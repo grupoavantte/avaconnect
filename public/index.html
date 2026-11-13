@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AVA Connect</title>
+<link rel="icon" href="/brand/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/brand/icone.webp">
+<meta name="theme-color" content="#071430">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f7fb; --panel:#ffffff; --ink:#0f1a2e; --muted:#5b6780; --line:#e3e8f0;
+  --brand:#071430; --accent:#0bb8a8; --accent-ink:#ffffff; --warn:#e8a317; --danger:#d64545;
+  --grad:linear-gradient(90deg,#1f6fff,#12d8c4);
+  --bubble-in:#ffffff; --bubble-ia:#e3f8f6; --bubble-hum:#e6eeff; --sys:#fff6e0;
+  --radius:12px; --shadow:0 1px 2px rgba(15,26,46,.06),0 4px 16px rgba(15,26,46,.05);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1220; --panel:#121b2d; --ink:#e8edf6; --muted:#93a0b8; --line:#22304a;
+  --brand:#06112a; --accent:#19e0c9; --accent-ink:#04201d; --bubble-in:#18233a; --bubble-ia:#103b3a; --bubble-hum:#1c2a4d; --sys:#3a3015;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+}}
+*{box-sizing:border-box} html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.hidden{display:none!important}
+/* Login */
+#login{min-height:100%;display:grid;place-items:center;padding:16px;background:radial-gradient(900px 500px at 0% 0%,rgba(18,216,196,.22),transparent),radial-gradient(900px 500px at 100% 100%,rgba(31,111,255,.25),transparent),#020f2b}
+.login-card{width:100%;max-width:420px;background:rgba(7,20,48,.85);border:1px solid rgba(120,170,255,.18);border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.4);color:#e8edf6}
+.login-card .muted{color:#9fb0cc} .login-card input{background:#0b1a3a;border-color:#22345e;color:#fff}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:.2px}
+.logo .dot{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#3a7bd5);box-shadow:0 0 18px rgba(19,181,166,.45)}
+.logo small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+/* Layout */
+#app{display:grid;grid-template-columns:220px 1fr;min-height:100%}
+aside{background:var(--brand);color:#dfe7f5;padding:18px 12px;display:flex;flex-direction:column;gap:4px}
+aside .logo{color:#fff;padding:4px 8px 18px}
+aside .logo small{color:#9fb0cc}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;cursor:pointer;color:#c6d2e8;border:0;background:none;text-align:left;width:100%}
+.nav:hover{background:rgba(255,255,255,.06)} .nav.active{background:rgba(47,208,192,.16);color:#fff}
+.nav .badge{margin-left:auto;background:var(--warn);color:#2a1d00;border-radius:999px;padding:0 7px;font-size:12px;font-weight:600}
+aside .foot{margin-top:auto;font-size:12px;color:#8ea0bf;padding:8px}
+main{padding:20px 24px;min-width:0}
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.topbar h1{font-size:20px;margin:0;margin-right:auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.pad{padding:16px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.kpi .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.kpi .value{font-size:26px;font-weight:700;margin-top:4px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:9px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--grad);border-color:transparent;color:#fff;font-weight:600}
+.btn.small{padding:4px 10px;font-size:13px}
+.btn.danger{color:var(--danger)}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 11px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{min-height:90px;resize:vertical}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px;font-weight:500}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+tr.click{cursor:pointer} tr.click:hover td{background:rgba(19,181,166,.05)}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid var(--line)}
+.pill.ia{background:var(--bubble-ia)} .pill.humano{background:#fdeccc;color:#6b4a00} .pill.encerrada{color:var(--muted)}
+.pill.ativo{background:var(--bubble-ia)} .pill.pausado,.pill.cancelado{color:var(--muted)}
+.muted{color:var(--muted)} .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.split{display:grid;grid-template-columns:340px 1fr;gap:14px;height:calc(100vh - 110px);min-height:420px}
+.list{overflow:auto}
+.list .item{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.list .item:hover,.list .item.sel{background:rgba(19,181,166,.07)}
+.list .item .t{display:flex;justify-content:space-between;gap:8px;font-weight:600}
+.list .item .p{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thread{display:flex;flex-direction:column;min-width:0}
+.thread .head{padding:12px 16px;border-bottom:1px solid var(--line)}
+.msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.msg{max-width:78%;padding:8px 12px;border-radius:12px;white-space:pre-wrap;word-wrap:break-word;border:1px solid var(--line)}
+.msg .who{font-size:11px;color:var(--muted);margin-bottom:2px;font-weight:600}
+.msg.cliente{background:var(--bubble-in);align-self:flex-start}
+.msg.ia{background:var(--bubble-ia);align-self:flex-end}
+.msg.humano{background:var(--bubble-hum);align-self:flex-end}
+.msg.sistema{background:var(--sys);align-self:center;font-size:12px;max-width:90%}
+.composer{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.composer textarea{min-height:42px;height:42px}
+.kanban{display:grid;grid-template-columns:repeat(5,minmax(200px,1fr));gap:12px;overflow-x:auto}
+.col h3{font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.lead{padding:12px;margin-bottom:10px}
+.lead b{display:block} .lead .s{font-size:13px;color:var(--muted);margin:4px 0 8px}
+.plans{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.plan h3{margin:0} .plan .price{font-size:24px;font-weight:700;margin:6px 0}
+.plan ul{padding-left:18px;margin:8px 0 0;color:var(--muted)}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;opacity:0;transition:.2s;pointer-events:none}
+.toast.on{opacity:1}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.wm{display:flex;align-items:center;gap:10px;font-family:Montserrat,Inter,sans-serif;color:#fff}
+.wm img{width:34px;height:auto;display:block}
+.wm .bar{width:1px;align-self:stretch;background:rgba(255,255,255,.55)}
+.wm .name{font-size:19px;line-height:1;letter-spacing:-.3px;white-space:nowrap}
+.wm .name b{font-weight:800} .wm .name i{font-style:normal;font-weight:500;color:#19e0c9;margin-left:3px}
+.wm .by{font-size:8.5px;letter-spacing:2.6px;margin-top:4px;color:#e8edf6;text-align:center}
+.wm.big{justify-content:center;gap:16px} .wm.big img{width:78px} .wm.big .name{font-size:42px} .wm.big .by{font-size:14px;letter-spacing:5px;margin-top:8px}
+.slogan{text-align:center;font-family:Montserrat,Inter,sans-serif;margin:16px 0 20px;color:#e8edf6;font-size:15px}
+.slogan em{font-style:normal;font-weight:700;color:#19e0c9}
+.side-logo{flex-direction:column;align-items:flex-start;gap:6px}
+
+.kanban .col{min-height:200px;border-radius:12px;padding:6px;transition:background .15s}
+.kanban .col.over{background:rgba(19,181,166,.10)}
+.lead[draggable=true]{cursor:grab}
+.lead .meta{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.due{font-weight:600} .due.late{color:var(--danger)} .due.today{color:var(--warn)}
+.tag{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:11px}
+.modal-bg{position:fixed;inset:0;background:rgba(5,10,20,.5);display:flex;justify-content:flex-end;z-index:20}
+.modal{width:min(560px,100%);height:100%;overflow:auto;background:var(--panel);border-left:1px solid var(--line);padding:20px}
+.modal h2{margin:0 0 4px;font-size:18px}
+.tl{list-style:none;padding:0;margin:10px 0 0}
+.tl li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:10px}
+.tl .ico{width:26px;height:26px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-size:12px;flex:none}
+.tl .done{text-decoration:line-through;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+code{background:var(--bg);padding:2px 6px;border-radius:6px;border:1px solid var(--line);font-size:12px;word-break:break-all}
+@media (max-width:860px){
+  #app{grid-template-columns:1fr} aside{flex-direction:row;overflow-x:auto;padding:8px} aside .logo,aside .foot{display:none}
+  .nav{white-space:nowrap;width:auto} main{padding:16px}
+  .split{grid-template-columns:1fr;height:auto} .msgs{min-height:320px}
+}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <div class="login-card">
+    <div class="brand-login"><div class="wm big"><img src="/brand/simbolo.webp" alt=""><span class="bar"></span><div><div class="name"><b>AVA</b><i>Connect</i></div><div class="by">by AVANTTE</div></div></div>
+      <p class="slogan">Atendimento e vendas com <em>Inteligência Artificial</em></p></div>
+    <label for="tok">Token de acesso</label>
+    <input id="tok" type="password" placeholder="Cole seu token" autocomplete="off">
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="btnLogin">Entrar</button><span id="loginErr" class="muted"></span></div>
+  </div>
+</section>
+
+<div id="app" class="hidden">
+  <aside>
+    <div class="logo side-logo"><div class="wm" aria-label="AVA Connect by Avantte"><img src="/brand/simbolo.webp" alt=""><span class="bar"></span><div><div class="name"><b>AVA</b><i>Connect</i></div><div class="by">by AVANTTE</div></div></div><small id="who"></small></div>
+    <button class="nav" data-v="overview">Visão geral</button>
+    <button class="nav" data-v="conversas">Conversas <span class="badge hidden" id="badgeHum"></span></button>
+    <button class="nav" data-v="crm">CRM</button>
+    <button class="nav" data-v="tarefas">Tarefas <span class="badge hidden" id="badgeTask"></span></button>
+    <button class="nav" data-v="simulador">Simulador</button>
+    <button class="nav" data-v="empresa">Configurar IA</button>
+    <button class="nav admin-only" data-v="empresas">Empresas</button>
+    <button class="nav admin-only" data-v="planos">Planos</button>
+    <div class="foot"><span id="iaMode"></span><br>Suporte: <a href="mailto:contato@grupoavantte.com.br" style="color:#9fb0cc">contato@grupoavantte.com.br</a><br>Um produto <b>Avantte</b> · <a href="#" id="logout" style="color:#9fb0cc">Sair</a></div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <h1 id="title"></h1>
+      <select id="tenantSel" class="admin-only" style="width:auto;min-width:220px"></select>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const brl = (v) => (v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+const when = (s) => s ? new Date(s.replace(' ', 'T') + 'Z').toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '';
+const store = { get(k){ try { return localStorage.getItem(k); } catch { return null; } }, set(k,v){ try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k,v); } catch {} } };
+
+let TOKEN = store.get('ava_token'); let ME = null; let TENANT = null; let VIEW = 'overview'; let CONV = null; let poll = null;
+const ETAPAS = [['novo','Novo'],['qualificado','Qualificado'],['proposta','Proposta'],['fechado','Fechado'],['perdido','Perdido']];
+
+function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('on'); setTimeout(() => el.classList.remove('on'), 2200); }
+async function api(path, opts = {}) {
+  const res = await fetch('/api' + path, { ...opts, headers: { 'content-type': 'application/json', authorization: 'Bearer ' + TOKEN }, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  if (res.status === 401) { logout(); throw new Error('Sessão expirada'); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.erro || 'Erro ' + res.status);
+  return data;
+}
+
+async function login() {
+  TOKEN = $('#tok').value.trim() || TOKEN;
+  try {
+    ME = await api('/me'); store.set('ava_token', TOKEN);
+    $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+    document.querySelectorAll('.admin-only').forEach((e) => e.classList.toggle('hidden', !ME.admin));
+    $('#who').textContent = ME.admin ? 'Administrador Avantte' : ME.nome;
+    $('#iaMode').textContent = ME.ia === 'claude' ? 'IA: Claude conectado' : 'IA: modo demonstração';
+    await loadTenants(); go(ME.admin ? 'overview' : 'conversas');
+  } catch (e) { $('#loginErr').textContent = e.message; }
+}
+function logout(){ store.set('ava_token', null); TOKEN = null; location.reload(); }
+
+async function loadTenants() {
+  const list = await api('/tenants');
+  const sel = $('#tenantSel'); const prev = TENANT?.id;
+  sel.innerHTML = list.map((t) => `<option value="${t.id}">${esc(t.nome)}</option>`).join('') || '<option value="">Nenhuma empresa</option>';
+  TENANT = list.find((t) => t.id === prev) || list[0] || null;
+  if (TENANT) sel.value = TENANT.id;
+  return list;
+}
+$('#tenantSel').onchange = async (e) => { const list = await api('/tenants'); TENANT = list.find((t) => t.id == e.target.value); CONV = null; go(VIEW); };
+
+const TITLES = { overview:'Visão geral', conversas:'Conversas', crm:'CRM de leads', tarefas:'Tarefas e retornos', simulador:'Simulador', empresa:'Configurar IA', empresas:'Empresas clientes', planos:'Planos' };
+function go(v) {
+  VIEW = v; clearInterval(poll);
+  document.querySelectorAll('.nav').forEach((n) => n.classList.toggle('active', n.dataset.v === v));
+  $('#title').textContent = TITLES[v];
+  $('#tenantSel').classList.toggle('hidden', !ME.admin || ['empresas','planos','overview'].includes(v));
+  const needTenant = ['conversas','crm','tarefas','simulador','empresa'].includes(v);
+  if (needTenant && !TENANT) { $('#view').innerHTML = `<div class="card pad">Cadastre a primeira empresa em <b>Empresas</b>.</div>`; return; }
+  ({ overview, conversas, crm, tarefas, simulador, empresa, empresas, planos })[v]().catch((e) => toast(e.message));
+}
+document.querySelectorAll('.nav').forEach((n) => (n.onclick = () => go(n.dataset.v)));
+
+async function refreshBadge() {
+  if (!TENANT) return;
+  const hs = await api(`/tenants/${TENANT.id}/conversations?status=humano`);
+  const b = $('#badgeHum'); b.textContent = hs.length; b.classList.toggle('hidden', !hs.length);
+  const ts = await api(`/tenants/${TENANT.id}/tasks`); const t = new Date().toLocaleDateString('sv-SE');
+  const pend = ts.filter((x) => x.vence_em && x.vence_em.slice(0, 10) <= t).length;
+  const bt = $('#badgeTask'); bt.textContent = pend; bt.classList.toggle('hidden', !pend);
+}
+
+// ---------- Visão geral ----------
+async function overview() {
+  const o = await api('/overview');
+  const lead = (e) => o.leads.find((l) => l.etapa === e) || { n: 0, v: 0 };
+  const pipeline = ['novo','qualificado','proposta'].reduce((s, e) => s + lead(e).v, 0);
+  $('#view').innerHTML = `
+    <div class="grid kpis">
+      ${ME.admin ? `<div class="card pad kpi"><div class="label">Receita recorrente (MRR)</div><div class="value">${brl(o.mrr)}</div></div>` : ''}
+      <div class="card pad kpi"><div class="label">Empresas ativas</div><div class="value">${o.empresas_ativas}</div></div>
+      <div class="card pad kpi"><div class="label">Conversas no mês</div><div class="value">${o.conversas_mes}</div></div>
+      <div class="card pad kpi"><div class="label">Respostas da IA no mês</div><div class="value">${o.mensagens_ia_mes}</div></div>
+      <div class="card pad kpi"><div class="label">Aguardando humano</div><div class="value">${o.aguardando_humano}</div></div>
+      <div class="card pad kpi"><div class="label">Leads fechados</div><div class="value">${lead('fechado').n}</div></div>
+      <div class="card pad kpi"><div class="label">Pipeline estimado</div><div class="value">${brl(pipeline)}</div></div>
+    </div>
+    ${ME.admin ? `<div class="card" style="margin-top:14px"><table><thead><tr><th>Empresa</th><th>Plano</th><th>Status</th><th>Uso do mês</th></tr></thead><tbody id="tt"></tbody></table></div>` : ''}`;
+  if (ME.admin) {
+    const list = await api('/tenants');
+    $('#tt').innerHTML = list.map((t) => { const pct = Math.min(100, Math.round(100 * t.uso.conversas / t.limite));
+      return `<tr><td><b>${esc(t.nome)}</b></td><td>${esc(t.plano)}</td><td><span class="pill ${t.status}">${t.status}</span></td>
+      <td style="min-width:160px">${t.uso.conversas} / ${t.limite} conversas<div class="bar"><i style="width:${pct}%"></i></div></td></tr>`; }).join('')
+      || '<tr><td colspan="4" class="muted">Nenhuma empresa ainda.</td></tr>';
+  }
+  refreshBadge();
+}
+
+// ---------- Conversas ----------
+async function conversas() {
+  $('#view').innerHTML = `<div class="split">
+    <div class="card list" id="clist"></div>
+    <div class="card thread" id="thread"><div class="pad muted">Selecione uma conversa.</div></div></div>`;
+  await loadConvList(); if (CONV) openConv(CONV);
+  poll = setInterval(async () => { await loadConvList(); if (CONV) openConv(CONV, true); }, 5000);
+}
+async function loadConvList() {
+  const rows = await api(`/tenants/${TENANT.id}/conversations`);
+  const el = $('#clist'); if (!el) return;
+  el.innerHTML = rows.map((c) => `<div class="item ${c.id === CONV ? 'sel' : ''}" data-id="${c.id}">
+      <div class="t"><span>${esc(c.contato_nome || c.telefone)}</span><span class="pill ${c.status}">${c.status === 'ia' ? 'IA' : c.status}</span></div>
+      <div class="p">${esc(c.ultima_mensagem || '')}</div><div class="p" style="font-size:11px">${when(c.ultima_mensagem_em)} · ${c.canal}</div></div>`).join('')
+    || '<div class="pad muted">Nenhuma conversa ainda. Teste no Simulador.</div>';
+  el.querySelectorAll('.item').forEach((i) => (i.onclick = () => openConv(+i.dataset.id)));
+  refreshBadge();
+}
+async function openConv(id, silent) {
+  CONV = id; const c = await api(`/conversations/${id}`); const el = $('#thread'); if (!el) return;
+  const draft = $('#reply')?.value || '';
+  const st = { ia:'IA atendendo', humano:'Com atendente', encerrada:'Encerrada' };
+  el.innerHTML = `<div class="head row"><div style="margin-right:auto"><b>${esc(c.contato.nome || c.contato.telefone)}</b>
+      <div class="muted" style="font-size:12px">${esc(c.contato.telefone)} · ${st[c.status]}${c.motivo_transbordo ? ' · ' + esc(c.motivo_transbordo) : ''}</div></div>
+      ${c.status !== 'ia' ? `<button class="btn small" data-s="ia">Devolver para IA</button>` : `<button class="btn small" data-s="humano">Assumir</button>`}
+      ${c.status !== 'encerrada' ? `<button class="btn small" data-s="encerrada">Encerrar</button>` : ''}</div>
+    ${c.lead ? `<div class="pad row" style="border-bottom:1px solid var(--line);font-size:13px"><div style="margin-right:auto"><b>Lead:</b> ${esc(c.lead.interesse || '')} · <span class="pill">${c.lead.etapa}</span> ${c.lead.resumo ? '<div class="muted">' + esc(c.lead.resumo) + '</div>' : ''}</div><button class="btn small" id="openLead">Abrir ficha no CRM</button></div>` : ''}
+    <div class="msgs" id="msgs">${c.mensagens.map((m) => `<div class="msg ${m.autor}"><div class="who">${{cliente:'Cliente',ia:'AVA',humano:'Atendente',sistema:'Sistema'}[m.autor]} · ${when(m.criado_em)}</div>${esc(m.conteudo)}</div>`).join('')}</div>
+    <div class="composer"><textarea id="reply" placeholder="Responder como atendente (a IA pausa nesta conversa)"></textarea><button class="btn primary" id="send">Enviar</button></div>`;
+  $('#reply').value = draft;
+  if ($('#openLead')) $('#openLead').onclick = () => leadModal(c.lead.id);
+  const box = $('#msgs'); box.scrollTop = box.scrollHeight;
+  el.querySelectorAll('[data-s]').forEach((b) => (b.onclick = async () => { await api(`/conversations/${id}/status`, { method:'POST', body:{ status: b.dataset.s } }); openConv(id); loadConvList(); }));
+  $('#send').onclick = async () => { const t = $('#reply').value.trim(); if (!t) return; $('#reply').value = ''; await api(`/conversations/${id}/reply`, { method:'POST', body:{ texto: t } }); openConv(id); loadConvList(); };
+  if (!silent) document.querySelectorAll('#clist .item').forEach((i) => i.classList.toggle('sel', +i.dataset.id === id));
+}
+
+// ---------- CRM ----------
+const today = () => new Date().toLocaleDateString('sv-SE');
+function dueBadge(d) {
+  if (!d) return '';
+  const day = d.slice(0, 10), t = today();
+  const cls = day < t ? 'late' : day === t ? 'today' : '';
+  const label = day < t ? 'Atrasada' : day === t ? 'Hoje' : new Date(day + 'T12:00').toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' });
+  return `<span class="due ${cls}">⏰ ${label}${d.length > 10 ? ' ' + d.slice(11, 16) : ''}</span>`;
+}
+const ORIGEM = { whatsapp: 'WhatsApp', manual: 'Manual', simulador: 'Simulador' };
+let CRM_Q = '';
+
+async function crm() {
+  const [leads, st] = await Promise.all([api(`/tenants/${TENANT.id}/leads?q=${encodeURIComponent(CRM_Q)}`), api(`/tenants/${TENANT.id}/crm-stats`)]);
+  $('#view').innerHTML = `
+    <div class="grid kpis" style="margin-bottom:14px">
+      <div class="card pad kpi"><div class="label">Pipeline aberto</div><div class="value">${brl(st.pipeline_aberto)}</div></div>
+      <div class="card pad kpi"><div class="label">Novos no mês</div><div class="value">${st.novos_mes}</div></div>
+      <div class="card pad kpi"><div class="label">Vendas no mês</div><div class="value">${st.ganhos_mes} <span class="muted" style="font-size:14px">${brl(st.valor_ganho_mes)}</span></div></div>
+      <div class="card pad kpi"><div class="label">Conversão</div><div class="value">${st.taxa_conversao == null ? '—' : st.taxa_conversao + '%'}</div></div>
+      <div class="card pad kpi"><div class="label">Tarefas atrasadas</div><div class="value" style="color:${st.tarefas_atrasadas ? 'var(--danger)' : 'inherit'}">${st.tarefas_atrasadas}</div></div>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <input id="q" placeholder="Buscar por nome, empresa, telefone, interesse ou tag" value="${esc(CRM_Q)}" style="max-width:380px">
+      <button class="btn primary" id="newLead">+ Novo lead</button>
+      <button class="btn" id="csv">Exportar planilha</button>
+    </div>
+    <div class="kanban">${ETAPAS.map(([k, n]) => { const ls = leads.filter((l) => l.etapa === k); const tot = ls.reduce((s, l) => s + (l.valor_estimado || 0), 0);
+      return `<div class="col" data-col="${k}"><h3><span>${n} · ${ls.length}</span><span>${tot ? brl(tot) : ''}</span></h3>${ls.map((l) => `
+        <div class="card lead" draggable="true" data-id="${l.id}">
+          <b>${esc(l.nome || l.contato_nome || l.telefone)}</b>
+          <div class="s">${l.empresa ? esc(l.empresa) + ' · ' : ''}${esc(l.interesse || 'Sem interesse definido')}</div>
+          <div class="meta">${l.valor_estimado ? `<span>${brl(l.valor_estimado)}</span>` : ''}${dueBadge(l.proxima_tarefa)}
+            <span>${ORIGEM[l.origem] || ''}</span>${l.responsavel ? `<span>👤 ${esc(l.responsavel)}</span>` : ''}
+            ${(l.tags || '').split(',').filter((t) => t.trim()).map((t) => `<span class="tag">${esc(t.trim())}</span>`).join('')}</div>
+          <select data-l="${l.id}" style="margin-top:8px;padding:4px 8px" aria-label="Mover etapa">${ETAPAS.map(([v, t]) => `<option value="${v}" ${v === l.etapa ? 'selected' : ''}>${t}</option>`).join('')}</select>
+        </div>`).join('')}</div>`; }).join('')}</div>
+    ${leads.length ? '' : '<p class="muted">Os leads aparecem aqui automaticamente quando a IA identifica interesse de compra. Você também pode cadastrar manualmente.</p>'}`;
+
+  let t; $('#q').oninput = (e) => { clearTimeout(t); t = setTimeout(() => { CRM_Q = e.target.value; crm().then(() => { const q = $('#q'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }); }, 350); };
+  $('#newLead').onclick = () => leadForm();
+  $('#csv').onclick = downloadCsv;
+  const move = async (id, etapa) => {
+    if (etapa === 'perdido') { const m = prompt('Motivo da perda (opcional):'); if (m === null) return crm(); await api(`/leads/${id}`, { method:'PUT', body:{ etapa, motivo_perda: m } }); }
+    else await api(`/leads/${id}`, { method:'PUT', body:{ etapa } });
+    toast('Etapa atualizada'); crm();
+  };
+  document.querySelectorAll('[data-l]').forEach((s) => { s.onclick = (e) => e.stopPropagation(); s.onchange = () => move(s.dataset.l, s.value); });
+  document.querySelectorAll('.lead[data-id]').forEach((c) => {
+    c.onclick = () => leadModal(+c.dataset.id);
+    c.ondragstart = (e) => e.dataTransfer.setData('text/plain', c.dataset.id);
+  });
+  document.querySelectorAll('[data-col]').forEach((col) => {
+    col.ondragover = (e) => { e.preventDefault(); col.classList.add('over'); };
+    col.ondragleave = () => col.classList.remove('over');
+    col.ondrop = (e) => { e.preventDefault(); col.classList.remove('over'); move(e.dataTransfer.getData('text/plain'), col.dataset.col); };
+  });
+}
+
+async function downloadCsv() {
+  const res = await fetch(`/api/tenants/${TENANT.id}/leads.csv`, { headers: { authorization: 'Bearer ' + TOKEN } });
+  const url = URL.createObjectURL(await res.blob()); const a = document.createElement('a');
+  a.href = url; a.download = `leads-${TENANT.nome.replace(/\W+/g, '-').toLowerCase()}.csv`; a.click(); URL.revokeObjectURL(url);
+}
+
+function openModal(html) {
+  const bg = document.createElement('div'); bg.className = 'modal-bg';
+  bg.innerHTML = `<div class="modal">${html}</div>`;
+  bg.onclick = (e) => { if (e.target === bg) bg.remove(); };
+  document.body.appendChild(bg); return bg;
+}
+const fieldsHtml = (l = {}) => `<div class="two">
+  <div><label>Nome</label><input id="l_nome" value="${esc(l.nome || '')}"></div>
+  <div><label>Empresa</label><input id="l_empresa" value="${esc(l.empresa || '')}"></div>
+  ${l.id ? '' : `<div><label>WhatsApp (com DDD) *</label><input id="l_telefone" placeholder="24999998888"></div>`}
+  <div><label>E-mail</label><input id="l_email" value="${esc(l.email || '')}"></div>
+  <div><label>Interesse</label><input id="l_interesse" value="${esc(l.interesse || '')}"></div>
+  <div><label>Valor estimado (R$)</label><input id="l_valor_estimado" type="number" step="0.01" value="${l.valor_estimado ?? ''}"></div>
+  <div><label>Etapa</label><select id="l_etapa">${ETAPAS.map(([v, t]) => `<option value="${v}" ${v === (l.etapa || 'novo') ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+  <div><label>Responsável</label><input id="l_responsavel" value="${esc(l.responsavel || '')}"></div>
+  <div><label>Tags (separadas por vírgula)</label><input id="l_tags" value="${esc(l.tags || '')}"></div>
+  </div><label>Resumo da necessidade</label><textarea id="l_resumo">${esc(l.resumo || '')}</textarea>`;
+const readFields = () => Object.fromEntries(['nome','empresa','telefone','email','interesse','valor_estimado','etapa','responsavel','tags','resumo']
+  .filter((f) => $('#l_' + f)).map((f) => [f, $('#l_' + f).value.trim()]));
+
+function leadForm() {
+  const m = openModal(`<h2>Novo lead</h2>${fieldsHtml()}<div class="row" style="margin-top:14px"><button class="btn primary" id="lsave">Cadastrar</button><button class="btn" id="lcancel">Cancelar</button></div>`);
+  $('#lcancel', m).onclick = () => m.remove();
+  $('#lsave', m).onclick = async () => { try { await api(`/tenants/${TENANT.id}/leads`, { method:'POST', body: readFields() }); m.remove(); toast('Lead cadastrado'); crm(); } catch (e) { toast(e.message); } };
+}
+
+const ICO = { nota:'📝', tarefa:'☑️', ligacao:'📞', whatsapp:'💬', reuniao:'🤝', sistema:'⚙️' };
+async function leadModal(id) {
+  const l = await api(`/leads/${id}`);
+  document.querySelectorAll('.modal-bg').forEach((x) => x.remove());
+  const m = openModal(`
+    <div class="row"><div style="margin-right:auto"><h2>${esc(l.nome || l.contato.nome || l.contato.telefone)}</h2>
+      <div class="muted" style="font-size:13px">${esc(l.contato.telefone)} · origem ${ORIGEM[l.origem] || l.origem} · desde ${when(l.criado_em)}</div></div>
+      <button class="btn small" id="lclose">Fechar</button></div>
+    ${l.conversas.length ? `<div class="row" style="margin-top:10px">${l.conversas.slice(0, 3).map((c) => `<button class="btn small" data-conv="${c.id}">💬 Conversa de ${when(c.iniciada_em)}</button>`).join('')}</div>` : ''}
+    ${fieldsHtml({ ...l, nome: l.nome || l.contato.nome })}
+    ${l.etapa === 'perdido' ? `<label>Motivo da perda</label><input id="l_motivo_perda" value="${esc(l.motivo_perda || '')}">` : ''}
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="lsave">Salvar</button><button class="btn danger small" id="ldel" style="margin-left:auto">Excluir lead</button></div>
+    <h3 style="margin:22px 0 6px;font-size:15px">Registrar atividade</h3>
+    <div class="row"><select id="a_tipo" style="width:auto"><option value="nota">Nota</option><option value="tarefa">Tarefa / retorno</option><option value="ligacao">Ligação</option><option value="whatsapp">WhatsApp</option><option value="reuniao">Reunião</option></select>
+      <input id="a_vence" type="datetime-local" style="width:auto" class="hidden"></div>
+    <textarea id="a_desc" style="min-height:60px;margin-top:8px" placeholder="O que aconteceu ou o que precisa ser feito"></textarea>
+    <button class="btn" id="aadd" style="margin-top:8px">Adicionar</button>
+    <h3 style="margin:22px 0 0;font-size:15px">Histórico</h3>
+    <ul class="tl">${l.atividades.map((a) => `<li><span class="ico">${ICO[a.tipo] || '•'}</span><div style="flex:1">
+      <div class="${a.concluida ? 'done' : ''}">${esc(a.descricao)}</div>
+      <div class="muted" style="font-size:12px">${a.autor} · ${when(a.criado_em)} ${a.tipo === 'tarefa' && !a.concluida ? dueBadge(a.vence_em) : ''}</div></div>
+      ${a.tipo === 'tarefa' ? `<label style="margin:0;display:flex;gap:6px;align-items:center;color:var(--ink)"><input type="checkbox" data-act="${a.id}" ${a.concluida ? 'checked' : ''} style="width:auto"> feita</label>` : ''}</li>`).join('') || '<li class="muted">Sem atividades.</li>'}</ul>`);
+  $('#lclose', m).onclick = () => m.remove();
+  $('#a_tipo', m).onchange = (e) => $('#a_vence', m).classList.toggle('hidden', e.target.value !== 'tarefa');
+  $('#lsave', m).onclick = async () => { const b = readFields(); if ($('#l_motivo_perda', m)) b.motivo_perda = $('#l_motivo_perda', m).value;
+    try { await api(`/leads/${id}`, { method:'PUT', body: b }); toast('Lead salvo'); leadModal(id); if (VIEW === 'crm') crm(); } catch (e) { toast(e.message); } };
+  $('#ldel', m).onclick = async () => { if (!confirm('Excluir este lead e o histórico dele?')) return; await api(`/leads/${id}`, { method:'DELETE' }); m.remove(); toast('Lead excluído'); go(VIEW); };
+  $('#aadd', m).onclick = async () => { const tipo = $('#a_tipo', m).value; const vence = $('#a_vence', m).value;
+    try { await api(`/leads/${id}/activities`, { method:'POST', body:{ tipo, descricao: $('#a_desc', m).value, vence_em: vence || null } }); leadModal(id); refreshBadge(); if (VIEW !== 'conversas') go(VIEW); } catch (e) { toast(e.message); } };
+  m.querySelectorAll('[data-act]').forEach((c) => (c.onchange = async () => { await api(`/activities/${c.dataset.act}`, { method:'PUT', body:{ concluida: c.checked } }); leadModal(id); refreshBadge(); if (VIEW !== 'conversas') go(VIEW); }));
+  m.querySelectorAll('[data-conv]').forEach((b) => (b.onclick = () => { m.remove(); CONV = +b.dataset.conv; go('conversas'); }));
+}
+
+// ---------- Tarefas ----------
+async function tarefas() {
+  const ts = await api(`/tenants/${TENANT.id}/tasks`); const t = today();
+  const grupos = [['Atrasadas', ts.filter((x) => x.vence_em && x.vence_em.slice(0, 10) < t)], ['Hoje', ts.filter((x) => x.vence_em && x.vence_em.slice(0, 10) === t)],
+    ['Próximas', ts.filter((x) => x.vence_em && x.vence_em.slice(0, 10) > t)], ['Sem data', ts.filter((x) => !x.vence_em)]];
+  $('#view').innerHTML = grupos.map(([n, l]) => `<div class="card" style="margin-bottom:14px"><div class="pad" style="border-bottom:1px solid var(--line)"><b>${n}</b> <span class="muted">${l.length}</span></div>
+    <table><tbody>${l.map((a) => `<tr><td style="width:36px"><input type="checkbox" data-done="${a.id}" style="width:auto" aria-label="Concluir"></td>
+      <td>${esc(a.descricao)}<div class="muted" style="font-size:12px">${a.autor === 'ia' ? 'Criada pela IA' : 'Criada por ' + esc(a.autor)}</div></td>
+      <td class="click" data-lead="${a.lead_id}" style="cursor:pointer"><b>${esc(a.lead_nome || a.telefone)}</b><div class="muted" style="font-size:12px">${esc(a.empresa || '')} ${a.etapa}</div></td>
+      <td style="white-space:nowrap">${dueBadge(a.vence_em)}</td></tr>`).join('') || '<tr><td class="muted">Nada aqui.</td></tr>'}</tbody></table></div>`).join('');
+  document.querySelectorAll('[data-done]').forEach((c) => (c.onchange = async () => { await api(`/activities/${c.dataset.done}`, { method:'PUT', body:{ concluida: true } }); toast('Tarefa concluída'); tarefas(); refreshBadge(); }));
+  document.querySelectorAll('[data-lead]').forEach((c) => (c.onclick = () => leadModal(+c.dataset.lead)));
+  refreshBadge();
+}
+
+// ---------- Simulador ----------
+async function simulador() {
+  const phone = 'sim-' + (store.get('ava_sim') || (() => { const v = Math.random().toString(36).slice(2, 8); store.set('ava_sim', v); return v; })());
+  $('#view').innerHTML = `<div class="card thread" style="max-width:640px;height:calc(100vh - 110px);min-height:420px">
+    <div class="head row"><div style="margin-right:auto"><b>Teste como se fosse um cliente</b><div class="muted" style="font-size:12px">${esc(TENANT.nome)} · nada é enviado ao WhatsApp</div></div>
+    <button class="btn small" id="reset">Nova conversa</button></div>
+    <div class="msgs" id="smsgs"></div>
+    <div class="composer"><textarea id="stext" placeholder="Ex.: Olá, quanto custa uma rampa niveladora?"></textarea><button class="btn primary" id="ssend">Enviar</button></div></div>`;
+  const box = $('#smsgs');
+  const add = (who, t, cls) => { box.insertAdjacentHTML('beforeend', `<div class="msg ${cls}"><div class="who">${who}</div>${esc(t)}</div>`); box.scrollTop = box.scrollHeight; };
+  const send = async () => {
+    const t = $('#stext').value.trim(); if (!t) return; $('#stext').value = ''; add('Você', t, 'cliente');
+    try { const r = await api(`/tenants/${TENANT.id}/simulate`, { method:'POST', body:{ texto: t, telefone: phone, nome: 'Cliente teste' } });
+      (r.ferramentas || []).forEach((f) => add('Sistema', f.nome === 'registrar_lead' ? `Lead registrado no CRM: ${f.input.interesse || ''}`
+        : f.nome === 'agendar_retorno' ? `Tarefa de retorno criada${f.input.data ? ' para ' + f.input.data : ''}: ${f.input.motivo}` : `Transferido para humano: ${f.input.motivo}`, 'sistema'));
+      r.respostas.forEach((x) => add(TENANT.nome_assistente || 'AVA', x, 'ia'));
+      if (!r.respostas.length && r.status === 'humano') add('Sistema', 'Conversa com atendente humano: a IA não responde. Responda pela aba Conversas.', 'sistema');
+    } catch (e) { add('Sistema', e.message, 'sistema'); }
+  };
+  $('#ssend').onclick = send; $('#stext').onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
+  $('#reset').onclick = () => { store.set('ava_sim', null); simulador(); };
+}
+
+// ---------- Configurar IA (empresa) ----------
+async function empresa() {
+  const t = await api(`/tenants/${TENANT.id}`);
+  const lim = t.plano_info.limite_base_conhecimento;
+  $('#view').innerHTML = `<div class="card pad" style="max-width:860px">
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <div><label>Nome da empresa</label><input id="f_nome" value="${esc(t.nome)}"></div>
+      <div><label>Nome da assistente</label><input id="f_nome_assistente" value="${esc(t.nome_assistente)}"></div>
+      <div><label>Horário de atendimento humano</label><input id="f_horario_atendimento" value="${esc(t.horario_atendimento)}"></div>
+      <div><label>WhatsApp do responsável (aviso de transbordo, com DDI)</label><input id="f_telefone_responsavel" value="${esc(t.telefone_responsavel || '')}" placeholder="5524999999999"></div>
+    </div>
+    <label>Como a IA deve se comportar</label>
+    <textarea id="f_persona" placeholder="Ex.: Somos fabricantes de equipamentos de movimentação de carga. Atenda de forma consultiva, pergunte a altura da doca e a capacidade de carga antes de falar em modelo.">${esc(t.persona)}</textarea>
+    <label>Base de conhecimento (produtos, preços, prazos, formas de pagamento, perguntas frequentes) <span id="cnt"></span></label>
+    <textarea id="f_base_conhecimento" style="min-height:240px">${esc(t.base_conhecimento)}</textarea>
+    ${ME.admin ? `<h3 style="margin:22px 0 4px;font-size:15px">Conexão WhatsApp e contrato</h3>
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <div><label>Plano</label><select id="f_plano">${['essencial','profissional','premium'].map((p) => `<option ${p === t.plano ? 'selected' : ''}>${p}</option>`).join('')}</select></div>
+      <div><label>Status</label><select id="f_status">${['ativo','pausado','cancelado'].map((p) => `<option ${p === t.status ? 'selected' : ''}>${p}</option>`).join('')}</select></div>
+      <div><label>Phone Number ID (Meta)</label><input id="f_wa_phone_number_id" value="${esc(t.wa_phone_number_id || '')}"></div>
+      <div><label>Token de acesso Meta ${t.wa_token_configurado ? '(configurado — deixe vazio para manter)' : ''}</label><input id="f_wa_token" type="password"></div>
+    </div>
+    <label>Token do painel do cliente</label><div class="row"><code>${esc(t.painel_token)}</code><button class="btn small" id="rot">Gerar novo</button></div>` : ''}
+    <div class="row" style="margin-top:18px"><button class="btn primary" id="save">Salvar</button><span class="muted" style="font-size:12px">Uso do mês: ${t.uso.conversas} de ${t.plano_info.conversas_mes} conversas (plano ${esc(t.plano_info.nome)})</span></div></div>`;
+  const kb = $('#f_base_conhecimento'); const cnt = () => ($('#cnt').textContent = `· ${kb.value.length.toLocaleString('pt-BR')} / ${lim.toLocaleString('pt-BR')}`); kb.oninput = cnt; cnt();
+  $('#save').onclick = async () => {
+    const body = {}; ['nome','nome_assistente','horario_atendimento','telefone_responsavel','persona','base_conhecimento','plano','status','wa_phone_number_id','wa_token']
+      .forEach((f) => { const el = $('#f_' + f); if (el && !(f === 'wa_token' && !el.value)) body[f] = el.value; });
+    try { await api(`/tenants/${TENANT.id}`, { method:'PUT', body }); toast('Configuração salva'); await loadTenants(); } catch (e) { toast(e.message); }
+  };
+  if ($('#rot')) $('#rot').onclick = async () => { await api(`/tenants/${TENANT.id}/rotate-token`, { method:'POST' }); empresa(); };
+}
+
+// ---------- Empresas (admin) ----------
+async function empresas() {
+  const list = await api('/tenants');
+  $('#view').innerHTML = `<div class="card pad" style="margin-bottom:14px"><div class="row">
+      <input id="n_nome" placeholder="Nome da nova empresa" style="max-width:320px">
+      <select id="n_plano" style="width:auto"><option>essencial</option><option>profissional</option><option>premium</option></select>
+      <button class="btn primary" id="add">Cadastrar empresa</button></div></div>
+    <div class="card"><table><thead><tr><th>Empresa</th><th>Plano</th><th>Status</th><th>WhatsApp</th><th>Conversas no mês</th></tr></thead><tbody>
+    ${list.map((t) => `<tr class="click" data-id="${t.id}"><td><b>${esc(t.nome)}</b><div class="muted" style="font-size:12px">desde ${when(t.criado_em)}</div></td><td>${t.plano}</td>
+      <td><span class="pill ${t.status}">${t.status}</span></td><td>${t.wa_phone_number_id ? 'Conectado' : '<span class="muted">Não conectado</span>'}</td><td>${t.uso.conversas} / ${t.limite}</td></tr>`).join('')
+      || '<tr><td colspan="5" class="muted">Nenhuma empresa ainda.</td></tr>'}</tbody></table></div>`;
+  $('#add').onclick = async () => {
+    const nome = $('#n_nome').value.trim(); if (!nome) return toast('Informe o nome');
+    const t = await api('/tenants', { method:'POST', body:{ nome, plano: $('#n_plano').value } });
+    await loadTenants(); TENANT = (await api('/tenants')).find((x) => x.id === t.id); $('#tenantSel').value = t.id; toast('Empresa cadastrada'); go('empresa');
+  };
+  document.querySelectorAll('tr[data-id]').forEach((r) => (r.onclick = async () => { TENANT = list.find((t) => t.id == r.dataset.id); $('#tenantSel').value = TENANT.id; go('empresa'); }));
+}
+
+// ---------- Planos ----------
+async function planos() {
+  const ps = await api('/plans');
+  $('#view').innerHTML = `<div class="grid plans">${ps.map((p) => `<div class="card pad plan"><h3>${p.nome}</h3>
+    <div class="price">${brl(p.preco_mensal)}<span class="muted" style="font-size:13px;font-weight:500">/mês</span></div>
+    <div class="muted">Implantação ${brl(p.implantacao)}</div>
+    <ul><li>${p.conversas_mes.toLocaleString('pt-BR')} conversas/mês</li><li>${p.usuarios_painel} usuários no painel</li>${p.recursos.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`).join('')}</div>`;
+}
+
+$('#btnLogin').onclick = login; $('#tok').onkeydown = (e) => e.key === 'Enter' && login();
+$('#logout').onclick = (e) => { e.preventDefault(); logout(); };
+if (TOKEN) login();
+</script>
+</body>
+</html>
