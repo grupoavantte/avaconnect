@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ava-connect
+    runtime: node
+    plan: starter
+    region: virginia
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DB_PATH
+        value: /var/data/ava-connect.db
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: WA_VERIFY_TOKEN
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: WA_APP_SECRET
+        sync: false
+    disk:
+      name: ava-data
+      mountPath: /var/data
+      sizeGB: 1
