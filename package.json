@@ -1,0 +1,19 @@
+{
+  "name": "ava-connect",
+  "version": "1.0.0",
+  "description": "AVA Connect — atendimento com IA no WhatsApp para várias empresas (Avantte)",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --no-warnings src/server.js",
+    "dev": "node --no-warnings --watch src/server.js",
+    "test": "node --no-warnings test/smoke.js"
+  },
+  "engines": { "node": ">=22.5" },
+  "author": "Avantte <contato@grupoavantte.com.br>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "express": "^4.22.3"
+  }
+}
