@@ -82,6 +82,8 @@ export function garantirAvantte() {
   set('base_conhecimento', baseConhecimento());
   // Chat no site do AVA: saudação sem o nome da empresa.
   try { db.prepare("UPDATE tenants SET webchat_saudacao = 'Oi! Sou a AVA. Como posso te ajudar?' WHERE id = ? AND (webchat_saudacao IS NULL OR webchat_saudacao = '' OR webchat_saudacao LIKE '%da Avantte%')").run(t.id); } catch {}
+  // O site da Avantte tem botão de WhatsApp no canto direito: o balão da AVA fica acima dele.
+  try { db.prepare('UPDATE tenants SET webchat_margem = 150 WHERE id = ? AND webchat_margem = 20').run(t.id); } catch {}
   set('condicoes_pagamento', 'Implantação: Pix, boleto ou cartão em até 3x. Contrato de 12 meses: 12 parcelas mensais (boleto, Pix ou cartão recorrente) ou à vista com desconto.');
   set('pos_venda_mensagem', 'Bem-vindo ao AVA Connect! Agora vamos agendar a reunião de implantação: é só me dizer o melhor dia e horário que eu marco aqui mesmo.');
   set('consultoria_descricao', '- A consultoria Avantte executa o plano de melhorias junto com o empresário, com acompanhamento mensal dos indicadores.');

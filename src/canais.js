@@ -18,6 +18,8 @@ addCols('tenants', [
   ['webchat_cor', "TEXT NOT NULL DEFAULT '#12D8C4'"],
   ['webchat_titulo', 'TEXT'],
   ['webchat_saudacao', 'TEXT'],
+  ['webchat_lado', "TEXT NOT NULL DEFAULT 'direita'"],   // direita | esquerda
+  ['webchat_margem', 'INTEGER NOT NULL DEFAULT 20'],      // distância do rodapé em px (para não brigar com outro botão do site)
   ['form_whatsapp', 'INTEGER NOT NULL DEFAULT 1'],  // responder pelo WhatsApp quem deixou o número no formulário (com consentimento)
   ['form_aviso_email', 'TEXT'],                     // e-mail da equipe para receber cada formulário
 ]);
@@ -212,14 +214,16 @@ function scriptWidget(tenant) {
     cor: /^#[0-9a-f]{6}$/i.test(tenant.webchat_cor || '') ? tenant.webchat_cor : '#12D8C4',
     titulo: tenant.webchat_titulo || `${tenant.nome_assistente || 'AVA'} · ${tenant.nome}`,
     saudacao: tenant.webchat_saudacao || `Oi! Sou a ${tenant.nome_assistente || 'AVA'}, da ${tenant.nome}. Como posso te ajudar?`,
+    lado: tenant.webchat_lado === 'esquerda' ? 'left' : 'right',
+    margem: Math.min(400, Math.max(0, Number(tenant.webchat_margem) || 20)),
   };
   return `(function(){if(window.__avaChat)return;window.__avaChat=1;var C=${JSON.stringify(cfg).replace(/</g, '\\u003c')};
 try{var S=document.currentScript;if(S&&S.src)C.base=new URL(S.src).origin}catch(e){}
 var K='ava_v_'+C.token,V;try{V=localStorage.getItem(K)}catch(e){}if(!V){V=Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem(K,V)}catch(e){}}
-var ult=0,aberto=false,poll=null,root=document.createElement('div');root.style.cssText='position:fixed;right:20px;bottom:20px;z-index:2147483000';
+var ult=0,aberto=false,poll=null,root=document.createElement('div');root.style.cssText='position:fixed;'+C.lado+':20px;bottom:'+C.margem+'px;z-index:2147483000';
 var sh=root.attachShadow?root.attachShadow({mode:'open'}):root;document.body.appendChild(root);
 sh.innerHTML='<style>*{box-sizing:border-box;font-family:Inter,system-ui,Arial,sans-serif}.b{width:60px;height:60px;border-radius:50%;border:0;background:'+C.cor+';color:#06112A;box-shadow:0 8px 24px rgba(6,17,42,.3);cursor:pointer;display:grid;place-items:center}.b:focus-visible,.s:focus-visible,.x:focus-visible{outline:3px solid #06112A;outline-offset:2px}'
-+'.p{position:absolute;right:0;bottom:72px;width:min(370px,calc(100vw - 32px));height:min(540px,calc(100vh - 110px));background:#fff;border-radius:16px;box-shadow:0 16px 48px rgba(6,17,42,.35);display:none;flex-direction:column;overflow:hidden;color:#0F1A2E}.p.on{display:flex}'
++'.p{position:absolute;'+C.lado+':0;bottom:72px;width:min(370px,calc(100vw - 32px));height:min(540px,calc(100vh - '+(C.margem+92)+'px));background:#fff;border-radius:16px;box-shadow:0 16px 48px rgba(6,17,42,.35);display:none;flex-direction:column;overflow:hidden;color:#0F1A2E}.p.on{display:flex}'
 +'.h{background:#06112A;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}.h b{font-size:15px;flex:1}.x{background:none;border:0;color:#fff;font-size:22px;cursor:pointer;line-height:1}'
 +'.m{flex:1;overflow-y:auto;padding:14px;background:#F5F7FB;display:flex;flex-direction:column;gap:8px}.g{max-width:85%;padding:9px 12px;border-radius:12px;font-size:14px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}.g.c{align-self:flex-end;background:#1F6FFF;color:#fff}.g.i{align-self:flex-start;background:#fff;border:1px solid #E3E8F0}.g a{color:inherit}'
 +'.wa{align-self:flex-start;background:#25D366;color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:9px 14px;border-radius:999px}'
@@ -368,7 +372,7 @@ export function canaisRouter(canSee) {
   const dadosCanais = (t) => {
     const base = publicUrl(); const tk = tokenCanal(t);
     return {
-      token: tk, webchat_ativo: !!t.webchat_ativo, webchat_cor: t.webchat_cor, webchat_titulo: t.webchat_titulo || '', webchat_saudacao: t.webchat_saudacao || '',
+      token: tk, webchat_ativo: !!t.webchat_ativo, webchat_cor: t.webchat_cor, webchat_titulo: t.webchat_titulo || '', webchat_saudacao: t.webchat_saudacao || '', webchat_lado: t.webchat_lado || 'direita', webchat_margem: t.webchat_margem ?? 20,
       form_whatsapp: !!t.form_whatsapp, form_aviso_email: t.form_aviso_email || '',
       codigo_chat: `<script src="${base}/w/${tk}.js" async></script>`,
       form_url: `${base}/f/${tk}`, email_webhook: `${base}/inbound/email/${tk}`,
@@ -389,7 +393,8 @@ export function canaisRouter(canSee) {
     if (b.form_aviso_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.form_aviso_email)) return res.status(400).json({ erro: 'E-mail de aviso inválido.' });
     const sets = []; const vals = [];
     for (const [k, conv] of [['webchat_ativo', (v) => (v ? 1 : 0)], ['webchat_cor', String], ['webchat_titulo', (v) => String(v).slice(0, 60) || null],
-      ['webchat_saudacao', (v) => String(v).slice(0, 300) || null], ['form_whatsapp', (v) => (v ? 1 : 0)], ['form_aviso_email', (v) => String(v).trim() || null]]) {
+      ['webchat_saudacao', (v) => String(v).slice(0, 300) || null], ['webchat_lado', (v) => (v === 'esquerda' ? 'esquerda' : 'direita')],
+      ['webchat_margem', (v) => Math.min(400, Math.max(0, Math.round(Number(v) || 20)))], ['form_whatsapp', (v) => (v ? 1 : 0)], ['form_aviso_email', (v) => String(v).trim() || null]]) {
       if (b[k] !== undefined) { sets.push(`${k} = ?`); vals.push(conv(b[k])); }
     }
     if (sets.length) db.prepare(`UPDATE tenants SET ${sets.join(', ')} WHERE id = ?`).run(...vals, req.params.id);
