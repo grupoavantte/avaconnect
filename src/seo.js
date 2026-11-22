@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { PLANS, MESES_PAGOS_ANUAL } from './plans.js';
 import { publicUrl } from './payments.js';
+import { tokenChatAvantte } from './canais.js';
 
 const EMPRESA = {
   nome: 'AVANTTE ASSESSORIA EMPRESARIAL LTDA', marca: 'Avantte', cnpj: '62.699.610/0001-82', email: 'contato@grupoavantte.com.br',
@@ -45,11 +46,13 @@ export function rotasSeo(app) {
   const arquivo = path.resolve('public/site.html');
   let cache = null;
   const pagina = () => {
-    const base = publicUrl();
-    if (cache?.base === base) return cache.html;
+    const base = publicUrl(); const chat = tokenChatAvantte();
+    if (cache?.base === base && cache.chat === chat) return cache.html;
     const html = fs.readFileSync(arquivo, 'utf8');
-    const out = html.replaceAll('{{BASE}}', base).replace('<!--JSONLD-->', `<script type="application/ld+json">${jsonLd(base, faqDoSite(html))}</script>`);
-    cache = { base, html: out };
+    let out = html.replaceAll('{{BASE}}', base).replace('<!--JSONLD-->', `<script type="application/ld+json">${jsonLd(base, faqDoSite(html))}</script>`);
+    // A própria AVA atende no site do AVA (chat da Avantte); o botão do WhatsApp sobe para não ficar por baixo do balão.
+    if (chat) out = out.replace('class="wa-flut js-wa"', 'class="wa-flut js-wa com-chat"').replace('</body>', `<script src="/w/${chat}.js" async></script>\n</body>`);
+    cache = { base, chat, html: out };
     return out;
   };
   app.get('/', (_req, res) => res.type('html').set('cache-control', 'public, max-age=300').send(pagina()));

@@ -1,4 +1,6 @@
 import { possivelComprovante } from './gateways.js';
+import { contextoCanal, contarConversa, vincularCodigoSite } from './canais.js';
+import { sendEmail } from './email.js';
 import { distribuir, entrarNaCarteira, antesDeAtender } from './operacao.js';
 // Orquestra uma mensagem recebida: contato -> conversa -> IA/humano -> resposta.
 import { db, bumpUsage, getUsage, logActivity } from './db.js';
@@ -30,7 +32,7 @@ function openConversation(tenant, contact, canal, { agentId = null, numeroId = n
   if (atual) return { conv: atual, nova: false };
   const r = db.prepare('INSERT INTO conversations (tenant_id, contact_id, canal, agent_id, numero_id) VALUES (?, ?, ?, ?, ?)')
     .run(tenant.id, contact.id, canal, agentId, numeroId);
-  bumpUsage(tenant.id, 'conversas');
+  contarConversa(tenant.id, canal); // site, formulário e e-mail não consomem o limite de conversas de WhatsApp
   return { conv: db.prepare('SELECT * FROM conversations WHERE id = ?').get(r.lastInsertRowid), nova: true };
 }
 
@@ -147,6 +149,7 @@ export async function handleIncoming(tenantBase, { telefone, nome, texto, waId =
   }
 
   const contact = upsertContact(tenant.id, telefone, nome);
+  if (canal === 'whatsapp') vincularCodigoSite(tenant, contact, texto); // veio do chat do site com o código S123
   // Nota da pesquisa de satisfação, "SAIR" das campanhas e respostas a campanhas.
   const pre = await antesDeAtender(tenant, contact, texto, canal);
   if (pre?.tratada) {
@@ -204,7 +207,7 @@ export async function handleIncoming(tenantBase, { telefone, nome, texto, waId =
   for (const md of midiasDaConversa(conv.id)) { const h = historico.find((x) => x.id === md.message_id); if (h) (h.midia ||= []).push(md); }
   let resposta;
   try {
-    const contexto = [contextoClienteIA(contact.id), tenant.vendas_ativo ? contextoVendas(contact.id) : ''].filter(Boolean).join(' ');
+    const contexto = [contextoCanal(canal, contact), contextoClienteIA(contact.id), tenant.vendas_ativo ? contextoVendas(contact.id) : ''].filter(Boolean).join(' ');
     resposta = await generateReply(tenant, historico, makeToolExecutor(tenant, contact, conv, enviar, enviarImagem), contexto);
     // Passagem para outro agente: ele responde em seguida, na mesma mensagem do cliente.
     if (conv._passagem) {
@@ -229,7 +232,7 @@ export async function handleIncoming(tenantBase, { telefone, nome, texto, waId =
   const respostas = saida;
 
   const status = db.prepare('SELECT status FROM conversations WHERE id = ?').get(conv.id).status;
-  if (status === 'ia') agendarReengajamento(tenant, contact);
+  if (status === 'ia' && ['whatsapp', 'simulador'].includes(canal)) agendarReengajamento(tenant, contact);
   return { conversation_id: conv.id, respostas, ferramentas: resposta.ferramentas, status };
 }
 
@@ -241,4 +244,10 @@ export async function humanReply(conv, texto, userId = null) {
   if (conv.status !== 'humano' || (userId && !conv.atendente_id)) db.prepare("UPDATE conversations SET status = 'humano', atendente_id = COALESCE(atendente_id, ?) WHERE id = ?").run(userId, conv.id);
   entrarNaCarteira(conv, userId);
   if (conv.canal === 'whatsapp') await sendText(tenant, contact.telefone, texto);
+  if (conv.canal === 'email' && contact.email) {
+    const assunto = db.prepare("SELECT conteudo FROM messages WHERE conversation_id = ? AND autor = 'cliente' ORDER BY id LIMIT 1").get(conv.id)?.conteudo.match(/^Assunto: (.+)$/m)?.[1];
+    await sendEmail(tenant, { to: contact.email, subject: assunto ? (/^re:/i.test(assunto) ? assunto : `Re: ${assunto}`) : `Contato com ${tenant.nome}`,
+      html: `<div style="font-family:Arial,sans-serif;font-size:15px;white-space:pre-wrap">${texto.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))}</div>`, text: texto });
+  }
+  // canal 'site': a mensagem aparece no balão do visitante (o chat busca as novas a cada poucos segundos)
 }

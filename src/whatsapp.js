@@ -3,7 +3,11 @@ import crypto from 'node:crypto';
 
 const GRAPH = `https://graph.facebook.com/${process.env.WA_GRAPH_VERSION || 'v21.0'}`;
 
+// Só envia para números de telefone (contatos do chat do site e do e-mail não têm WhatsApp).
+const ehTelefone = (to) => /^\d{8,15}$/.test(String(to || ''));
+
 export async function sendText(tenant, to, body) {
+  if (!ehTelefone(to)) return { ignorado: 'sem WhatsApp' };
   const token = tenant.wa_token || process.env.WA_DEFAULT_TOKEN;
   if (!tenant.wa_phone_number_id || !token) {
     console.log(`[whatsapp:simulado] ${tenant.nome} -> ${to}: ${body}`);
@@ -27,6 +31,7 @@ export async function sendText(tenant, to, body) {
 
 // Foto por link público (a Meta baixa a imagem do nosso servidor).
 export async function sendImage(tenant, to, link, caption = '') {
+  if (!ehTelefone(to)) return { ignorado: 'sem WhatsApp' };
   const token = tenant.wa_token || process.env.WA_DEFAULT_TOKEN;
   if (!tenant.wa_phone_number_id || !token) { console.log(`[whatsapp:simulado] ${tenant.nome} -> ${to}: [foto] ${link} ${caption}`); return { simulado: true }; }
   try {
@@ -40,6 +45,7 @@ export async function sendImage(tenant, to, link, caption = '') {
 
 // Mensagem de modelo aprovado pela Meta (necessária para falar com o cliente após 24h sem resposta dele).
 export async function sendTemplate(tenant, to, name, params = [], lang = 'pt_BR') {
+  if (!ehTelefone(to)) return { erro: 'sem WhatsApp' };
   const token = tenant.wa_token || process.env.WA_DEFAULT_TOKEN;
   if (!tenant.wa_phone_number_id || !token) {
     console.log(`[whatsapp:simulado] modelo ${name} -> ${to}: ${params.join(' | ')}`);
