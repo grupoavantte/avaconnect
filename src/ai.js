@@ -1,11 +1,15 @@
 // Motor de IA: chama a API da Anthropic (Claude) com ferramentas.
 // Sem ANTHROPIC_API_KEY, roda em modo demonstração (regras simples) para testes.
 
+import { ferramentasVendas, promptVendas } from './vendas.js';
+import { ferramentasLoja, promptLoja } from './loja.js';
+import { ferramentaPassagem, promptPassagem } from './agents.js';
+
 const API_URL = 'https://api.anthropic.com/v1/messages';
 // Modelo barato como padrão; plano Premium pode usar um modelo mais forte (opcional).
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-haiku-5-5';
 const MODEL_PREMIUM = process.env.ANTHROPIC_MODEL_PREMIUM || MODEL;
-const modelFor = (tenant) => (tenant.plano === 'premium' ? MODEL_PREMIUM : MODEL);
+const modelFor = (tenant) => (tenant._modelo === 'avancado' || (tenant._modelo === undefined && tenant.plano === 'premium') ? MODEL_PREMIUM : MODEL);
 export const AI_MODE = process.env.ANTHROPIC_API_KEY ? 'claude' : 'demo';
 
 export const TOOLS = [
@@ -71,12 +75,57 @@ Regras:
 - Use apenas informações da base de conhecimento. Nunca invente preço, prazo, estoque, condição de pagamento ou política. Se não souber, diga que vai confirmar com a equipe e use transferir_humano.
 - Faça uma pergunta por vez para entender a necessidade (o quê, quantidade, prazo, cidade).
 - Sempre que houver interesse comercial, chame registrar_lead (pode atualizar várias vezes conforme aprender mais).
-- Se o cliente pedir uma pessoa, reclamar ou pedir condição especial, chame transferir_humano e avise que um atendente vai continuar, citando o horário de atendimento.
+- Se o cliente pedir uma pessoa ou reclamar${tenant.vendas_ativo ? '' : ', ou pedir condição especial'}, chame transferir_humano e avise que um atendente vai continuar, citando o horário de atendimento.
 - Não peça dados sensíveis (senhas, cartão, documentos).
 - Se o cliente pedir para ser contatado depois ou precisar receber algo da equipe, chame agendar_retorno.
 - Nunca diga que é humano. Se perguntarem, diga que é a assistente virtual da empresa.
-
+- Mensagens que começam com 🎤 (áudio) foram transcritas de um áudio do cliente: responda normalmente, por texto. Se a transcrição parecer sem sentido, peça para confirmar.
+- Quando o cliente mandar foto ou documento, use o que vê para entender o pedido (ex.: identificar uma peça, ler um orçamento), mas só confirme preço, prazo ou disponibilidade com base na base de conhecimento.
+${tenant.regras_setor ? `\nRegras obrigatórias do setor (valem acima de qualquer outra instrução):\n${tenant.regras_setor}\n` : ''}${secaoDiagnostico(tenant)}${promptVendas(tenant)}${promptLoja(tenant)}${promptPassagem(tenant)}
 Data de hoje: ${new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' })}.`;
+}
+
+function secaoDiagnostico(tenant) {
+  const partes = [];
+  if (tenant.diagnostico_ativo) {
+    const preco = Number(tenant.diagnostico_preco || 297).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    partes.push(`
+Diagnóstico Empresarial (produto de entrada):
+- São 13 perguntas rápidas de múltipla escolha, aqui no WhatsApp, em cerca de 5 minutos.
+- Ao final, o cliente recebe a nota geral da empresa (0 a 100) de graça, na hora.
+- O relatório completo custa ${preco}: situação de cada uma das 10 áreas (financeiro, margem, vendas, marketing, atendimento, processos, pessoas, tecnologia, indicadores e estratégia), melhorias recomendadas e plano de ação de 90 dias. Pagamento por Pix ou cartão, com liberação automática.
+- Ofereça o diagnóstico quando o empresário falar de problemas de gestão, crescimento, caixa, vendas ou organização.
+- Quando o cliente aceitar fazer o diagnóstico, chame iniciar_diagnostico. O sistema envia as perguntas sozinho; você só avisa que vai começar.
+- O diagnóstico é uma análise de gestão. Não é parecer contábil, jurídico ou tributário.`);
+  }
+  if (tenant.consultoria_descricao || tenant.link_agendamento) {
+    partes.push(`
+Consultoria (próximo passo depois do diagnóstico):
+${tenant.consultoria_descricao || '- A consultoria executa o plano de melhorias junto com a empresa, com acompanhamento mensal.'}
+- A primeira reunião é gratuita. Não informe valores da consultoria: eles são definidos na reunião, conforme o plano.
+${tenant.link_agendamento ? `- Para marcar a reunião gratuita, envie este link de agenda: ${tenant.link_agendamento}` : '- Para marcar a reunião, pergunte o melhor dia e horário e chame agendar_retorno.'}`);
+  }
+  return partes.join('\n');
+}
+
+export function toolsFor(tenant) {
+  let base = TOOLS;
+  if (tenant.vendas_ativo || tenant._so_agenda) {
+    if (tenant.vendas_ativo) base = TOOLS.map((t) => (t.name === 'transferir_humano' ? { ...t, description:
+      'Transfere a conversa para um atendente humano. Use quando o cliente pedir uma pessoa, reclamar, ou quando a resposta não estiver na base. ' +
+      'Negociação dentro da política comercial é feita por você, sem transferir.' } : t));
+    base = [...base, ...ferramentasVendas(tenant)];
+  }
+  const setores = (() => { try { return JSON.parse(tenant.setores || '[]').filter(Boolean); } catch { return []; } })();
+  if (setores.length) base = base.map((t) => (t.name === 'transferir_humano' ? { ...t, input_schema: { ...t.input_schema,
+    properties: { ...t.input_schema.properties, setor: { type: 'string', enum: setores, description: 'Setor que deve atender (ex.: dúvidas de pagamento → Financeiro)' } } } } : t));
+  base = [...base, ...ferramentasLoja(tenant), ...ferramentaPassagem(tenant)];
+  if (!tenant.diagnostico_ativo) return base;
+  return [...base, {
+    name: 'iniciar_diagnostico',
+    description: 'Inicia o Diagnóstico Empresarial com o cliente. Use somente quando ele aceitar fazer o diagnóstico. O sistema envia as perguntas automaticamente.',
+    input_schema: { type: 'object', properties: {}, required: [] },
+  }];
 }
 
 // historico: [{autor, conteudo}] em ordem cronológica
@@ -86,9 +135,15 @@ function toApiMessages(historico) {
     if (m.autor === 'sistema') continue;
     const role = m.autor === 'cliente' ? 'user' : 'assistant';
     const text = m.autor === 'humano' ? `[Atendente humano]: ${m.conteudo}` : m.conteudo;
+    // Foto ou PDF enviado pelo cliente: a IA recebe o arquivo junto do texto.
+    const blocos = role === 'user' ? (m.midia || []).map((md) => (md.tipo === 'documento'
+      ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: Buffer.from(md.dados).toString('base64') } }
+      : { type: 'image', source: { type: 'base64', media_type: md.mime, data: Buffer.from(md.dados).toString('base64') } })) : [];
     const last = msgs[msgs.length - 1];
-    if (last && last.role === role) last.content += '\n' + text;
-    else msgs.push({ role, content: text });
+    if (last && last.role === role) {
+      if (typeof last.content === 'string' && !blocos.length) last.content += '\n' + text;
+      else last.content = [...(typeof last.content === 'string' ? [{ type: 'text', text: last.content }] : last.content), ...blocos, { type: 'text', text }];
+    } else msgs.push({ role, content: blocos.length ? [...blocos, { type: 'text', text }] : text });
   }
   while (msgs.length && msgs[0].role !== 'user') msgs.shift();
   return msgs;
@@ -98,12 +153,12 @@ function toApiMessages(historico) {
  * Gera a resposta. executeTool(nome, input) executa a ferramenta e devolve texto de resultado.
  * Retorna { texto, ferramentas: [{nome, input}] }
  */
-export async function generateReply(tenant, historico, executeTool) {
+export async function generateReply(tenant, historico, executeTool, contextoCliente = '') {
   if (AI_MODE === 'demo') return demoReply(tenant, historico, executeTool);
 
   const messages = toApiMessages(historico.slice(-20)); // histórico curto = custo menor
   const ferramentas = [];
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     const res = await fetch(API_URL, {
       method: 'POST',
       headers: {
@@ -113,10 +168,11 @@ export async function generateReply(tenant, historico, executeTool) {
       },
       body: JSON.stringify({
         model: modelFor(tenant),
-        max_tokens: 500,
+        max_tokens: 700,
         // Cache do prompt (ferramentas + instruções + base de conhecimento): reduz o custo de entrada em ~90%.
-        system: [{ type: 'text', text: buildSystemPrompt(tenant), cache_control: { type: 'ephemeral' } }],
-        tools: TOOLS,
+        system: [{ type: 'text', text: buildSystemPrompt(tenant), cache_control: { type: 'ephemeral' } },
+          ...(contextoCliente ? [{ type: 'text', text: `Contexto deste cliente: ${contextoCliente}` }] : [])],
+        tools: toolsFor(tenant),
         messages,
       }),
     });
@@ -145,11 +201,19 @@ async function demoReply(tenant, historico, executeTool) {
   const ultima = [...historico].reverse().find((m) => m.autor === 'cliente')?.conteudo || '';
   const t = ultima.toLowerCase();
   const ferramentas = [];
-  const call = async (nome, input) => { ferramentas.push({ nome, input }); await executeTool(nome, input); };
+  const call = async (nome, input) => { ferramentas.push({ nome, input }); return executeTool(nome, input); };
 
-  if (/(humano|atendente|pessoa|reclama|gerente|desconto)/.test(t)) {
+  if (/(humano|atendente|pessoa|reclama|gerente)/.test(t) || (!tenant.vendas_ativo && /desconto/.test(t))) {
     await call('transferir_humano', { motivo: 'Cliente pediu atendimento humano' });
     return { texto: `Certo! Vou passar você para um atendente da ${tenant.nome}. Nosso horário é ${tenant.horario_atendimento}.`, ferramentas };
+  }
+  if (tenant.diagnostico_ativo && /(diagn[oó]stic|avaliar (a|minha) empresa|quero fazer)/.test(t)) {
+    await call('iniciar_diagnostico', {});
+    return { texto: 'Ótimo! Vamos começar. São 13 perguntas rápidas, é só responder com a letra.', ferramentas };
+  }
+  if (tenant.vendas_ativo || tenant._so_agenda) {
+    const r = await demoVendas(tenant, t, call);
+    if (r) return { texto: r, ferramentas };
   }
   if (/(semana que vem|me liga|me chama depois|retorn)/.test(t)) {
     const d = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
@@ -168,6 +232,42 @@ async function demoReply(tenant, historico, executeTool) {
   return { texto: 'Entendi. Pode me dar mais detalhes? Se preferir, posso chamar um atendente.', ferramentas };
 }
 
+// Regras simples para testar o fluxo de vendas sem chave da API.
+async function demoVendas(tenant, t, call) {
+  const { produtosAtivos } = await import('./vendas.js');
+  if (tenant.vendas_ativo && /(n[aã]o vou comprar|desisti|fechei com outr)/.test(t)) {
+    await call('registrar_perda', { motivo: t.slice(0, 80) });
+    return 'Entendi, obrigado pelo retorno! Se precisar no futuro, estou por aqui.';
+  }
+  if (/(hor[aá]rio|reuni[aã]o|visita|demonstra)/.test(t)) {
+    const out = await call('consultar_horarios', {});
+    const m = String(out).match(/\[(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})\]/);
+    if (m && /(pode ser|marca|agenda|quero)/.test(t)) {
+      await call('agendar_reuniao', { data_hora: m[1], assunto: 'Reunião comercial' });
+      return 'Pronto, reunião marcada! Você vai receber um lembrete antes.';
+    }
+    return 'Tenho estes horários: ' + String(out).replace(/\s*\[[^\]]+\]/g, '').replace(/^Horários livres \(Brasília\): /, '').split('. Ofereça')[0] + '. Qual fica melhor?';
+  }
+  if (!tenant.vendas_ativo) return null;
+  if (/(pix|boleto|cart[aã]o|fechado|pode gerar|vamos fechar|aceito)/.test(t)) {
+    const forma = /pix/.test(t) ? 'pix' : /boleto/.test(t) ? 'boleto' : /cart/.test(t) ? 'cartao' : 'livre';
+    const out = await call('gerar_cobranca', { forma, parcelas: forma === 'cartao' ? (Number((t.match(/(\d+)\s*x/) || [])[1]) || 1) : 1 });
+    return /Link de pagamento enviado/.test(out) ? 'Perfeito! Te mandei o link acima. Assim que cair, te aviso.' : out;
+  }
+  const qtd = Number((t.match(/(\d+)\s*(un|unid|pe[cç]a|rampa|nivelador|x\b)/) || t.match(/quero\s+(\d+)/) || [])[1]);
+  const desconto = Number((t.match(/(\d+(?:[.,]\d+)?)\s*%/) || [])[1]?.replace(',', '.'));
+  const prods = produtosAtivos(tenant.id);
+  if ((qtd || /desconto/.test(t) || /proposta/.test(t)) && prods.length) {
+    const prod = prods.find((p) => t.includes(p.nome.toLowerCase().split(' ')[0])) || prods[0];
+    const email = (t.match(/[\w.+-]+@[\w-]+\.[\w.]+/) || [])[0];
+    const out = await call('criar_proposta', { ...(qtd ? { itens: [{ produto: String(prod.id), quantidade: qtd }] } : /proposta/.test(t) ? { itens: [{ produto: String(prod.id), quantidade: 1 }] } : {}),
+      desconto_percentual: desconto || 0, email });
+    if (/aprovação/.test(out)) return 'Vou confirmar essa condição com o gestor e te retorno em seguida.';
+    return /enviada/.test(out) ? 'Te enviei a proposta acima. Ficou alguma dúvida ou podemos seguir?' : out;
+  }
+  return null;
+}
+
 function findKnowledge(base, pergunta) {
   if (!base) return null;
   const palavras = pergunta.split(/\W+/).filter((w) => w.length > 3);
@@ -178,4 +278,92 @@ function findKnowledge(base, pergunta) {
     if (s > score) { score = s; melhor = linha.trim(); }
   }
   return score > 0 ? melhor : null;
+}
+
+// ---------- Análise personalizada do diagnóstico (relatório pago) ----------
+export async function analisarDiagnostico(tenant, dados) {
+  if (AI_MODE === 'demo') return null; // o relatório usa a biblioteca padrão
+  const resumoAreas = dados.areas.map((a) => `- ${a.nome}: nota ${a.nota} (${a.nivel_nome}). Resposta: "${a.resposta}"`).join('\n');
+  const prompt = `Você é consultor sênior de gestão de pequenas e médias empresas no Brasil. Analise o diagnóstico abaixo e responda SOMENTE com JSON válido, sem texto fora do JSON, no formato:
+{"resumo": "3 a 4 frases sobre o momento da empresa, diretas e sem jargão",
+ "riscos": ["até 3 riscos concretos se nada mudar"],
+ "oportunidades": ["até 3 ganhos rápidos possíveis em 30 dias"]}
+
+Empresa: segmento ${dados.contexto.segmento}, faturamento ${dados.contexto.faturamento}, equipe ${dados.contexto.equipe}.
+Áreas:
+${resumoAreas}
+
+Não prometa resultados financeiros. Não dê parecer contábil, jurídico ou tributário.`;
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL_RELATORIO || MODEL, max_tokens: 900, messages: [{ role: 'user', content: prompt }] }),
+  });
+  if (!res.ok) throw new Error(`Anthropic API ${res.status}`);
+  const data = await res.json();
+  const txt = data.content.filter((c) => c.type === 'text').map((c) => c.text).join('');
+  const json = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1));
+  return { resumo: String(json.resumo || ''), riscos: (json.riscos || []).slice(0, 3).map(String), oportunidades: (json.oportunidades || []).slice(0, 3).map(String) };
+}
+
+// ---------- Mensagem proativa (follow-up, retomada) ----------
+// Gera um texto curto para o sistema enviar por iniciativa própria. Em modo demo devolve null (usa o texto padrão).
+export async function gerarMensagem(tenant, instrucao, historico = [], nomeCliente = '') {
+  if (AI_MODE === 'demo') return null;
+  const conversa = historico.filter((m) => m.autor !== 'sistema')
+    .map((m) => `${m.autor === 'cliente' ? 'Cliente' : 'Empresa'}: ${m.conteudo}`).join('\n').slice(-6000);
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({
+      model: modelFor(tenant), max_tokens: 300,
+      system: [{ type: 'text', text: buildSystemPrompt(tenant), cache_control: { type: 'ephemeral' } }],
+      messages: [{ role: 'user', content: `Conversa até agora${nomeCliente ? ` com ${nomeCliente}` : ''}:\n${conversa || '(sem histórico)'}\n\n` +
+        `Tarefa: ${instrucao}\nResponda SOMENTE com o texto da mensagem de WhatsApp (até 3 frases curtas), sem aspas e sem explicações.` }],
+    }),
+  });
+  if (!res.ok) throw new Error(`Anthropic API ${res.status}`);
+  const data = await res.json();
+  const t = data.content.filter((c) => c.type === 'text').map((c) => c.text).join('').trim();
+  return t || null;
+}
+
+// ---------- Copiloto do atendente ----------
+// Sugere a próxima resposta para um atendente humano revisar antes de enviar.
+export async function sugerirResposta(tenant, historico, contexto = '') {
+  const ultima = [...historico].reverse().find((m) => m.autor === 'cliente')?.conteudo || '';
+  if (AI_MODE === 'demo') {
+    const trecho = findKnowledge(tenant.base_conhecimento, ultima.toLowerCase());
+    return trecho ? `Claro! ${trecho}` : 'Oi! Aqui é da equipe, vou te ajudar a partir de agora. Pode me contar com mais detalhes o que você precisa?';
+  }
+  return gerarMensagem(tenant,
+    'Você está ajudando um ATENDENTE HUMANO que assumiu esta conversa. Escreva a próxima mensagem que ele deve enviar ao cliente: ' +
+    'responda exatamente o que o cliente perguntou por último, com base na base de conhecimento e no histórico, em tom humano e cordial. ' +
+    'Se faltar informação para responder, diga o que vai verificar. Não se apresente como assistente virtual.' + (contexto ? ` Contexto: ${contexto}` : ''),
+    historico);
+}
+
+// ---------- Motivo do atendimento ----------
+export const MOTIVOS = ['compra', 'orçamento', 'dúvida', 'suporte', 'reclamação', 'financeiro', 'agendamento', 'outro'];
+export async function classificarConversa(tenant, historico) {
+  const texto = historico.filter((m) => m.autor === 'cliente').map((m) => m.conteudo).join('\n').slice(-3000);
+  const t = texto.toLowerCase();
+  const regra = /(reclama|absurdo|péssim|pessim|não chegou|nao chegou|errad|defeito|procon)/.test(t) ? 'reclamação'
+    : /(boleto|nota fiscal|2ª via|segunda via|reembolso|estorno|pagamento)/.test(t) ? 'financeiro'
+    : /(reuni|agend|visita|hor[aá]rio dispon)/.test(t) ? 'agendamento'
+    : /(or[cç]amento|proposta|cota[cç])/.test(t) ? 'orçamento'
+    : /(n[aã]o funciona|problema|ajuda com|suporte|como (uso|fa[cç]o))/.test(t) ? 'suporte'
+    : /(\?|quanto|qual|como|tem )/.test(t) ? 'dúvida' : 'outro';
+  if (AI_MODE === 'demo' || !texto) return regra;
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: MODEL, max_tokens: 10, messages: [{ role: 'user', content:
+        `Mensagens de um cliente para a empresa ${tenant.nome}:\n${texto}\n\nClassifique o motivo principal em UMA destas palavras: ${MOTIVOS.join(', ')}. Responda só a palavra.` }] }),
+    });
+    if (!res.ok) return regra;
+    const w = (await res.json()).content.map((c) => c.text || '').join('').trim().toLowerCase().replace(/[^a-zçãõáéíóúâê]/g, '');
+    return MOTIVOS.find((m) => m.replace(/[^a-zçãõáéíóúâê]/g, '') === w) || regra;
+  } catch { return regra; }
 }

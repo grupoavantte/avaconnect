@@ -99,9 +99,119 @@ CREATE INDEX IF NOT EXISTS idx_act_lead ON activities(lead_id, id);
 CREATE INDEX IF NOT EXISTS idx_act_tasks ON activities(tenant_id, concluida, vence_em);
 `);
 
+// ---- Funil de diagnóstico, pagamentos e cadências ----
+const tenantCols = db.prepare('PRAGMA table_info(tenants)').all().map((c) => c.name);
+for (const [col, def] of [
+  ['diagnostico_ativo', 'INTEGER NOT NULL DEFAULT 0'],
+  ['diagnostico_preco', 'REAL NOT NULL DEFAULT 297'],
+  ['link_agendamento', 'TEXT'],                    // link da agenda para a reunião gratuita (Google Agenda, Calendly...)
+  ['consultoria_descricao', 'TEXT'],               // como a IA apresenta a consultoria
+  ['wa_template_followup', 'TEXT'],                // nome do modelo aprovado na Meta para o contato D+1
+]) if (!tenantCols.includes(col)) db.exec(`ALTER TABLE tenants ADD COLUMN ${col} ${def}`);
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS diagnostics (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  contact_id INTEGER NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+  conversation_id INTEGER REFERENCES conversations(id) ON DELETE SET NULL,
+  status TEXT NOT NULL DEFAULT 'em_andamento',     -- em_andamento | aguardando_pagamento | pago | cancelado
+  etapa INTEGER NOT NULL DEFAULT 0,                -- índice da próxima pergunta
+  respostas TEXT NOT NULL DEFAULT '{}',            -- JSON {id_pergunta: valor}
+  nota_geral INTEGER,
+  notas TEXT,                                      -- JSON {area: nota}
+  valor REAL,
+  pagamento_ref TEXT,                              -- id do link/cobrança no gateway
+  pagamento_url TEXT,
+  token TEXT NOT NULL UNIQUE,                      -- acesso ao relatório
+  relatorio_ia TEXT,                               -- análise personalizada gerada pela IA (JSON)
+  criado_em TEXT NOT NULL DEFAULT (datetime('now')),
+  pago_em TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_diag_contact ON diagnostics(contact_id, status);
+CREATE TABLE IF NOT EXISTS jobs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tipo TEXT NOT NULL,                              -- followup_consultoria | ...
+  payload TEXT NOT NULL DEFAULT '{}',
+  executar_em TEXT NOT NULL,                       -- UTC 'AAAA-MM-DD HH:MM:SS'
+  status TEXT NOT NULL DEFAULT 'pendente',         -- pendente | feito | erro | cancelado
+  resultado TEXT,
+  criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_jobs_due ON jobs(status, executar_em);
+`);
+
+// Tabelas comerciais (catálogo, propostas, cobranças, agenda) — criadas aqui para existirem antes de qualquer módulo.
+db.exec(`
+CREATE TABLE IF NOT EXISTS products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  nome TEXT NOT NULL,
+  descricao TEXT,
+  preco REAL NOT NULL,
+  preco_minimo REAL,                -- abaixo disso só com aprovação
+  unidade TEXT NOT NULL DEFAULT 'un',
+  ativo INTEGER NOT NULL DEFAULT 1,
+  criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS proposals (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  contact_id INTEGER NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+  lead_id INTEGER REFERENCES leads(id) ON DELETE SET NULL,
+  conversation_id INTEGER REFERENCES conversations(id) ON DELETE SET NULL,
+  numero INTEGER NOT NULL,
+  token TEXT NOT NULL UNIQUE,
+  status TEXT NOT NULL DEFAULT 'enviada',   -- aguardando_aprovacao | enviada | aceita | paga | recusada | expirada | substituida
+  itens TEXT NOT NULL DEFAULT '[]',
+  subtotal REAL NOT NULL DEFAULT 0,          -- pelo preço de tabela
+  desconto_percentual REAL NOT NULL DEFAULT 0, -- desconto efetivo sobre a tabela
+  frete REAL NOT NULL DEFAULT 0,
+  total REAL NOT NULL DEFAULT 0,
+  condicao_pagamento TEXT,
+  observacoes TEXT,
+  email TEXT,
+  validade TEXT,                              -- AAAA-MM-DD
+  motivo_aprovacao TEXT,
+  autor TEXT NOT NULL DEFAULT 'ia',
+  criado_em TEXT NOT NULL DEFAULT (datetime('now')),
+  enviada_em TEXT,
+  paga_em TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_prop_contact ON proposals(contact_id, status);
+CREATE TABLE IF NOT EXISTS charges (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  contact_id INTEGER NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+  proposal_id INTEGER REFERENCES proposals(id) ON DELETE SET NULL,
+  token TEXT NOT NULL UNIQUE,
+  descricao TEXT NOT NULL,
+  valor REAL NOT NULL,
+  forma TEXT NOT NULL DEFAULT 'livre',       -- pix | boleto | cartao | livre
+  parcelas INTEGER NOT NULL DEFAULT 1,
+  status TEXT NOT NULL DEFAULT 'pendente',   -- pendente | pago | vencido | cancelado
+  pagamento_ref TEXT,
+  pagamento_url TEXT,
+  criado_em TEXT NOT NULL DEFAULT (datetime('now')),
+  pago_em TEXT
+);
+CREATE TABLE IF NOT EXISTS appointments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  contact_id INTEGER NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+  lead_id INTEGER REFERENCES leads(id) ON DELETE SET NULL,
+  inicio TEXT NOT NULL,                      -- horário de Brasília 'AAAA-MM-DD HH:MM'
+  fim TEXT NOT NULL,
+  assunto TEXT,
+  status TEXT NOT NULL DEFAULT 'agendada',   -- agendada | realizada | cancelada | faltou
+  criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_appt ON appointments(tenant_id, inicio);
+`);
+
 export function logActivity(tenantId, leadId, descricao, { tipo = 'sistema', autor = 'sistema', vence_em = null } = {}) {
-  db.prepare('INSERT INTO activities (tenant_id, lead_id, tipo, descricao, vence_em, autor) VALUES (?, ?, ?, ?, ?, ?)')
-    .run(tenantId, leadId, tipo, descricao, vence_em, autor);
+  return db.prepare('INSERT INTO activities (tenant_id, lead_id, tipo, descricao, vence_em, autor) VALUES (?, ?, ?, ?, ?, ?)')
+    .run(tenantId, leadId, tipo, descricao, vence_em, autor).lastInsertRowid;
 }
 
 export const newToken =() => 'ava_' + crypto.randomBytes(18).toString('hex');
@@ -120,8 +230,7 @@ export function getUsage(tenantId) {
 // Remove segredos antes de devolver ao painel.
 export function publicTenant(t, { withSecrets = false } = {}) {
   if (!t) return t;
-  const { wa_token, painel_token, ...rest } = t;
-  return withSecrets
-    ? { ...rest, wa_token_configurado: !!wa_token, painel_token }
-    : { ...rest, wa_token_configurado: !!wa_token };
+  const { wa_token, painel_token, asaas_api_key, asaas_webhook_token, gateway_config, ...rest } = t;
+  const flags = { wa_token_configurado: !!wa_token, asaas_configurado: !!asaas_api_key };
+  return withSecrets ? { ...rest, ...flags, painel_token } : { ...rest, ...flags };
 }

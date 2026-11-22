@@ -9,16 +9,53 @@ export async function sendText(tenant, to, body) {
     console.log(`[whatsapp:simulado] ${tenant.nome} -> ${to}: ${body}`);
     return { simulado: true };
   }
-  const res = await fetch(`${GRAPH}/${tenant.wa_phone_number_id}/messages`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
-    body: JSON.stringify({ messaging_product: 'whatsapp', to, type: 'text', text: { body, preview_url: false } }),
-  });
+  let res;
+  try {
+    res = await fetch(`${GRAPH}/${tenant.wa_phone_number_id}/messages`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+      body: JSON.stringify({ messaging_product: 'whatsapp', to, type: 'text', text: { body, preview_url: false } }),
+    });
+  } catch (e) { console.error('[whatsapp] sem conexão com a Meta', e.message); return { erro: e.message }; }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     console.error('[whatsapp] erro ao enviar', res.status, JSON.stringify(data));
     return { erro: data };
   }
+  return data;
+}
+
+// Foto por link público (a Meta baixa a imagem do nosso servidor).
+export async function sendImage(tenant, to, link, caption = '') {
+  const token = tenant.wa_token || process.env.WA_DEFAULT_TOKEN;
+  if (!tenant.wa_phone_number_id || !token) { console.log(`[whatsapp:simulado] ${tenant.nome} -> ${to}: [foto] ${link} ${caption}`); return { simulado: true }; }
+  try {
+    const res = await fetch(`${GRAPH}/${tenant.wa_phone_number_id}/messages`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+      body: JSON.stringify({ messaging_product: 'whatsapp', to, type: 'image', image: { link, caption: caption.slice(0, 1000) } }) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { console.error('[whatsapp] erro na foto', res.status, JSON.stringify(data)); return { erro: data }; }
+    return data;
+  } catch (e) { console.error('[whatsapp] sem conexão com a Meta', e.message); return { erro: e.message }; }
+}
+
+// Mensagem de modelo aprovado pela Meta (necessária para falar com o cliente após 24h sem resposta dele).
+export async function sendTemplate(tenant, to, name, params = [], lang = 'pt_BR') {
+  const token = tenant.wa_token || process.env.WA_DEFAULT_TOKEN;
+  if (!tenant.wa_phone_number_id || !token) {
+    console.log(`[whatsapp:simulado] modelo ${name} -> ${to}: ${params.join(' | ')}`);
+    return { simulado: true };
+  }
+  let res;
+  try { res = await fetch(`${GRAPH}/${tenant.wa_phone_number_id}/messages`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp', to, type: 'template',
+      template: { name, language: { code: lang }, components: params.length ? [{ type: 'body', parameters: params.map((t) => ({ type: 'text', text: String(t) })) }] : [] },
+    }),
+  }); } catch (e) { console.error('[whatsapp] sem conexão com a Meta', e.message); return { erro: e.message }; }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) { console.error('[whatsapp] erro no modelo', res.status, JSON.stringify(data)); return { erro: data }; }
   return data;
 }
 
@@ -45,8 +82,12 @@ export function parseWebhook(body) {
         if (m.type === 'text') texto = m.text?.body;
         else if (m.type === 'button') texto = m.button?.text;
         else if (m.type === 'interactive') texto = m.interactive?.button_reply?.title || m.interactive?.list_reply?.title;
+        else if (m.type === 'reaction') texto = m.reaction?.emoji;
         else texto = `[${m.type} recebido]`;
-        out.push({ phoneNumberId, from: m.from, nome: nomes[m.from], waId: m.id, texto, tipo: m.type });
+        const md = m[m.type] || {};
+        out.push({ phoneNumberId, from: m.from, nome: nomes[m.from], waId: m.id, texto, tipo: m.type,
+          mediaId: md.id || null, mime: md.mime_type || null, legenda: md.caption || null, nomeArquivo: md.filename || null,
+          local: m.type === 'location' ? m.location : null });
       }
     }
   }
