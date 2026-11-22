@@ -1,3 +1,5 @@
+import { publicUrl } from './payments.js';
+import crypto from 'node:crypto';
 // Cadastro inicial da própria Avantte como empresa cliente do AVA Connect (idempotente: só preenche o que falta).
 import { db, newToken } from './db.js';
 import { PLANS , MESES_PAGOS_ANUAL } from './plans.js';
@@ -109,6 +111,13 @@ export function garantirAvantte() {
   if (!db.prepare("SELECT 1 FROM users WHERE papel = 'plataforma'").get() && !db.prepare('SELECT 1 FROM users WHERE email = ?').get(emailPlat)) {
     const { link } = convidarUsuario({ nome: process.env.PLATAFORMA_NOME || 'Walci Júnior', email: emailPlat, papel: 'plataforma' });
     console.log(`[seed] Acesso da plataforma criado para ${emailPlat}. Crie a senha em: ${link}`);
+  }
+  // Usuário da plataforma ainda sem senha: gera um link novo a cada inicialização (o anterior pode ter vencido).
+  const semSenha = db.prepare("SELECT * FROM users WHERE email = ? AND (senha_hash IS NULL OR senha_hash = '')").get(emailPlat);
+  if (semSenha) {
+    const tk = 'inv_' + crypto.randomBytes(20).toString('hex');
+    db.prepare("UPDATE users SET convite_token = ?, convite_expira = datetime('now', '+7 days') WHERE id = ?").run(tk, semSenha.id);
+    console.log(`[seed] ${emailPlat} ainda não tem senha. Crie a senha em: ${publicUrl()}/convite/${tk}`);
   }
   return t;
 }
