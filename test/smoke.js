@@ -9,7 +9,7 @@ const call = async (path, { token = ADMIN, method = 'GET', body } = {}) => {
 };
 
 const t = (await call('/api/tenants', { method: 'POST', body: {
-  nome: 'Iron Equipamentos (teste)', plano: 'essencial', wa_phone_number_id: 'PNID_TESTE_' + Date.now(),
+  nome: 'Indústria Exemplo (teste)', plano: 'essencial', wa_phone_number_id: 'PNID_TESTE_' + Date.now(),
   base_conhecimento: 'Rampa niveladora hidráulica: capacidade de 6 a 12 toneladas, prazo de fabricação de 20 dias úteis.\nEntregamos em todo o Brasil.',
 } })).data;
 check(t.id && t.painel_token, 'empresa criada com token de painel');
