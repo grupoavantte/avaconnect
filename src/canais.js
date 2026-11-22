@@ -195,7 +195,7 @@ function paginaFormulario(tenant) {
 label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}input,textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid #C9D3E6;border-radius:10px}textarea{min-height:96px}
 input:focus,textarea:focus{outline:3px solid ${cor};outline-offset:1px}.ck{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:13px;color:#5B6780}.ck input{width:auto;margin-top:2px}
 button{margin-top:16px;width:100%;border:0;border-radius:10px;padding:13px;font:700 15px Inter,sans-serif;background:${cor};color:#06112A;cursor:pointer}.hp{position:absolute;left:-9999px}</style></head>
-<body><form method="post" action="${publicUrl()}/f/${tokenCanal(tenant)}"><h1 style="font-size:20px;margin:0 0 4px">Fale com a ${esc(tenant.nome)}</h1><p style="margin:0;color:#5B6780;font-size:14px">Responderemos em instantes.</p>
+<body><form method="post" action="/f/${tokenCanal(tenant)}"><h1 style="font-size:20px;margin:0 0 4px">Fale com a ${esc(tenant.nome)}</h1><p style="margin:0;color:#5B6780;font-size:14px">Responderemos em instantes.</p>
 <label for="f-nome">Nome</label><input id="f-nome" name="nome" autocomplete="name" required>
 <label for="f-wa">WhatsApp</label><input id="f-wa" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(11) 90000-0000">
 <label for="f-em">E-mail</label><input id="f-em" name="email" type="email" autocomplete="email">
@@ -214,6 +214,7 @@ function scriptWidget(tenant) {
     saudacao: tenant.webchat_saudacao || `Oi! Sou a ${tenant.nome_assistente || 'AVA'}, da ${tenant.nome}. Como posso te ajudar?`,
   };
   return `(function(){if(window.__avaChat)return;window.__avaChat=1;var C=${JSON.stringify(cfg).replace(/</g, '\\u003c')};
+try{var S=document.currentScript;if(S&&S.src)C.base=new URL(S.src).origin}catch(e){}
 var K='ava_v_'+C.token,V;try{V=localStorage.getItem(K)}catch(e){}if(!V){V=Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem(K,V)}catch(e){}}
 var ult=0,aberto=false,poll=null,root=document.createElement('div');root.style.cssText='position:fixed;right:20px;bottom:20px;z-index:2147483000';
 var sh=root.attachShadow?root.attachShadow({mode:'open'}):root;document.body.appendChild(root);
