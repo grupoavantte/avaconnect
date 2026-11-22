@@ -1183,7 +1183,7 @@ function wzPassos() {
       const env = async () => { const x = val('wsTxt'); if (!x) return; $('#wsTxt').value = ''; add('Você', x, 'cliente');
         try { const r = await api(`/tenants/${t.id}/simulate`, { method:'POST', body:{ texto: x, telefone: tel, nome: 'Cliente teste', agent_id: ag?.id } }); r.respostas.forEach((m) => add(ag?.nome || 'AVA', m, 'ia')); }
         catch (e) { add('Sistema', e.message, 'sistema'); } };
-      $('#wsEnv').onclick = env; $('#wsTxt').onkeydown = (e) => e.key === 'Enter' && env(); },
+      $('#wsEnv').onclick = env; $('#wsTxt').onkeydown = (e) => { if (e.key === 'Enter') env(); }; },
     salvar: async () => { await api(`/tenants/${t.id}`, { method:'PUT', body:{ onboarding_concluido: 1 } }); TENANT.onboarding_concluido = 1; toast('Configuração concluída! 🎉'); WZ = 0; go('inicio'); return false; } });
   return passos;
 }
@@ -1330,6 +1330,8 @@ async function cfgCanais() {
       <div class="grid" style="grid-template-columns:110px 1fr;gap:10px"><div><label for="cn_cor">Cor</label><input id="cn_cor" type="color" value="${esc(c.webchat_cor)}" ${edit ? '' : 'disabled'} style="height:40px;padding:2px"></div>
         <div><label for="cn_tit">Título do balão</label><input id="cn_tit" value="${esc(c.webchat_titulo)}" placeholder="AVA · ${esc(TENANT.nome)}" ${edit ? '' : 'disabled'}></div></div>
       <label for="cn_sau">Mensagem de boas-vindas</label><input id="cn_sau" value="${esc(c.webchat_saudacao)}" placeholder="Oi! Como posso te ajudar?" ${edit ? '' : 'disabled'}>
+      <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px"><div><label for="cn_lado">Posição do balão</label><select id="cn_lado" ${edit ? '' : 'disabled'}><option value="direita" ${c.webchat_lado !== 'esquerda' ? 'selected' : ''}>Canto direito</option><option value="esquerda" ${c.webchat_lado === 'esquerda' ? 'selected' : ''}>Canto esquerdo</option></select></div>
+        <div><label for="cn_mg">Altura do rodapé (px)</label><input id="cn_mg" type="number" min="0" max="400" value="${c.webchat_margem}" ${edit ? '' : 'disabled'}><small class="muted">Aumente se o balão ficar por cima de outro botão do seu site (ex.: WhatsApp).</small></div></div>
       <label style="margin-top:12px">Cole esta linha no seu site, antes de &lt;/body&gt; (WordPress, Wix, Shopify, Nuvemshop: "código personalizado" ou "scripts no rodapé")</label>${bloco('cp_chat', c.codigo_chat)}</div>
     <div class="card pad"><b style="font-size:15px">📝 Formulários de contato e orçamento</b>
       <p class="muted" style="margin:4px 0 0">Cada envio vira um negócio no CRM. Se a pessoa deixou o WhatsApp e marcou o aceite, a IA chama em segundos com o modelo "ava_lead_formulario" (aprove em Modelos Meta); senão, responde por e-mail e cria tarefa para a equipe.</p>
@@ -1350,7 +1352,7 @@ async function cfgCanais() {
   $('#cn_save').onclick = async () => {
     try {
       await api(`/tenants/${TENANT.id}/canais`, { method: 'PUT', body: { webchat_ativo: $('#cn_on').checked, webchat_cor: $('#cn_cor').value, webchat_titulo: $('#cn_tit').value.trim(),
-        webchat_saudacao: $('#cn_sau').value.trim(), form_whatsapp: $('#cn_fwa').checked, form_aviso_email: $('#cn_av').value.trim() } });
+        webchat_saudacao: $('#cn_sau').value.trim(), webchat_lado: $('#cn_lado').value, webchat_margem: Number($('#cn_mg').value), form_whatsapp: $('#cn_fwa').checked, form_aviso_email: $('#cn_av').value.trim() } });
       toast('Canais salvos'); cfgCanais();
     } catch (e) { toast(e.message); }
   };
@@ -1581,7 +1583,8 @@ async function planos() {
     <ul><li>${p.conversas_mes.toLocaleString('pt-BR')} conversas/mês</li><li>${p.usuarios_painel ? p.usuarios_painel + ' usuários' : 'Usuários ilimitados'}</li>${p.recursos.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`).join('')}</div>`;
 }
 
-$('#btnLogin').onclick = login; ['#tok', '#lg_senha', '#lg_email'].forEach((x) => ($(x).onkeydown = (e) => e.key === 'Enter' && login(e)));
+$('#btnLogin').onclick = login; // Atenção: um handler on* que devolve false cancela a tecla; por isso as chaves (não digitar ficava bloqueado).
+['#tok', '#lg_senha', '#lg_email'].forEach((x) => ($(x).onkeydown = (e) => { if (e.key === 'Enter') login(e); }));
 $('#lgVer').onclick = () => { const i = $('#lg_senha'); i.type = i.type === 'password' ? 'text' : 'password'; $('#lgVer').textContent = i.type === 'password' ? 'Mostrar' : 'Ocultar'; };
 $('#lgModo').onclick = (e) => { e.preventDefault(); const tok = $('#lgEmail').classList.toggle('hidden'); $('#lgTok').classList.toggle('hidden', !tok); $('#lgModo').textContent = tok ? 'Entrar com e-mail e senha' : 'Entrar com token de acesso'; };
 $('#lgEsqueci').onclick = (e) => { e.preventDefault(); $('#rc_email').value = $('#lg_email').value; $('#lgEntrar').classList.add('hidden'); $('#lgRecuperar').classList.remove('hidden'); $('#rc_email').focus(); };
