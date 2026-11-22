@@ -104,12 +104,17 @@ footer .legal{flex:1 1 100%;margin:8px 0 0;font-size:13px;line-height:1.6}
 .wa-flut[hidden]{display:none}
 @media (max-width:640px){.wa-flut span{display:none}.wa-flut{padding:15px;right:16px;bottom:16px}}
 @media (prefers-reduced-motion:reduce){.wa-flut{transition:none}}
+.canais{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}@media (max-width:900px){.canais{grid-template-columns:1fr 1fr}}@media (max-width:560px){.canais{grid-template-columns:1fr}}
+.canais > div{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}.canais h3{font-size:18px;font-weight:800;margin:8px 0 0}.canais p{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.55}
+.canais .ic{font-size:26px}.canais .tag{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:var(--teal-ink);background:var(--mint);border-radius:999px;padding:3px 10px}
+.canais .breve{color:#5B6780;background:#EEF1F6}
+.wa-flut.com-chat{bottom:92px}
 </style>
 </head>
 <body>
 <header><div class="w top">
   <a href="/" class="logo" aria-label="AVA Connect by Avantte"><span class="wm"><img src="/brand/simbolo.webp" alt="" width="34" height="34"><span><b>AVA <i>Connect</i></b><small>by AVANTTE</small></span></span></a>
-  <nav aria-label="Principal"><a href="#como-funciona">Como funciona</a><a href="#segmentos">Segmentos</a><a href="#avashop">AvaShop</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a></nav>
+  <nav aria-label="Principal"><a href="#como-funciona">Como funciona</a><a href="#canais">Canais</a><a href="#segmentos">Segmentos</a><a href="#avashop">AvaShop</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a></nav>
   <div class="acts"><a href="/entrar" class="entrar">Entrar</a><a href="/cadastro" class="btn btn-teal">Criar conta</a></div>
 </div></header>
 
@@ -159,6 +164,20 @@ footer .legal{flex:1 1 100%;margin:8px 0 0;font-size:13px;line-height:1.6}
   <div style="background:var(--mint)"><h3 style="color:var(--navy)">Clientes de volta</h3><p style="color:#24404A">Campanhas no WhatsApp para promoções, clientes parados e produtos de volta ao estoque. Quem responde já é atendido pela AVA.</p></div>
 </div></section>
 
+<section id="canais" class="sec" style="padding-top:0"><div class="w">
+  <p class="eyebrow">Todos os canais</p>
+  <h2 class="h2">De onde o cliente vier, a resposta sai em segundos.</h2>
+  <p style="max-width:720px;color:var(--muted);font-size:17px;margin:12px 0 0">WhatsApp, chat do site, formulário de orçamento e e-mail caem na mesma caixa de entrada e no mesmo CRM. Quem preenche o formulário às 23h recebe a AVA no WhatsApp antes de fechar a página.</p>
+  <div class="canais">
+    <div><span class="ic" aria-hidden="true">💬</span><h3>WhatsApp</h3><p>API oficial da Meta, no número que você já usa. Texto, áudio, foto e PDF.</p></div>
+    <div><span class="ic" aria-hidden="true">🌐</span><h3>Chat no seu site</h3><p>Um balão da AVA no canto do seu site, instalado com uma linha. Quem deixa o WhatsApp continua por lá.</p></div>
+    <div><span class="ic" aria-hidden="true">📝</span><h3>Formulários</h3><p>Contato e orçamento do seu site viram negócio no CRM, e a AVA chama a pessoa no WhatsApp na hora.</p></div>
+    <div><span class="ic" aria-hidden="true">✉️</span><h3>E-mail</h3><p>A AVA lê e responde os e-mails do seu contato comercial, com o mesmo cuidado do WhatsApp.</p></div>
+    <div><span class="ic" aria-hidden="true">📸</span><h3>Instagram e Messenger</h3><p>Direct, respostas a Stories e comentário que vira conversa.</p><span class="tag breve">Em breve</span></div>
+    <div><span class="ic" aria-hidden="true">📞</span><h3>AVA Voz</h3><p>A AVA atendendo e ligando por telefone, com a mesma inteligência.</p><span class="tag breve">Em breve</span></div>
+  </div>
+</div></section>
+
 <section id="segmentos" class="sec" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="w">
   <p class="eyebrow">Para o seu negócio</p>
   <h2 class="h2">Uma IA que conhece as regras do seu setor.</h2>
@@ -204,7 +223,7 @@ footer .legal{flex:1 1 100%;margin:8px 0 0;font-size:13px;line-height:1.6}
 
 <section id="duvidas" class="sec"><div class="w faq">
   <h2 class="h2" style="margin-bottom:28px">Dúvidas</h2>
-  <details><summary>Preciso trocar o número de WhatsApp?</summary><p>Não. A conexão é feita com a API oficial da Meta em poucos cliques, e você pode continuar usando o mesmo número no aplicativo WhatsApp Business.</p></details>
+  <details><summary>A AVA atende só no WhatsApp?</summary><p>Não. Ela atende também no chat do seu site, responde formulários de contato e orçamento e lê os e-mails do seu comercial. Tudo cai na mesma caixa de entrada e no mesmo CRM. Instagram, Messenger e atendimento por voz estão chegando.</p></details><details><summary>Preciso trocar o número de WhatsApp?</summary><p>Não. A conexão é feita com a API oficial da Meta em poucos cliques, e você pode continuar usando o mesmo número no aplicativo WhatsApp Business.</p></details>
   <details><summary>E se a IA não souber responder?</summary><p>Ela não inventa. Responde só com o que está na base da sua empresa e, quando não sabe, passa a conversa para o setor certo da sua equipe.</p></details>
   <details><summary>A IA pode dar desconto sem eu saber?</summary><p>Só até o limite que você definir. Acima disso, ela pede sua aprovação pelo WhatsApp e espera a resposta.</p></details>
   <details><summary>O dinheiro das vendas passa pela Avantte?</summary><p>Não. Você conecta a sua conta (Asaas, Mercado Pago, Pagar.me ou uma chave Pix) e os pagamentos caem direto nela. A AVA só gera a cobrança e acompanha.</p></details>

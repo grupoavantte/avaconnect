@@ -367,7 +367,7 @@ async function loadConvList() {
   const el = $('#clist'); if (!el) return;
   el.innerHTML = rows.map((c) => `<div class="item ${c.id === CONV ? 'sel' : ''}" data-id="${c.id}">
       <div class="t"><span>${esc(c.contato_nome || c.telefone)}</span><span class="pill ${c.status}">${c.status === 'ia' ? 'IA' : c.status === 'humano' ? (c.atendente_nome ? esc(c.atendente_nome.split(' ')[0]) : 'Fila') : 'encerrada'}</span></div>
-      <div class="p">${esc(c.ultima_mensagem || '')}</div><div class="p" style="font-size:11px">${when(c.ultima_mensagem_em)} · ${c.canal}${c.setor ? ' · ' + esc(c.setor) : ''}${c.nota ? ' · ' + '★'.repeat(c.nota) : ''}</div></div>`).join('')
+      <div class="p">${esc(c.ultima_mensagem || '')}</div><div class="p" style="font-size:11px">${when(c.ultima_mensagem_em)} · ${CANAL[c.canal] || c.canal}${c.setor ? ' · ' + esc(c.setor) : ''}${c.nota ? ' · ' + '★'.repeat(c.nota) : ''}</div></div>`).join('')
     || `<div class="pad muted">${CFILTRO === 'todas' ? 'Nenhuma conversa ainda. Teste no Simulador.' : 'Nada por aqui.'}</div>`;
   el.querySelectorAll('.item').forEach((i) => (i.onclick = () => openConv(+i.dataset.id)));
   refreshBadge();
@@ -424,7 +424,8 @@ function dueBadge(d) {
   const label = day < t ? 'Atrasada' : day === t ? 'Hoje' : new Date(day + 'T12:00').toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' });
   return `<span class="due ${cls}">⏰ ${label}${d.length > 10 ? ' ' + d.slice(11, 16) : ''}</span>`;
 }
-const ORIGEM = { whatsapp: 'WhatsApp', manual: 'Manual', simulador: 'Simulador' };
+const ORIGEM = { whatsapp: 'WhatsApp', manual: 'Manual', simulador: 'Simulador', site: 'Chat do site', formulario: 'Formulário do site', email: 'E-mail' };
+const CANAL = { whatsapp: '💬 WhatsApp', simulador: '🧪 Simulador', site: '🌐 Chat do site', email: '✉️ E-mail', formulario: '📝 Formulário' };
 let CRM_Q = '';
 
 async function crm() {
@@ -1212,11 +1213,11 @@ async function inicio() {
 // ---------- Configurações ----------
 let CTAB = 'empresa';
 async function empresa() {
-  const abas = [['empresa', 'Empresa e IA', ME.pode.configurar], ['agentes', 'Agentes', true], ['usuarios', 'Usuários', true], ['atendimento', 'Atendimento', true], ['modelos', 'Modelos Meta', true], ['conexoes', 'Conexões', true]].filter((a) => a[2]);
+  const abas = [['empresa', 'Empresa e IA', ME.pode.configurar], ['agentes', 'Agentes', true], ['usuarios', 'Usuários', true], ['atendimento', 'Atendimento', true], ['modelos', 'Modelos Meta', true], ['canais', 'Canais', true], ['conexoes', 'Conexões', true]].filter((a) => a[2]);
   if (!abas.some((a) => a[0] === CTAB)) CTAB = abas[0][0];
   $('#view').innerHTML = `<div class="row" style="margin-bottom:12px">${abas.map(([k, n]) => `<button class="btn small ${CTAB === k ? 'primary' : ''}" data-ct="${k}">${n}</button>`).join('')}</div><div id="cbody"></div>`;
   document.querySelectorAll('[data-ct]').forEach((b) => (b.onclick = () => { CTAB = b.dataset.ct; empresa(); }));
-  await ({ empresa: cfgEmpresa, agentes: cfgAgentes, usuarios: cfgUsuarios, atendimento: cfgAtendimento, modelos: cfgModelos, conexoes: cfgConexoes })[CTAB]();
+  await ({ empresa: cfgEmpresa, agentes: cfgAgentes, usuarios: cfgUsuarios, atendimento: cfgAtendimento, modelos: cfgModelos, canais: cfgCanais, conexoes: cfgConexoes })[CTAB]();
 }
 
 const HAB_NOMES = { transferir: 'Passar para humano', agenda: 'Agenda', vendas: 'Vendas (proposta, cobrança, follow-up)', diagnostico: 'Diagnóstico Empresarial', loja: 'Loja (AvaShop)' };
@@ -1315,6 +1316,44 @@ async function cfgAtendimento() {
   document.querySelectorAll('[data-us]').forEach((el) => (el.onchange = async () => {
     const marcados = [...document.querySelectorAll(`[data-us="${el.dataset.us}"]`)].filter((x) => x.checked).map((x) => x.value);
     await api(`/users/${el.dataset.us}/setores`, { method:'PUT', body:{ setores: marcados.length === a.setores.length ? [] : marcados } }); toast('Setores atualizados'); }));
+}
+
+async function cfgCanais() {
+  const c = await api(`/tenants/${TENANT.id}/canais`); const edit = ME.pode.configurar;
+  const bloco = (id, txt) => `<div style="position:relative"><pre id="${id}" style="white-space:pre-wrap;word-break:break-all;background:var(--bg,#F5F7FB);border:1px solid var(--line,#E3E8F0);border-radius:10px;padding:12px 84px 12px 12px;font-size:12.5px;margin:8px 0 0">${esc(txt)}</pre>
+    <button class="btn small" data-copia="${id}" style="position:absolute;top:6px;right:6px">Copiar</button></div>`;
+  $('#cbody').innerHTML = `<p class="muted" style="margin:0 0 12px">Todos os contatos caem na mesma caixa de entrada e no CRM, com a origem marcada. Conversas do site e do e-mail não consomem o limite de conversas de WhatsApp do plano (este mês: ${c.uso_mes}).</p>
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card pad"><b style="font-size:15px">🌐 Chat no site</b>
+      <p class="muted" style="margin:4px 0 0">Um balão da sua assistente no canto do seu site. A IA atende ali mesmo e, quando a pessoa deixa o WhatsApp, oferece continuar por lá. O que o atendente responder no painel aparece no balão.</p>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:12px"><input type="checkbox" id="cn_on" style="width:auto" ${c.webchat_ativo ? 'checked' : ''} ${edit ? '' : 'disabled'}> Chat ligado</label>
+      <div class="grid" style="grid-template-columns:110px 1fr;gap:10px"><div><label for="cn_cor">Cor</label><input id="cn_cor" type="color" value="${esc(c.webchat_cor)}" ${edit ? '' : 'disabled'} style="height:40px;padding:2px"></div>
+        <div><label for="cn_tit">Título do balão</label><input id="cn_tit" value="${esc(c.webchat_titulo)}" placeholder="AVA · ${esc(TENANT.nome)}" ${edit ? '' : 'disabled'}></div></div>
+      <label for="cn_sau">Mensagem de boas-vindas</label><input id="cn_sau" value="${esc(c.webchat_saudacao)}" placeholder="Oi! Como posso te ajudar?" ${edit ? '' : 'disabled'}>
+      <label style="margin-top:12px">Cole esta linha no seu site, antes de &lt;/body&gt; (WordPress, Wix, Shopify, Nuvemshop: "código personalizado" ou "scripts no rodapé")</label>${bloco('cp_chat', c.codigo_chat)}</div>
+    <div class="card pad"><b style="font-size:15px">📝 Formulários de contato e orçamento</b>
+      <p class="muted" style="margin:4px 0 0">Cada envio vira um negócio no CRM. Se a pessoa deixou o WhatsApp e marcou o aceite, a IA chama em segundos com o modelo "ava_lead_formulario" (aprove em Modelos Meta); senão, responde por e-mail e cria tarefa para a equipe.</p>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:12px"><input type="checkbox" id="cn_fwa" style="width:auto" ${c.form_whatsapp ? 'checked' : ''} ${edit ? '' : 'disabled'}> Responder pelo WhatsApp quem aceitar</label>
+      <label for="cn_av">E-mail da equipe para receber cada formulário (opcional)</label><input id="cn_av" type="email" value="${esc(c.form_aviso_email)}" placeholder="vendas@suaempresa.com.br" ${edit ? '' : 'disabled'}>
+      <label style="margin-top:12px">Formulário pronto (link ou iframe)</label>${bloco('cp_furl', c.form_url)}
+      <details style="margin-top:10px"><summary class="muted" style="cursor:pointer">Usar o formulário do seu próprio site</summary>
+        <p class="muted" style="font-size:13px">Troque o endereço de envio (action) do seu formulário pelo link acima, com method="post". Campos reconhecidos: nome, whatsapp/telefone, email, empresa, mensagem e consentimento; os demais também são guardados. Para voltar a uma página sua depois do envio, inclua um campo escondido _next com o endereço.</p>${bloco('cp_fex', c.exemplo_form)}</details></div>
+    <div class="card pad"><b style="font-size:15px">✉️ E-mail</b>
+      <p class="muted" style="margin:4px 0 0">A IA lê os e-mails que chegam no seu endereço de contato e responde por e-mail. Para ligar, o seu provedor de e-mail precisa encaminhar cada mensagem recebida para o endereço abaixo (webhook). Funciona com Cloudflare Email Routing, Mailgun, Postmark e Resend. A equipe Avantte configura com você na implantação.</p>
+      <label style="margin-top:12px">Endereço para encaminhar os e-mails</label>${bloco('cp_mail', c.email_webhook)}</div>
+    <div class="card pad"><b style="font-size:15px">📸 Instagram e Messenger · 📞 AVA Voz</b>
+      <p class="muted" style="margin:4px 0 0">Em breve: Direct do Instagram, Messenger, comentário que vira mensagem e atendimento por voz. Fale com a Avantte para entrar na lista de espera.</p></div>
+  </div>
+  ${edit ? '<div class="row" style="margin:12px 0"><button class="btn primary" id="cn_save">Salvar</button></div>' : ''}`;
+  document.querySelectorAll('[data-copia]').forEach((b) => (b.onclick = () => { navigator.clipboard?.writeText($('#' + b.dataset.copia).textContent); toast('Copiado'); }));
+  if (!edit) return;
+  $('#cn_save').onclick = async () => {
+    try {
+      await api(`/tenants/${TENANT.id}/canais`, { method: 'PUT', body: { webchat_ativo: $('#cn_on').checked, webchat_cor: $('#cn_cor').value, webchat_titulo: $('#cn_tit').value.trim(),
+        webchat_saudacao: $('#cn_sau').value.trim(), form_whatsapp: $('#cn_fwa').checked, form_aviso_email: $('#cn_av').value.trim() } });
+      toast('Canais salvos'); cfgCanais();
+    } catch (e) { toast(e.message); }
+  };
 }
 
 async function cfgModelos(dados) {
