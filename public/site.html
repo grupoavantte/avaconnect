@@ -109,6 +109,10 @@ footer .legal{flex:1 1 100%;margin:8px 0 0;font-size:13px;line-height:1.6}
 .canais .ic{font-size:26px}.canais .tag{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:var(--teal-ink);background:var(--mint);border-radius:999px;padding:3px 10px}
 .canais .breve{color:#5B6780;background:#EEF1F6}
 .wa-flut.com-chat{bottom:92px}
+.shop-grid{flex:1 1 100%;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+.shop-grid > div{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}.shop-grid span{font-size:24px}.shop-grid h3{font-size:17px;font-weight:800;margin:8px 0 0}.shop-grid p{margin:8px 0 0;color:var(--muted);font-size:14.5px;line-height:1.55}
+.shop-pra{flex:1 1 100%;margin:4px 0 0;color:var(--muted);font-size:15px}
+@media (max-width:1000px){.shop-grid{grid-template-columns:1fr 1fr}}@media (max-width:560px){.shop-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -194,23 +198,37 @@ footer .legal{flex:1 1 100%;margin:8px 0 0;font-size:13px;line-height:1.6}
 <section id="avashop" class="sec shop"><div class="w">
   <div class="txt">
     <p class="eyebrow">AvaShop</p>
-    <h2 class="h2">Sua loja vendendo pelo WhatsApp, sem ninguém online.</h2>
-    <p style="margin:18px 0 0;font-size:17px;line-height:1.6;color:var(--muted)">Não é mais uma loja virtual para você cuidar. É a AVA vendendo produto físico na conversa, do jeito que o cliente já compra.</p>
+    <h2 class="h2">Sua loja vendendo pelo WhatsApp, 24 horas, sem ninguém online.</h2>
+    <p style="margin:18px 0 0;font-size:17px;line-height:1.6;color:var(--muted)">Não é mais uma loja virtual para você cuidar. É a AVA vendendo produto físico na conversa, do jeito que o cliente já compra: pergunta, vê a foto, calcula o frete, paga e recebe o rastreio. Tudo sem um vendedor online.</p>
     <ul>
-      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Mostra a foto da cor e do tamanho que o cliente pediu</span></li>
-      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Calcula o frete: motoboy, retirada ou Correios e transportadoras pelo Melhor Envio</span></li>
-      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Fecha o pedido, cobra na sua conta e baixa o estoque sozinha</span></li>
-      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Gera a etiqueta e manda o rastreio para o cliente</span></li>
-      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Retoma quem viu o frete e não fechou</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Mostra a foto da cor e do tamanho certos e avisa quando restam poucas unidades</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Calcula o frete na hora: motoboy, retirada na loja ou Correios e transportadoras pelo Melhor Envio</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Fecha o pedido, cobra por Pix, cartão ou boleto na sua conta e baixa o estoque sozinha</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Gera a etiqueta, envia o rastreio e avisa o cliente em cada etapa</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Chama de volta quem viu o frete e não fechou a compra</span></li>
     </ul>
+    <div class="ctas" style="margin-top:28px"><a href="/cadastro?plano=profissional" class="btn btn-teal">Quero vender com a AvaShop</a></div>
   </div>
   <div class="chatbox" aria-label="Exemplo de venda pelo AvaShop">
     <p class="cli">Tem o tênis preto no 40?</p>
     <div class="ava"><div class="foto" aria-hidden="true">👟</div><p style="margin:8px 0 0">Tênis Run · Preto / 40 · últimas 2 unidades. Qual o seu CEP para eu calcular o frete?</p></div>
     <p class="cli">25600-000</p>
-    <p class="ava">Motoboy hoje ou PAC em até 6 dias úteis. Qual prefere?</p>
-    <p class="tag">Pedido nº 1042 pago · rastreio enviado</p>
+    <p class="ava">Motoboy hoje por R$ 12 ou PAC em até 6 dias úteis por R$ 21. Qual prefere?</p>
+    <p class="cli">Motoboy. Pago no Pix</p>
+    <p class="ava">Pedido nº 1042 criado! Segue o Pix copia e cola. Assim que cair, já separo para o motoboy. 🛵</p>
+    <p class="tag">Pedido nº 1042 pago · estoque atualizado · rastreio enviado</p>
   </div>
+  <div class="shop-grid" role="list">
+    <div role="listitem"><span aria-hidden="true">🗂️</span><h3>Catálogo com variações</h3><p>Até 3 atributos por produto (cor, tamanho, voltagem). Cada combinação com preço, promoção, estoque, código e foto próprios.</p></div>
+    <div role="listitem"><span aria-hidden="true">🛍️</span><h3>Vitrine online pronta</h3><p>Um link da sua loja para a bio do Instagram e os anúncios. O cliente escolhe e a compra continua com a AVA no WhatsApp.</p></div>
+    <div role="listitem"><span aria-hidden="true">💳</span><h3>Pagamento na sua conta</h3><p>Asaas, Mercado Pago, Pagar.me ou Pix direto, sem taxa de gateway. O dinheiro cai com você, não com a Avantte.</p></div>
+    <div role="listitem"><span aria-hidden="true">📦</span><h3>Pedido, estoque e envio</h3><p>Baixa o estoque no pagamento, gera a etiqueta pelo Melhor Envio e manda o rastreio. Frete grátis acima do valor que você escolher.</p></div>
+    <div role="listitem"><span aria-hidden="true">🔔</span><h3>Cliente avisado em cada etapa</h3><p>Pagamento confirmado, pedido enviado, pronto para retirada e entregue, com mensagens aprovadas pela Meta.</p></div>
+    <div role="listitem"><span aria-hidden="true">♻️</span><h3>Carrinho que volta</h3><p>Quem consultou o frete e sumiu recebe até duas retomadas no momento certo, sem você lembrar de nada.</p></div>
+    <div role="listitem"><span aria-hidden="true">📣</span><h3>Campanhas que vendem</h3><p>Promoção, produto de volta ao estoque e pós-venda para quem já comprou. O relatório mostra quanto cada campanha vendeu.</p></div>
+    <div role="listitem"><span aria-hidden="true">⚖️</span><h3>Dentro da lei</h3><p>A AVA segue o Código de Defesa do Consumidor: informa preço total, frete, prazo e o direito de desistir em até 7 dias. Trocas vão para a sua equipe.</p></div>
+  </div>
+  <p class="shop-pra">Ideal para moda, calçados, cosméticos, autopeças, pet shop, papelaria, distribuidores e qualquer loja que já vende pelo WhatsApp. Disponível nos planos Profissional e Premium.</p>
 </div></section>
 
 <section id="planos" class="sec dark"><div class="w">
@@ -223,7 +241,7 @@ footer .legal{flex:1 1 100%;margin:8px 0 0;font-size:13px;line-height:1.6}
 
 <section id="duvidas" class="sec"><div class="w faq">
   <h2 class="h2" style="margin-bottom:28px">Dúvidas</h2>
-  <details><summary>A AVA atende só no WhatsApp?</summary><p>Não. Ela atende também no chat do seu site, responde formulários de contato e orçamento e lê os e-mails do seu comercial. Tudo cai na mesma caixa de entrada e no mesmo CRM. Instagram, Messenger e atendimento por voz estão chegando.</p></details><details><summary>Preciso trocar o número de WhatsApp?</summary><p>Não. A conexão é feita com a API oficial da Meta em poucos cliques, e você pode continuar usando o mesmo número no aplicativo WhatsApp Business.</p></details>
+  <details><summary>A AVA atende só no WhatsApp?</summary><p>Não. Ela atende também no chat do seu site, responde formulários de contato e orçamento e lê os e-mails do seu comercial. Tudo cai na mesma caixa de entrada e no mesmo CRM. Instagram, Messenger e atendimento por voz estão chegando.</p></details><details><summary>A AvaShop substitui minha loja virtual?</summary><p>Não precisa. Ela vende na conversa do WhatsApp, com catálogo, frete, pagamento e rastreio, e também tem uma vitrine online simples. Se você já tem loja virtual, a AVA atende quem chega pelo WhatsApp e leva até o pagamento.</p></details><details><summary>Preciso trocar o número de WhatsApp?</summary><p>Não. A conexão é feita com a API oficial da Meta em poucos cliques, e você pode continuar usando o mesmo número no aplicativo WhatsApp Business.</p></details>
   <details><summary>E se a IA não souber responder?</summary><p>Ela não inventa. Responde só com o que está na base da sua empresa e, quando não sabe, passa a conversa para o setor certo da sua equipe.</p></details>
   <details><summary>A IA pode dar desconto sem eu saber?</summary><p>Só até o limite que você definir. Acima disso, ela pede sua aprovação pelo WhatsApp e espera a resposta.</p></details>
   <details><summary>O dinheiro das vendas passa pela Avantte?</summary><p>Não. Você conecta a sua conta (Asaas, Mercado Pago, Pagar.me ou uma chave Pix) e os pagamentos caem direto nela. A AVA só gera a cobrança e acompanha.</p></details>
