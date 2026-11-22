@@ -12,7 +12,7 @@ export const PLANS = {
     vendas: false,
     modelo_avancado: false,
     numeros_whatsapp: 1,
-    recursos: ['Usuários ilimitados no painel', '1 agente de IA e 1 número de WhatsApp', 'Atendimento 24h com IA', 'Base de conhecimento', 'CRM com funil, tarefas e histórico', 'Leads e retornos registrados pela IA', 'Transferência para humano por setor, fila e carteira de clientes', 'Copiloto: a IA sugere a resposta ao atendente', 'Pesquisa de satisfação e motivo de cada atendimento', 'Campanhas com modelos aprovados na Meta'],
+    recursos: ['Usuários ilimitados no painel', '1 agente de IA e 1 número de WhatsApp', 'Atendimento 24h com IA', 'Base de conhecimento', 'CRM com funil, tarefas e histórico', 'Leads e retornos registrados pela IA', 'Transferência para humano por setor, fila e carteira de clientes', 'Copiloto: a IA sugere a resposta ao atendente', 'Pesquisa de satisfação e motivo de cada atendimento', 'Campanhas com modelos aprovados na Meta', 'Chat no site, formulários e e-mail na mesma caixa de entrada'],
   },
   profissional: {
     id: 'profissional',
@@ -26,7 +26,7 @@ export const PLANS = {
     vendas: true,
     modelo_avancado: false,
     numeros_whatsapp: 2,
-    recursos: ['Tudo do Essencial', 'Até 3 agentes (ex.: recepção, vendas, pós-venda) e 2 números', 'Agente de vendas: proposta, negociação, cobrança e follow-up', 'Métricas de conversão do funil', 'Exportação de leads para planilha', 'Aviso de transbordo no WhatsApp do responsável', 'Relatório mensal'],
+    recursos: ['Tudo do Essencial', 'Até 3 agentes (ex.: recepção, vendas, pós-venda) e 2 números', 'Agente de vendas: proposta, negociação, cobrança e follow-up', 'AvaShop: venda de produtos com frete, pedido, estoque e rastreio', 'Métricas de conversão do funil', 'Exportação de leads para planilha', 'Aviso de transbordo no WhatsApp do responsável', 'Relatório mensal'],
   },
   premium: {
     id: 'premium',
