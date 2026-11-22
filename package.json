@@ -9,7 +9,7 @@
     "dev": "node --no-warnings --watch src/server.js",
     "test": "node --no-warnings test/smoke.js && node --no-warnings test/vendas.js && node --no-warnings test/plataforma.js && node --no-warnings test/cadastro.js",
     "test:cadencia": "node --no-warnings test/vendas-cadencia.js",
-    "test:unit": "node --no-warnings test/vendas-cadencia.js && node --no-warnings test/midia.js && node --no-warnings test/loja.js && node --no-warnings test/meta.js && node --no-warnings test/ai-mock.js && node --no-warnings test/operacao.js && node --no-warnings test/modelos.js && node --no-warnings test/gateways.js"
+    "test:unit": "node --no-warnings test/vendas-cadencia.js && node --no-warnings test/midia.js && node --no-warnings test/loja.js && node --no-warnings test/meta.js && node --no-warnings test/ai-mock.js && node --no-warnings test/operacao.js && node --no-warnings test/modelos.js && node --no-warnings test/gateways.js && node --no-warnings test/canais.js"
   },
   "engines": {
     "node": ">=22.5"
