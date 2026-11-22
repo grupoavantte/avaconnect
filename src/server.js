@@ -19,6 +19,7 @@ import { listaSegmentos } from './segmentos.js';
 import { rotasPublicasLoja, lojaRouter } from './loja.js';
 import { metaRouter } from './meta.js';
 import { garantirAvantte } from './seed.js';
+import { rotasSeo } from './seo.js';
 import { rotasCadastro, eventoAssinatura, situacaoConta } from './cadastro.js';
 
 Object.assign(HANDLERS, VENDAS_HANDLERS);
@@ -32,13 +33,13 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'troque-este-token';
 if (!process.env.ADMIN_TOKEN) console.warn('[aviso] ADMIN_TOKEN não definido — usando token padrão de desenvolvimento.');
 
 app.use(express.json({ limit: '4mb', verify: (req, _res, buf) => { req.rawBody = buf; } }));
-app.get('/brand/:file', (req, res) => {
+app.get('/brand/:file', (req, res, next) => {
   const data = BRAND[req.params.file];
-  if (!data) return res.sendStatus(404);
+  if (!data) return next(); // demais imagens da marca saem de public/brand
   res.type(req.params.file.split('.').pop()).set('cache-control', 'public, max-age=86400').send(Buffer.from(data, 'base64'));
 });
 // Site público na raiz; login em /entrar; painel em /app.
-app.get('/', (_req, res) => res.sendFile(path.resolve('public/site.html')));
+rotasSeo(app);       // / (site com dados estruturados), /robots.txt, /sitemap.xml, /llms.txt
 app.get(['/entrar', '/app', '/app/*'], (_req, res) => res.sendFile(path.resolve('public/index.html')));
 app.get('/cadastro', (_req, res) => res.sendFile(path.resolve('public/cadastro.html')));
 app.get('/termos', (_req, res) => res.sendFile(path.resolve('public/termos.html')));
