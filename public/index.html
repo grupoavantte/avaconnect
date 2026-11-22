@@ -26,10 +26,51 @@
 body{background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}
 .hidden{display:none!important}
-/* Login */
-#login{min-height:100%;display:grid;place-items:center;padding:16px;background:radial-gradient(900px 500px at 0% 0%,rgba(18,216,196,.22),transparent),radial-gradient(900px 500px at 100% 100%,rgba(31,111,255,.25),transparent),#020f2b}
-.login-card{width:100%;max-width:420px;background:rgba(7,20,48,.85);border:1px solid rgba(120,170,255,.18);border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.4);color:#e8edf6}
-.login-card .muted{color:#9fb0cc} .login-card input{background:#0b1a3a;border-color:#22345e;color:#fff}
+/* Assistente de configuração */
+.wz{display:grid;grid-template-columns:250px minmax(0,1fr);gap:16px;align-items:start;max-width:1100px}
+.wz-steps{list-style:none;margin:0;padding:8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);position:sticky;top:12px}
+.wz-steps li{display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:9px;cursor:pointer;color:var(--muted)}
+.wz-steps li:hover{background:var(--bg)} .wz-steps li.on{background:rgba(19,181,166,.10);color:var(--ink);font-weight:600}
+.wz-steps li span{width:24px;height:24px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:12px;border:1px solid var(--line);background:var(--bg)}
+.wz-steps li.done span{background:var(--accent);border-color:var(--accent);color:#fff}
+.wz-card{min-height:420px} .wz-nav{margin-top:22px;padding-top:14px;border-top:1px solid var(--line)}
+.tom{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;margin:0;color:var(--ink);font-size:14px}
+.tom input{display:none} .tom span{color:var(--muted);font-size:12px} .tom.on{border-color:var(--accent);background:rgba(19,181,166,.07)}
+@media (max-width:860px){.wz{grid-template-columns:1fr}.wz-steps{position:static;display:flex;overflow-x:auto}.wz-steps li{white-space:nowrap}}
+/* Login (tela dividida) */
+#login{min-height:100%;display:grid;grid-template-columns:1.05fr 1fr;background:#fff;color:#0f1a2e}
+.lg-side{position:relative;overflow:hidden;color:#e8edf6;padding:44px 52px;display:flex;flex-direction:column;gap:28px;
+  background:radial-gradient(700px 420px at 0% 0%,rgba(18,216,196,.28),transparent 60%),radial-gradient(800px 500px at 100% 100%,rgba(31,111,255,.35),transparent 60%),#06112a}
+.lg-side h2{font-family:Montserrat,Inter,sans-serif;font-size:34px;line-height:1.15;margin:8px 0 0;letter-spacing:-.5px;max-width:520px}
+.lg-side h2 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lg-side ul{list-style:none;padding:0;margin:0;display:grid;gap:12px;max-width:480px}
+.lg-side li{display:flex;gap:12px;align-items:flex-start;color:#c6d2e8}
+.lg-side li b{color:#fff;font-weight:600}
+.lg-side .ck{flex:none;width:24px;height:24px;border-radius:7px;background:rgba(25,224,201,.15);border:1px solid rgba(25,224,201,.45);display:grid;place-items:center;color:#19e0c9;font-size:13px}
+.lg-chat{margin-top:auto;max-width:430px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;display:grid;gap:8px;backdrop-filter:blur(6px)}
+.lg-chat .b{padding:8px 12px;border-radius:12px;font-size:13px;max-width:85%}
+.lg-chat .c{background:#fff;color:#0f1a2e;justify-self:start;border-bottom-left-radius:4px}
+.lg-chat .a{background:#0f3b44;color:#dffcf8;justify-self:end;border-bottom-right-radius:4px}
+.lg-chat .s{justify-self:center;font-size:11px;color:#9fb0cc}
+.lg-foot{font-size:12px;color:#8ea0bf}
+.lg-main{display:grid;place-items:center;padding:32px 20px}
+.lg-box{width:100%;max-width:400px}
+.lg-box h1{font-family:Montserrat,Inter,sans-serif;font-size:26px;margin:0 0 6px;letter-spacing:-.3px}
+.lg-box .sub{color:#5b6780;margin:0 0 24px}
+.lg-box label{color:#3a4660;font-size:13px}
+.lg-box input{background:#f5f7fb;border:1px solid #dfe5ef;padding:12px 13px;border-radius:10px;color:#0f1a2e}
+.lg-box input:focus{border-color:#12b8a8;background:#fff;box-shadow:0 0 0 3px rgba(18,216,196,.15)}
+.lg-pass{position:relative} .lg-pass button{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;color:#5b6780;cursor:pointer;font-size:12px;padding:6px}
+.lg-btn{width:100%;margin-top:18px;padding:13px;border:0;border-radius:10px;background:var(--grad);color:#fff;font-weight:700;cursor:pointer;font-size:15px}
+.lg-btn:disabled{opacity:.6;cursor:wait}
+.lg-link{color:#1f6fff;text-decoration:none;font-size:13px;font-weight:500} .lg-link:hover{text-decoration:underline}
+.lg-err{min-height:20px;margin-top:10px;font-size:13px;color:#d64545} .lg-err.ok{color:#0b8f80}
+.lg-sep{display:flex;align-items:center;gap:10px;color:#93a0b8;font-size:12px;margin:26px 0 14px} .lg-sep:before,.lg-sep:after{content:"";flex:1;height:1px;background:#e3e8f0}
+.lg-cta{display:block;text-align:center;padding:11px;border:1px solid #dfe5ef;border-radius:10px;color:#0f1a2e;text-decoration:none;font-weight:600}
+.lg-cta:hover{border-color:#12b8a8}
+.lg-mob{display:none}
+@media (max-width:900px){#login{grid-template-columns:1fr}.lg-side{display:none}.lg-mob{display:flex;justify-content:center;margin-bottom:26px}
+  .lg-mob .wm .name{color:#0f1a2e}.lg-mob .wm .by{color:#5b6780}.lg-mob .wm .bar{background:#c9d3e3}}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:.2px}
 .logo .dot{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#3a7bd5);box-shadow:0 0 18px rgba(19,181,166,.45)}
 .logo small{display:block;font-weight:500;color:var(--muted);font-size:12px}
@@ -126,30 +167,71 @@ code{background:var(--bg);padding:2px 6px;border-radius:6px;border:1px solid var
   #app{grid-template-columns:1fr} aside{flex-direction:row;overflow-x:auto;padding:8px} aside .logo,aside .foot{display:none}
   .nav{white-space:nowrap;width:auto} main{padding:16px}
   .split{grid-template-columns:1fr;height:auto} .msgs{min-height:320px}
+  main .grid:not(.kpis){grid-template-columns:1fr!important}
+  .kpis{grid-template-columns:1fr 1fr} table{display:block;overflow-x:auto}
 }
 </style>
 </head>
 <body>
 
-<section id="login">
-  <div class="login-card">
-    <div class="brand-login"><div class="wm big"><img src="/brand/simbolo.webp" alt=""><span class="bar"></span><div><div class="name"><b>AVA</b><i>Connect</i></div><div class="by">by AVANTTE</div></div></div>
-      <p class="slogan">Atendimento e vendas com <em>Inteligência Artificial</em></p></div>
-    <label for="tok">Token de acesso</label>
-    <input id="tok" type="password" placeholder="Cole seu token" autocomplete="off">
-    <div class="row" style="margin-top:14px"><button class="btn primary" id="btnLogin">Entrar</button><span id="loginErr" class="muted"></span></div>
+<section id="login" class="hidden">
+  <div class="lg-side">
+    <div class="wm" aria-label="AVA Connect by Avantte"><img src="/brand/simbolo.webp" alt=""><span class="bar"></span><div><div class="name"><b>AVA</b><i>Connect</i></div><div class="by">by AVANTTE</div></div></div>
+    <h2>Sua equipe de atendimento e vendas, <em>24 horas no WhatsApp</em>.</h2>
+    <ul>
+      <li><span class="ck">✓</span><span><b>Atende na hora</b>, com as informações da sua empresa.</span></li>
+      <li><span class="ck">✓</span><span><b>Envia proposta, negocia e cobra</b> dentro das regras que você define.</span></li>
+      <li><span class="ck">✓</span><span><b>Faz o follow-up sozinha</b> e marca reuniões na sua agenda.</span></li>
+    </ul>
+    <div class="lg-chat" aria-hidden="true">
+      <div class="b c">Boa tarde! Vocês fazem caixa de papelão personalizada?</div>
+      <div class="b a">Boa tarde! Fazemos sim 😊 Qual a medida e a quantidade? Com isso já te mando a proposta.</div>
+      <div class="s">proposta enviada · pagamento confirmado</div>
+    </div>
+    <div class="lg-foot">Um produto Avantte · grupoavantte.com.br</div>
   </div>
+  <div class="lg-main"><div class="lg-box">
+    <div class="lg-mob"><div class="wm big" style="gap:12px"><img src="/brand/simbolo.webp" alt="" style="width:44px"><span class="bar"></span><div><div class="name" style="font-size:26px"><b>AVA</b><i>Connect</i></div><div class="by" style="font-size:9px">by AVANTTE</div></div></div></div>
+    <div id="lgEntrar">
+      <h1>Bem-vindo de volta</h1>
+      <p class="sub">Entre para configurar e acompanhar a assistente da sua empresa.</p>
+      <div id="lgEmail">
+        <label for="lg_email">E-mail</label><input id="lg_email" type="email" autocomplete="username" placeholder="voce@suaempresa.com.br">
+        <div class="row" style="justify-content:space-between;margin-top:14px"><label for="lg_senha" style="margin:0">Senha</label><a href="#" id="lgEsqueci" class="lg-link">Esqueci minha senha</a></div>
+        <div class="lg-pass" style="margin-top:4px"><input id="lg_senha" type="password" autocomplete="current-password" placeholder="Sua senha"><button type="button" id="lgVer">Mostrar</button></div>
+      </div>
+      <div id="lgTok" class="hidden"><label for="tok">Token de acesso</label><input id="tok" type="password" placeholder="Cole seu token" autocomplete="off"></div>
+      <button class="lg-btn" id="btnLogin">Entrar</button>
+      <div class="lg-err" id="loginErr" role="alert"></div>
+      <div class="lg-sep">ainda não é cliente?</div>
+      <a class="lg-cta" href="/">Conheça o AVA Connect</a>
+      <p style="text-align:center;margin-top:18px"><a href="#" id="lgModo" class="lg-link" style="color:#93a0b8;font-size:12px">Entrar com token de acesso</a></p>
+    </div>
+    <div id="lgRecuperar" class="hidden">
+      <h1>Recuperar acesso</h1>
+      <p class="sub">Digite o e-mail da sua conta. Enviaremos um link para você criar uma nova senha.</p>
+      <label for="rc_email">E-mail</label><input id="rc_email" type="email" placeholder="voce@suaempresa.com.br">
+      <button class="lg-btn" id="rcEnviar">Enviar link</button>
+      <div class="lg-err" id="rcMsg" role="alert"></div>
+      <p style="text-align:center"><a href="#" id="rcVoltar" class="lg-link">Voltar para o login</a></p>
+    </div>
+  </div></div>
 </section>
 
 <div id="app" class="hidden">
   <aside>
     <div class="logo side-logo"><div class="wm" aria-label="AVA Connect by Avantte"><img src="/brand/simbolo.webp" alt=""><span class="bar"></span><div><div class="name"><b>AVA</b><i>Connect</i></div><div class="by">by AVANTTE</div></div></div><small id="who"></small></div>
     <button class="nav" data-v="overview">Visão geral</button>
+    <button class="nav" data-v="inicio">Início</button>
+    <button class="nav" data-v="configurar">Configurar empresa</button>
     <button class="nav" data-v="conversas">Conversas <span class="badge hidden" id="badgeHum"></span></button>
     <button class="nav" data-v="crm">CRM</button>
+    <button class="nav" data-v="vendas">Vendas <span class="badge hidden" id="badgeApr"></span></button>
+    <button class="nav" data-v="campanhas">Campanhas</button>
     <button class="nav" data-v="tarefas">Tarefas <span class="badge hidden" id="badgeTask"></span></button>
     <button class="nav" data-v="simulador">Simulador</button>
-    <button class="nav" data-v="empresa">Configurar IA</button>
+    <button class="nav" data-v="diagnosticos">Diagnósticos</button>
+    <button class="nav" data-v="empresa">Configurações</button>
     <button class="nav admin-only" data-v="empresas">Empresas</button>
     <button class="nav admin-only" data-v="planos">Planos</button>
     <div class="foot"><span id="iaMode"></span><br>Suporte: <a href="mailto:contato@grupoavantte.com.br" style="color:#9fb0cc">contato@grupoavantte.com.br</a><br>Um produto <b>Avantte</b> · <a href="#" id="logout" style="color:#9fb0cc">Sair</a></div>
@@ -179,22 +261,33 @@ async function api(path, opts = {}) {
   const res = await fetch('/api' + path, { ...opts, headers: { 'content-type': 'application/json', authorization: 'Bearer ' + TOKEN }, body: opts.body ? JSON.stringify(opts.body) : undefined });
   if (res.status === 401) { logout(); throw new Error('Sessão expirada'); }
   const data = await res.json().catch(() => ({}));
+  if (res.status === 402 && data.bloqueado) telaBloqueio();
   if (!res.ok) throw new Error(data.erro || 'Erro ' + res.status);
   return data;
 }
 
-async function login() {
-  TOKEN = $('#tok').value.trim() || TOKEN;
+function mostrarLogin() { $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); if (location.pathname !== '/entrar') history.replaceState(null, '', '/entrar'); setTimeout(() => $('#lg_email').focus(), 50); }
+async function login(ev) {
+  const btn = $('#btnLogin'); btn.disabled = true; btn.textContent = 'Entrando...'; $('#loginErr').textContent = '';
   try {
+    if (ev && !$('#lgEmail').classList.contains('hidden')) {
+      const r = await fetch('/api/auth/login', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ email: $('#lg_email').value.trim(), senha: $('#lg_senha').value }) });
+      const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.erro || 'Não foi possível entrar');
+      TOKEN = d.token;
+    } else if (ev) TOKEN = $('#tok').value.trim() || TOKEN;
     ME = await api('/me'); store.set('ava_token', TOKEN);
     $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+    if (!location.pathname.startsWith('/app')) history.replaceState(null, '', '/app');
+    document.querySelectorAll('.nav[data-v="configurar"]').forEach((e) => e.classList.toggle('hidden', !ME.pode.configurar));
     document.querySelectorAll('.admin-only').forEach((e) => e.classList.toggle('hidden', !ME.admin));
-    $('#who').textContent = ME.admin ? 'Administrador Avantte' : ME.nome;
+    document.querySelectorAll('.tenant-only').forEach((e) => e.classList.toggle('hidden', ME.admin && false));
+    $('#who').textContent = ME.admin ? `${ME.nome} · Plataforma` : `${ME.nome} · ${ME.papel_nome}${ME.empresa && ME.empresa !== ME.nome ? ' · ' + ME.empresa : ''}`;
     $('#iaMode').textContent = ME.ia === 'claude' ? 'IA: Claude conectado' : 'IA: modo demonstração';
-    await loadTenants(); go(ME.admin ? 'overview' : 'conversas');
-  } catch (e) { $('#loginErr').textContent = e.message; }
+    await loadTenants(); go(ME.admin ? 'overview' : ME.pode.configurar ? (TENANT && !TENANT.onboarding_concluido ? 'configurar' : 'inicio') : 'conversas');
+  } catch (e) { $('#loginErr').textContent = e.message; if (!ev) { store.set('ava_token', null); TOKEN = null; } mostrarLogin(); }
+  finally { btn.disabled = false; btn.textContent = 'Entrar'; }
 }
-function logout(){ store.set('ava_token', null); TOKEN = null; location.reload(); }
+function logout(){ fetch('/api/auth/logout', { method:'POST', headers:{ authorization: 'Bearer ' + TOKEN } }).catch(() => {}).finally(() => { store.set('ava_token', null); TOKEN = null; location.href = '/entrar'; }); }
 
 async function loadTenants() {
   const list = await api('/tenants');
@@ -206,15 +299,15 @@ async function loadTenants() {
 }
 $('#tenantSel').onchange = async (e) => { const list = await api('/tenants'); TENANT = list.find((t) => t.id == e.target.value); CONV = null; go(VIEW); };
 
-const TITLES = { overview:'Visão geral', conversas:'Conversas', crm:'CRM de leads', tarefas:'Tarefas e retornos', simulador:'Simulador', empresa:'Configurar IA', empresas:'Empresas clientes', planos:'Planos' };
+const TITLES = { inicio:'Início', configurar:'Configurar minha empresa', overview:'Visão geral', conversas:'Conversas', crm:'CRM de leads', vendas:'Vendas', tarefas:'Tarefas e retornos', diagnosticos:'Diagnósticos', simulador:'Simulador', campanhas:'Campanhas', empresa:'Configurações', empresas:'Empresas clientes', planos:'Planos' };
 function go(v) {
   VIEW = v; clearInterval(poll);
   document.querySelectorAll('.nav').forEach((n) => n.classList.toggle('active', n.dataset.v === v));
   $('#title').textContent = TITLES[v];
   $('#tenantSel').classList.toggle('hidden', !ME.admin || ['empresas','planos','overview'].includes(v));
-  const needTenant = ['conversas','crm','tarefas','simulador','empresa'].includes(v);
+  const needTenant = ['inicio','configurar','conversas','crm','vendas','campanhas','tarefas','diagnosticos','simulador','empresa'].includes(v);
   if (needTenant && !TENANT) { $('#view').innerHTML = `<div class="card pad">Cadastre a primeira empresa em <b>Empresas</b>.</div>`; return; }
-  ({ overview, conversas, crm, tarefas, simulador, empresa, empresas, planos })[v]().catch((e) => toast(e.message));
+  ({ inicio, configurar, overview, conversas, crm, vendas, campanhas, tarefas, diagnosticos, simulador, empresa, empresas, planos })[v]().catch((e) => toast(e.message));
 }
 document.querySelectorAll('.nav').forEach((n) => (n.onclick = () => go(n.dataset.v)));
 
@@ -225,6 +318,8 @@ async function refreshBadge() {
   const ts = await api(`/tenants/${TENANT.id}/tasks`); const t = new Date().toLocaleDateString('sv-SE');
   const pend = ts.filter((x) => x.vence_em && x.vence_em.slice(0, 10) <= t).length;
   const bt = $('#badgeTask'); bt.textContent = pend; bt.classList.toggle('hidden', !pend);
+  const vs = await api(`/tenants/${TENANT.id}/vendas-stats`).catch(() => null);
+  const ba = $('#badgeApr'); const n = vs?.aguardando_aprovacao || 0; ba.textContent = n; ba.classList.toggle('hidden', !n);
 }
 
 // ---------- Visão geral ----------
@@ -254,39 +349,69 @@ async function overview() {
 }
 
 // ---------- Conversas ----------
+let CFILTRO = 'todas'; let ATD = null;
 async function conversas() {
-  $('#view').innerHTML = `<div class="split">
-    <div class="card list" id="clist"></div>
+  ATD = await api(`/tenants/${TENANT.id}/atendimento`).catch(() => null);
+  const filtros = [['todas', 'Todas'], ['minhas', 'Minhas'], ['fila', 'Fila'], ['ia', 'Com a IA'], ['humano', 'Com atendente'], ['encerrada', 'Encerradas']];
+  const s = ATD?.satisfacao || {};
+  $('#view').innerHTML = `<div class="row" style="margin-bottom:10px;gap:6px">${filtros.map(([k, n]) => `<button class="btn small ${CFILTRO === k ? 'primary' : ''}" data-cf="${k}">${n}${k === 'fila' && ATD?.fila ? ` <span class="badge">${ATD.fila}</span>` : ''}</button>`).join('')}
+      <span class="muted" style="margin-left:auto;font-size:13px">${s.avaliacoes ? `Satisfação (30 dias): <b>${String(s.media).replace('.', ',')}</b>/5 · ${s.avaliacoes} avaliações` : 'Sem avaliações ainda'}${ATD?.motivos?.length ? ' · Motivos: ' + ATD.motivos.slice(0, 3).map((m) => `${m.motivo} ${m.n}`).join(', ') : ''}</span></div>
+    <div class="split"><div class="card list" id="clist"></div>
     <div class="card thread" id="thread"><div class="pad muted">Selecione uma conversa.</div></div></div>`;
+  document.querySelectorAll('[data-cf]').forEach((b) => (b.onclick = () => { CFILTRO = b.dataset.cf; conversas(); }));
   await loadConvList(); if (CONV) openConv(CONV);
   poll = setInterval(async () => { await loadConvList(); if (CONV) openConv(CONV, true); }, 5000);
 }
 async function loadConvList() {
-  const rows = await api(`/tenants/${TENANT.id}/conversations`);
+  const rows = await api(`/tenants/${TENANT.id}/conversations${CFILTRO !== 'todas' ? '?filtro=' + CFILTRO : ''}`);
   const el = $('#clist'); if (!el) return;
   el.innerHTML = rows.map((c) => `<div class="item ${c.id === CONV ? 'sel' : ''}" data-id="${c.id}">
-      <div class="t"><span>${esc(c.contato_nome || c.telefone)}</span><span class="pill ${c.status}">${c.status === 'ia' ? 'IA' : c.status}</span></div>
-      <div class="p">${esc(c.ultima_mensagem || '')}</div><div class="p" style="font-size:11px">${when(c.ultima_mensagem_em)} · ${c.canal}</div></div>`).join('')
-    || '<div class="pad muted">Nenhuma conversa ainda. Teste no Simulador.</div>';
+      <div class="t"><span>${esc(c.contato_nome || c.telefone)}</span><span class="pill ${c.status}">${c.status === 'ia' ? 'IA' : c.status === 'humano' ? (c.atendente_nome ? esc(c.atendente_nome.split(' ')[0]) : 'Fila') : 'encerrada'}</span></div>
+      <div class="p">${esc(c.ultima_mensagem || '')}</div><div class="p" style="font-size:11px">${when(c.ultima_mensagem_em)} · ${c.canal}${c.setor ? ' · ' + esc(c.setor) : ''}${c.nota ? ' · ' + '★'.repeat(c.nota) : ''}</div></div>`).join('')
+    || `<div class="pad muted">${CFILTRO === 'todas' ? 'Nenhuma conversa ainda. Teste no Simulador.' : 'Nada por aqui.'}</div>`;
   el.querySelectorAll('.item').forEach((i) => (i.onclick = () => openConv(+i.dataset.id)));
   refreshBadge();
 }
 async function openConv(id, silent) {
   CONV = id; const c = await api(`/conversations/${id}`); const el = $('#thread'); if (!el) return;
   const draft = $('#reply')?.value || '';
-  const st = { ia:'IA atendendo', humano:'Com atendente', encerrada:'Encerrada' };
+  if (silent && el.dataset.conv == id && el.dataset.n == c.mensagens.length && el.dataset.st === c.status + (c.atendente_id || '')) return;
+  const st = { ia:'IA atendendo', humano: c.atendente ? `Com ${c.atendente.nome}` : 'Na fila, aguardando atendente', encerrada:'Encerrada' };
+  const users = ATD?.users || [];
+  el.dataset.conv = id; el.dataset.n = c.mensagens.length; el.dataset.st = c.status + (c.atendente_id || '');
   el.innerHTML = `<div class="head row"><div style="margin-right:auto"><b>${esc(c.contato.nome || c.contato.telefone)}</b>
-      <div class="muted" style="font-size:12px">${esc(c.contato.telefone)} · ${st[c.status]}${c.motivo_transbordo ? ' · ' + esc(c.motivo_transbordo) : ''}</div></div>
-      ${c.status !== 'ia' ? `<button class="btn small" data-s="ia">Devolver para IA</button>` : `<button class="btn small" data-s="humano">Assumir</button>`}
-      ${c.status !== 'encerrada' ? `<button class="btn small" data-s="encerrada">Encerrar</button>` : ''}</div>
-    ${c.lead ? `<div class="pad row" style="border-bottom:1px solid var(--line);font-size:13px"><div style="margin-right:auto"><b>Lead:</b> ${esc(c.lead.interesse || '')} · <span class="pill">${c.lead.etapa}</span> ${c.lead.resumo ? '<div class="muted">' + esc(c.lead.resumo) + '</div>' : ''}</div><button class="btn small" id="openLead">Abrir ficha no CRM</button></div>` : ''}
+      <div class="muted" style="font-size:12px">${esc(c.contato.telefone)} · ${st[c.status]}${c.setor ? ' · ' + esc(c.setor) : ''}${c.motivo_transbordo && c.status === 'humano' ? ' · ' + esc(c.motivo_transbordo) : ''}
+      ${c.status === 'encerrada' ? `${c.motivo_atendimento ? ' · Motivo: ' + esc(c.motivo_atendimento) : ''}${c.nota ? ` · Nota ${'★'.repeat(c.nota)}${c.nota_comentario ? ' "' + esc(c.nota_comentario) + '"' : ''}` : ''}` : ''}</div></div>
+      ${c.status === 'humano' && c.atendente_id === c.eu ? '' : `<button class="btn small" id="cv_assumir">Assumir</button>`}
+      <button class="btn small" id="cv_transf">Transferir</button>
+      ${c.status !== 'ia' ? `<button class="btn small" data-s="ia">Devolver para IA</button>` : ''}
+      ${c.status !== 'encerrada' ? `<button class="btn small" id="cv_fim">Encerrar</button>` : ''}</div>
+    <div class="pad row" style="border-bottom:1px solid var(--line);font-size:13px;gap:8px">
+      ${c.lead ? `<div style="margin-right:auto"><b>Lead:</b> ${esc(c.lead.interesse || '')} · <span class="pill">${c.lead.etapa}</span></div><button class="btn small" id="openLead">Ficha no CRM</button>` : '<div style="margin-right:auto"></div>'}
+      <span class="muted">Carteira:</span><select id="cv_resp" style="width:auto;padding:4px 8px"><option value="">Ninguém</option>${users.map((u) => `<option value="${u.id}" ${u.id === c.contato.responsavel_id ? 'selected' : ''}>${esc(u.nome)}</option>`).join('')}</select></div>
     <div class="msgs" id="msgs">${c.mensagens.map((m) => `<div class="msg ${m.autor}"><div class="who">${{cliente:'Cliente',ia:'AVA',humano:'Atendente',sistema:'Sistema'}[m.autor]} · ${when(m.criado_em)}</div>${esc(m.conteudo)}</div>`).join('')}</div>
-    <div class="composer"><textarea id="reply" placeholder="Responder como atendente (a IA pausa nesta conversa)"></textarea><button class="btn primary" id="send">Enviar</button></div>`;
+    <div class="composer"><textarea id="reply" placeholder="Responder como atendente (a IA pausa nesta conversa)"></textarea>
+      <div style="display:grid;gap:6px"><button class="btn primary" id="send">Enviar</button><button class="btn small" id="sugerir" title="A IA escreve uma resposta para você revisar">✨ Sugerir</button></div></div>`;
   $('#reply').value = draft;
   if ($('#openLead')) $('#openLead').onclick = () => leadModal(c.lead.id);
   const box = $('#msgs'); box.scrollTop = box.scrollHeight;
-  el.querySelectorAll('[data-s]').forEach((b) => (b.onclick = async () => { await api(`/conversations/${id}/status`, { method:'POST', body:{ status: b.dataset.s } }); openConv(id); loadConvList(); }));
-  $('#send').onclick = async () => { const t = $('#reply').value.trim(); if (!t) return; $('#reply').value = ''; await api(`/conversations/${id}/reply`, { method:'POST', body:{ texto: t } }); openConv(id); loadConvList(); };
+  const recarregar = () => { el.dataset.n = ''; openConv(id); loadConvList(); };
+  el.querySelectorAll('[data-s]').forEach((b) => (b.onclick = async () => { await api(`/conversations/${id}/status`, { method:'POST', body:{ status: b.dataset.s } }); recarregar(); }));
+  if ($('#cv_assumir')) $('#cv_assumir').onclick = async () => { await api(`/conversations/${id}/assumir`, { method:'POST' }); toast('Conversa com você'); recarregar(); };
+  if ($('#cv_fim')) $('#cv_fim').onclick = async () => { const r = await api(`/conversations/${id}/encerrar`, { method:'POST' }); toast(r.pesquisa ? 'Encerrada. Pesquisa de satisfação enviada.' : 'Conversa encerrada'); recarregar(); };
+  $('#cv_resp').onchange = async (e) => { await api(`/contacts/${c.contato.id}/responsavel`, { method:'PUT', body:{ responsavel_id: e.target.value || null } }); toast('Carteira atualizada'); };
+  $('#cv_transf').onclick = () => {
+    const m = openModal(`<h2>Transferir conversa</h2><label>Setor</label><select id="tf_setor"><option value="">Manter</option>${(ATD?.setores || []).map((s) => `<option>${esc(s)}</option>`).join('')}</select>
+      <label>Pessoa</label><select id="tf_user"><option value="">Quem estiver mais livre no setor</option>${users.map((u) => `<option value="${u.id}">${esc(u.nome)} (${u.abertas} abertas)</option>`).join('')}</select>
+      <label>Observação para quem recebe (opcional)</label><input id="tf_nota" placeholder="Ex.: cliente quer 2ª via do boleto">
+      <div class="row" style="margin-top:14px"><button class="btn primary" id="tf_ok">Transferir</button></div>`);
+    $('#tf_ok', m).onclick = async () => { try { const r = await api(`/conversations/${id}/transferir`, { method:'POST', body:{ setor: $('#tf_setor', m).value || null, atendente_id: $('#tf_user', m).value || null, nota: $('#tf_nota', m).value.trim() || null } });
+      toast(r.atendente ? `Transferida para ${r.atendente.nome}` : 'Transferida para a fila'); m.remove(); recarregar(); } catch (er) { toast(er.message); } };
+  };
+  $('#sugerir').onclick = async (ev) => { const b = ev.target; b.disabled = true; b.textContent = 'Pensando...';
+    try { const r = await api(`/conversations/${id}/sugestao`, { method:'POST' }); $('#reply').value = r.texto; $('#reply').focus(); } catch (er) { toast(er.message); }
+    finally { b.disabled = false; b.textContent = '✨ Sugerir'; } };
+  $('#send').onclick = async () => { const t = $('#reply').value.trim(); if (!t) return; $('#reply').value = ''; await api(`/conversations/${id}/reply`, { method:'POST', body:{ texto: t } }); recarregar(); };
   if (!silent) document.querySelectorAll('#clist .item').forEach((i) => i.classList.toggle('sel', +i.dataset.id === id));
 }
 
@@ -369,13 +494,16 @@ const fieldsHtml = (l = {}) => `<div class="two">
   <div><label>Interesse</label><input id="l_interesse" value="${esc(l.interesse || '')}"></div>
   <div><label>Valor estimado (R$)</label><input id="l_valor_estimado" type="number" step="0.01" value="${l.valor_estimado ?? ''}"></div>
   <div><label>Etapa</label><select id="l_etapa">${ETAPAS.map(([v, t]) => `<option value="${v}" ${v === (l.etapa || 'novo') ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
-  <div><label>Responsável</label><input id="l_responsavel" value="${esc(l.responsavel || '')}"></div>
+  <div><label>Responsável</label><select id="l_responsavel_id"><option value="">${l.id ? (l.responsavel && !l.responsavel_id ? esc(l.responsavel) + ' (texto antigo)' : 'Ninguém') : 'Eu'}</option>${(USERS || []).map((u) => `<option value="${u.id}" ${u.id === l.responsavel_id ? 'selected' : ''}>${esc(u.nome)}</option>`).join('')}</select></div>
   <div><label>Tags (separadas por vírgula)</label><input id="l_tags" value="${esc(l.tags || '')}"></div>
   </div><label>Resumo da necessidade</label><textarea id="l_resumo">${esc(l.resumo || '')}</textarea>`;
-const readFields = () => Object.fromEntries(['nome','empresa','telefone','email','interesse','valor_estimado','etapa','responsavel','tags','resumo']
+let USERS = null;
+const carregarUsers = async () => { USERS = await api(`/tenants/${TENANT.id}/users`).then((us) => us.filter((u) => u.ativo)).catch(() => []); };
+const readFields = () => Object.fromEntries(['nome','empresa','telefone','email','interesse','valor_estimado','etapa','responsavel_id','tags','resumo']
   .filter((f) => $('#l_' + f)).map((f) => [f, $('#l_' + f).value.trim()]));
 
-function leadForm() {
+async function leadForm() {
+  await carregarUsers();
   const m = openModal(`<h2>Novo lead</h2>${fieldsHtml()}<div class="row" style="margin-top:14px"><button class="btn primary" id="lsave">Cadastrar</button><button class="btn" id="lcancel">Cancelar</button></div>`);
   $('#lcancel', m).onclick = () => m.remove();
   $('#lsave', m).onclick = async () => { try { await api(`/tenants/${TENANT.id}/leads`, { method:'POST', body: readFields() }); m.remove(); toast('Lead cadastrado'); crm(); } catch (e) { toast(e.message); } };
@@ -383,7 +511,7 @@ function leadForm() {
 
 const ICO = { nota:'📝', tarefa:'☑️', ligacao:'📞', whatsapp:'💬', reuniao:'🤝', sistema:'⚙️' };
 async function leadModal(id) {
-  const l = await api(`/leads/${id}`);
+  const [l] = await Promise.all([api(`/leads/${id}`), carregarUsers()]);
   document.querySelectorAll('.modal-bg').forEach((x) => x.remove());
   const m = openModal(`
     <div class="row"><div style="margin-right:auto"><h2>${esc(l.nome || l.contato.nome || l.contato.telefone)}</h2>
@@ -414,6 +542,322 @@ async function leadModal(id) {
   m.querySelectorAll('[data-conv]').forEach((b) => (b.onclick = () => { m.remove(); CONV = +b.dataset.conv; go('conversas'); }));
 }
 
+// ---------- Diagnósticos ----------
+const DSTATUS = { em_andamento:'Respondendo', aguardando_pagamento:'Aguardando pagamento', pago:'Pago', cancelado:'Cancelado' };
+async function diagnosticos() {
+  const ds = await api(`/tenants/${TENANT.id}/diagnosticos`);
+  const pagos = ds.filter((d) => d.status === 'pago');
+  const concl = ds.filter((d) => ['aguardando_pagamento','pago'].includes(d.status));
+  const receita = pagos.reduce((s, d) => s + (d.valor || 0), 0);
+  const media = concl.length ? Math.round(concl.reduce((s, d) => s + (d.nota_geral || 0), 0) / concl.length) : null;
+  $('#view').innerHTML = `
+    <div class="grid kpis" style="margin-bottom:14px">
+      <div class="card pad kpi"><div class="label">Iniciados</div><div class="value">${ds.length}</div></div>
+      <div class="card pad kpi"><div class="label">Concluídos</div><div class="value">${concl.length}</div></div>
+      <div class="card pad kpi"><div class="label">Pagos</div><div class="value">${pagos.length} <span class="muted" style="font-size:14px">${concl.length ? Math.round(100 * pagos.length / concl.length) + '%' : ''}</span></div></div>
+      <div class="card pad kpi"><div class="label">Receita</div><div class="value">${brl(receita)}</div></div>
+      <div class="card pad kpi"><div class="label">Nota média</div><div class="value">${media ?? '—'}</div></div>
+    </div>
+    <div class="card"><table><thead><tr><th>Cliente</th><th>Status</th><th>Nota</th><th>Valor</th><th>Data</th><th></th></tr></thead><tbody>
+    ${ds.map((d) => `<tr><td><b>${esc(d.contato_nome || d.telefone)}</b><div class="muted" style="font-size:12px">${esc(d.telefone)}</div></td>
+      <td><span class="pill ${d.status === 'pago' ? 'ativo' : d.status === 'aguardando_pagamento' ? 'humano' : ''}">${DSTATUS[d.status]}${d.status === 'em_andamento' ? ' (' + d.etapa + '/13)' : ''}</span></td>
+      <td>${d.nota_geral ?? '—'}</td><td>${brl(d.valor)}</td><td>${when(d.pago_em || d.criado_em)}</td>
+      <td style="white-space:nowrap">${d.status === 'pago' ? `<a class="btn small" href="/relatorio/${d.token}" target="_blank" rel="noopener">Ver relatório</a>` : ''}
+        ${d.status === 'aguardando_pagamento' && ME.admin ? `<button class="btn small" data-pay="${d.id}">Confirmar pagamento</button>` : ''}
+        ${d.conversation_id ? `<button class="btn small" data-conv="${d.conversation_id}">Conversa</button>` : ''}</td></tr>`).join('')
+      || '<tr><td colspan="6" class="muted">Nenhum diagnóstico ainda. Ative o diagnóstico em Configurar IA e teste no Simulador dizendo "quero fazer o diagnóstico".</td></tr>'}
+    </tbody></table></div>`;
+  document.querySelectorAll('[data-pay]').forEach((b) => (b.onclick = async () => {
+    const box = b.parentElement; if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Confirmar mesmo?'; return; }
+    await api(`/diagnosticos/${b.dataset.pay}/confirmar-pagamento`, { method:'POST' }); toast('Pagamento confirmado e relatório enviado'); diagnosticos(); }));
+  document.querySelectorAll('[data-conv]').forEach((b) => (b.onclick = () => { CONV = +b.dataset.conv; go('conversas'); }));
+}
+
+// ---------- Vendas ----------
+let VTAB = 'propostas';
+const PSTATUS = { aguardando_aprovacao:'Aguardando aprovação', enviada:'Enviada', aceita:'Aceita (aguardando pagamento)', paga:'Paga', recusada:'Recusada', expirada:'Expirada' };
+const CSTATUS = { pendente:'Pendente', pago:'Pago', vencido:'Vencido' };
+const FORMA = { pix:'Pix', boleto:'Boleto', cartao:'Cartão', livre:'Cliente escolhe' };
+const brl2 = (v) => (v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const dataLocal = (s) => s ? s.slice(8, 10) + '/' + s.slice(5, 7) + (s.length > 10 ? ' ' + s.slice(11, 16) : '') : '';
+const twice = (b, fn) => { if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.dataset.txt = b.textContent; b.textContent = 'Confirmar?'; setTimeout(() => { b.dataset.sure = ''; b.textContent = b.dataset.txt; }, 3000); return; } fn(); };
+
+async function vendas() {
+  const [st, t] = await Promise.all([api(`/tenants/${TENANT.id}/vendas-stats`), api(`/tenants/${TENANT.id}`)]);
+  const aviso = !t.vendas_ativo && !t.loja_ativa ? `<div class="card pad" style="margin-bottom:14px;border-color:var(--warn)">O agente de vendas está <b>desligado</b> para esta empresa. Ligue em <b>Configuração</b>, cadastre o catálogo e teste no Simulador.</div>`
+    : st.pagamento === 'teste' ? `<div class="card pad" style="margin-bottom:14px;border-color:var(--warn)">Pagamentos em <b>modo de teste</b>: os links abrem uma página simulada. Configure o Asaas para cobrar de verdade.</div>`
+    : st.pagamento === 'sem_conta' ? `<div class="card pad" style="margin-bottom:14px;border-color:var(--warn)">Esta empresa ainda não tem <b>conta Asaas</b>. A IA monta a proposta, mas o link de pagamento vira tarefa para a equipe. Cadastre a chave Asaas do cliente em Configuração.</div>` : '';
+  $('#view').innerHTML = `${aviso}
+    <div class="grid kpis" style="margin-bottom:14px">
+      <div class="card pad kpi"><div class="label">Vendido no mês</div><div class="value">${brl(st.vendido_mes.v)}</div><div class="muted">${st.vendido_mes.n} pagamento(s)</div></div>
+      <div class="card pad kpi"><div class="label">Propostas em aberto</div><div class="value">${brl(st.em_aberto.v)}</div><div class="muted">${st.em_aberto.n} proposta(s)</div></div>
+      <div class="card pad kpi"><div class="label">A receber</div><div class="value">${brl(st.a_receber.v)}</div><div class="muted">${st.a_receber.n} cobrança(s)</div></div>
+      <div class="card pad kpi"><div class="label">Aprovações</div><div class="value" style="${st.aguardando_aprovacao ? 'color:var(--warn)' : ''}">${st.aguardando_aprovacao}</div><div class="muted">aguardando você</div></div>
+      <div class="card pad kpi"><div class="label">Reuniões</div><div class="value">${st.reunioes_proximas}</div><div class="muted">próximas</div></div>
+      <div class="card pad kpi"><div class="label">Follow-ups</div><div class="value">${st.followups_pendentes}</div><div class="muted">programados</div></div>
+    </div>
+    <div class="row" style="margin-bottom:12px">${[['propostas','Propostas'],['pedidos','Pedidos da loja'],['cobrancas','Cobranças'],['agenda','Agenda'],['catalogo','Catálogo'],['loja','Loja (AvaShop)'],['config','Configuração']]
+      .map(([k, n]) => `<button class="btn small ${VTAB === k ? 'primary' : ''}" data-vt="${k}">${n}</button>`).join('')}</div>
+    <div id="vbody"></div>`;
+  document.querySelectorAll('[data-vt]').forEach((b) => (b.onclick = () => { VTAB = b.dataset.vt; vendas(); }));
+  await ({ propostas: vPropostas, pedidos: vPedidos, loja: vLoja, cobrancas: vCobrancas, agenda: vAgenda, catalogo: vCatalogo, config: () => vConfig(t) })[VTAB]();
+}
+
+async function vPropostas() {
+  const ps = await api(`/tenants/${TENANT.id}/proposals`);
+  $('#vbody').innerHTML = `<div class="card"><table><thead><tr><th>Nº</th><th>Cliente</th><th>Status</th><th>Total</th><th>Desconto</th><th>Validade</th><th></th></tr></thead><tbody>
+    ${ps.map((p) => `<tr><td>${p.numero}</td><td><b>${esc(p.contato_nome || p.telefone)}</b><div class="muted" style="font-size:12px">${JSON.parse(p.itens).map((i) => i.quantidade + '× ' + esc(i.nome)).join(', ')}</div></td>
+      <td><span class="pill ${p.status === 'paga' ? 'ativo' : p.status === 'aguardando_aprovacao' ? 'humano' : ''}">${PSTATUS[p.status] || p.status}</span>
+        ${p.motivo_aprovacao && p.status === 'aguardando_aprovacao' ? `<div class="muted" style="font-size:12px;max-width:260px">${esc(p.motivo_aprovacao)}</div>` : ''}</td>
+      <td><b>${brl2(p.total)}</b></td><td>${p.desconto_percentual ? p.desconto_percentual + '%' : '—'}</td><td>${dataLocal(p.validade)}</td>
+      <td style="white-space:nowrap"><a class="btn small" href="/proposta/${p.token}" target="_blank" rel="noopener">Ver</a>
+        ${p.status === 'aguardando_aprovacao' ? `<button class="btn small primary" data-apr="${p.id}">Aprovar</button> <button class="btn small danger" data-rec="${p.id}">Recusar</button>` : ''}
+        ${p.conv_id ? `<button class="btn small" data-conv="${p.conv_id}">Conversa</button>` : ''}</td></tr>`).join('')
+      || '<tr><td colspan="7" class="muted">Nenhuma proposta ainda. Com o agente ligado, a IA monta e envia as propostas sozinha.</td></tr>'}</tbody></table></div>
+    <p class="muted" style="font-size:12px">Dica: você também aprova pelo WhatsApp do responsável respondendo <b>APROVAR 12</b> ou <b>RECUSAR 12</b>.</p>`;
+  document.querySelectorAll('[data-apr]').forEach((b) => (b.onclick = async () => { await api(`/proposals/${b.dataset.apr}/aprovar`, { method:'POST', body:{ aprovado: true } }); toast('Aprovada e enviada ao cliente'); vendas(); }));
+  document.querySelectorAll('[data-rec]').forEach((b) => (b.onclick = () => twice(b, async () => { await api(`/proposals/${b.dataset.rec}/aprovar`, { method:'POST', body:{ aprovado: false } }); toast('Recusada; a IA avisou o cliente'); vendas(); })));
+  document.querySelectorAll('[data-conv]').forEach((b) => (b.onclick = () => { CONV = +b.dataset.conv; go('conversas'); }));
+}
+
+async function vCobrancas() {
+  const cs = await api(`/tenants/${TENANT.id}/charges`);
+  $('#vbody').innerHTML = `<div class="card"><table><thead><tr><th>Cliente</th><th>Descrição</th><th>Valor</th><th>Forma</th><th>Status</th><th>Data</th><th></th></tr></thead><tbody>
+    ${cs.map((c) => `<tr><td><b>${esc(c.contato_nome || c.telefone)}</b></td><td>${esc(c.descricao)}</td><td><b>${brl2(c.valor)}</b></td>
+      <td>${FORMA[c.forma]}${c.parcelas > 1 ? ' ' + c.parcelas + 'x' : ''}${c.gateway && c.gateway !== 'teste' ? `<div class="muted" style="font-size:12px">${{ asaas: 'Asaas', mercadopago: 'Mercado Pago', pagarme: 'Pagar.me', pix: 'Pix direto · confirmar pelo comprovante' }[c.gateway] || ''}</div>` : ''}</td>
+      <td><span class="pill ${c.status === 'pago' ? 'ativo' : c.status === 'vencido' ? 'humano' : ''}">${CSTATUS[c.status] || c.status}</span></td><td>${when(c.pago_em || c.criado_em)}</td>
+      <td style="white-space:nowrap">${c.pagamento_url ? `<a class="btn small" href="${esc(c.pagamento_url)}" target="_blank" rel="noopener">Link</a>` : ''}
+        ${c.status !== 'pago' ? `<button class="btn small" data-paid="${c.id}">Marcar como pago</button>` : ''}</td></tr>`).join('')
+      || '<tr><td colspan="7" class="muted">Nenhuma cobrança ainda.</td></tr>'}</tbody></table></div>
+    <p class="muted" style="font-size:12px">Com o Asaas configurado, o pagamento é confirmado sozinho. "Marcar como pago" é para pagamentos recebidos por fora.</p>`;
+  document.querySelectorAll('[data-paid]').forEach((b) => (b.onclick = () => twice(b, async () => { await api(`/charges/${b.dataset.paid}/confirmar`, { method:'POST' }); toast('Pagamento confirmado; cliente avisado'); vendas(); })));
+}
+
+async function vAgenda() {
+  const [as, livres] = await Promise.all([api(`/tenants/${TENANT.id}/appointments`), api(`/tenants/${TENANT.id}/horarios`)]);
+  $('#vbody').innerHTML = `<div class="grid" style="grid-template-columns:2fr 1fr;align-items:start">
+    <div class="card"><table><thead><tr><th>Quando</th><th>Cliente</th><th>Assunto</th><th>Status</th></tr></thead><tbody>
+    ${as.map((a) => `<tr><td><b>${dataLocal(a.inicio)}</b></td><td>${esc(a.contato_nome || a.telefone)}</td><td>${esc(a.assunto || '')}</td>
+      <td><select data-ap="${a.id}" style="width:auto">${['agendada','realizada','faltou','cancelada'].map((s) => `<option ${s === a.status ? 'selected' : ''}>${s}</option>`).join('')}</select></td></tr>`).join('')
+      || '<tr><td colspan="4" class="muted">Nenhuma reunião. A IA marca sozinha nos horários livres e manda lembrete na véspera e 1h antes.</td></tr>'}</tbody></table></div>
+    <div class="card pad"><b>Próximos horários livres</b><ul style="padding-left:18px;color:var(--muted)">${livres.map((h) => `<li>${esc(h.rotulo)}</li>`).join('') || '<li>Nenhum. Ajuste a agenda em Configuração.</li>'}</ul></div></div>`;
+  document.querySelectorAll('[data-ap]').forEach((s) => (s.onchange = async () => { await api(`/appointments/${s.dataset.ap}/status`, { method:'POST', body:{ status: s.value } }); toast('Reunião atualizada'); }));
+}
+
+async function vCatalogo() {
+  const ps = await api(`/tenants/${TENANT.id}/products`);
+  $('#vbody').innerHTML = `<div class="card pad" style="margin-bottom:14px"><b>Novo produto ou serviço</b>
+    <div class="grid" style="grid-template-columns:2fr 1fr 1fr 1fr;align-items:end">
+      <div><label>Nome</label><input id="p_nome" placeholder="Ex.: Caixa de papelão 30x20x15"></div>
+      <div><label>Preço de tabela (R$)</label><input id="p_preco" type="number" step="0.01"></div>
+      <div><label>Preço mínimo (R$, opcional)</label><input id="p_min" type="number" step="0.01"></div>
+      <div><label>Unidade</label><input id="p_un" value="un"></div></div>
+    <label>Descrição curta (o que a IA usa para recomendar)</label><input id="p_desc" placeholder="Ex.: Parede dupla, impressão em 1 cor, mínimo de 500 unidades">
+    <div class="row" style="margin-top:10px"><button class="btn primary" id="p_add">Adicionar</button></div></div>
+    <div class="card"><table><thead><tr><th>Produto</th><th>Preço</th><th>Mínimo</th><th>Unid.</th><th>Ativo</th><th></th></tr></thead><tbody>
+    ${ps.map((p) => `<tr><td><input data-f="nome" data-p="${p.id}" value="${esc(p.nome)}"><input data-f="descricao" data-p="${p.id}" value="${esc(p.descricao || '')}" placeholder="Descrição" style="margin-top:4px;font-size:12px"></td>
+      <td><input data-f="preco" data-p="${p.id}" type="number" step="0.01" value="${p.preco}" style="width:120px"></td>
+      <td><input data-f="preco_minimo" data-p="${p.id}" type="number" step="0.01" value="${p.preco_minimo ?? ''}" style="width:120px"></td>
+      <td><input data-f="unidade" data-p="${p.id}" value="${esc(p.unidade)}" style="width:70px"></td>
+      <td><input data-f="ativo" data-p="${p.id}" type="checkbox" ${p.ativo ? 'checked' : ''} style="width:auto"></td>
+      <td style="white-space:nowrap"><button class="btn small" data-plj="${p.id}">Fotos e opções</button> <button class="btn small danger" data-del="${p.id}">Excluir</button></td></tr>`).join('')
+      || '<tr><td colspan="6" class="muted">Catálogo vazio. A IA só monta proposta com produtos daqui (com preço).</td></tr>'}</tbody></table></div>
+    <p class="muted" style="font-size:12px">A IA nunca vende abaixo do preço mínimo sem pedir sua aprovação. As alterações são salvas ao sair do campo.</p>`;
+  $('#p_add').onclick = async () => {
+    try { await api(`/tenants/${TENANT.id}/products`, { method:'POST', body:{ nome: $('#p_nome').value.trim(), preco: $('#p_preco').value, preco_minimo: $('#p_min').value || null, unidade: $('#p_un').value || 'un', descricao: $('#p_desc').value } });
+      toast('Produto adicionado'); vCatalogo(); } catch (e) { toast(e.message); } };
+  document.querySelectorAll('[data-p]').forEach((el) => (el.onchange = async () => {
+    const v = el.type === 'checkbox' ? (el.checked ? 1 : 0) : el.value;
+    try { await api(`/products/${el.dataset.p}`, { method:'PUT', body:{ [el.dataset.f]: v } }); toast('Salvo'); } catch (e) { toast(e.message); } }));
+  document.querySelectorAll('[data-del]').forEach((b) => (b.onclick = () => twice(b, async () => { await api(`/products/${b.dataset.del}`, { method:'DELETE' }); vCatalogo(); })));
+  document.querySelectorAll('[data-plj]').forEach((b) => (b.onclick = () => produtoLojaModal(ps.find((x) => x.id === +b.dataset.plj))));
+}
+
+function vConfig(t) {
+  const dias = String(t.agenda_dias || '').split(',');
+  const f = (id, lbl, v, extra = '') => `<div><label>${lbl}</label><input id="v_${id}" value="${esc(v ?? '')}" ${extra}></div>`;
+  $('#vbody').innerHTML = `<div class="card pad" style="max-width:900px">
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <div><label>Agente de vendas</label><select id="v_vendas_ativo"><option value="0" ${!t.vendas_ativo ? 'selected' : ''}>Desligado (só atendimento)</option><option value="1" ${t.vendas_ativo ? 'selected' : ''}>Ligado: a IA vende do início ao pagamento</option></select></div>
+      <div><label>Follow-up automático</label><select id="v_cadencia_ativa"><option value="1" ${t.cadencia_ativa ? 'selected' : ''}>Ligado: retoma conversas, cobra propostas e pagamentos</option><option value="0" ${!t.cadencia_ativa ? 'selected' : ''}>Desligado</option></select></div>
+    </div>
+    <h3 style="margin:20px 0 4px;font-size:15px">Política comercial</h3>
+    <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+      ${f('desconto_max', 'Desconto que a IA dá sozinha (%)', t.desconto_max, 'type="number" step="0.5" min="0" max="50"')}
+      ${f('desconto_avista', 'Desconto extra à vista (%)', t.desconto_avista, 'type="number" step="0.5" min="0"')}
+      ${f('parcelas_max', 'Parcelas no cartão (máx.)', t.parcelas_max, 'type="number" min="1" max="21"')}
+      ${f('validade_proposta_dias', 'Validade da proposta (dias)', t.validade_proposta_dias, 'type="number" min="1"')}
+    </div>
+    ${f('condicoes_pagamento', 'Condições de pagamento (aparece na proposta)', t.condicoes_pagamento, 'placeholder="Ex.: 50% no pedido e 50% na entrega, ou à vista com 5% de desconto"')}
+    ${f('frete_info', 'Frete e entrega (como a IA calcula ou informa)', t.frete_info, 'placeholder="Ex.: Frete grátis para RJ; demais estados, cotação após o pedido"')}
+    <label>Mensagem após o pagamento (pós-venda)</label><textarea id="v_pos_venda_mensagem" style="min-height:60px" placeholder="Ex.: Seu pedido entra em produção hoje. Prazo de 20 dias úteis. Vou te avisar a cada etapa.">${esc(t.pos_venda_mensagem || '')}</textarea>
+    <h3 style="margin:20px 0 4px;font-size:15px">Agenda de reuniões</h3>
+    <label>Dias</label><div class="row">${['dom','seg','ter','qua','qui','sex','sáb'].map((d, i) => `<label style="margin:0;display:flex;gap:4px;align-items:center"><input type="checkbox" data-dia="${i}" ${dias.includes(String(i)) ? 'checked' : ''} style="width:auto">${d}</label>`).join('')}</div>
+    <div class="grid" style="grid-template-columns:repeat(4,1fr)">
+      ${f('agenda_inicio', 'Início', t.agenda_inicio, 'type="time"')}${f('agenda_fim', 'Fim', t.agenda_fim, 'type="time"')}
+      ${f('reuniao_minutos', 'Duração (min)', t.reuniao_minutos, 'type="number" min="10" step="5"')}${f('reuniao_local', 'Link ou endereço', t.reuniao_local, 'placeholder="https://meet.google.com/..."')}
+    </div>
+    <p class="muted" style="font-size:12px;margin-top:16px">Conta Asaas, e-mail e modelos do WhatsApp ficam em Configurações → Conexões.</p>
+    <div class="row" style="margin-top:18px"><button class="btn primary" id="v_save">Salvar</button></div></div>`;
+  $('#v_save').onclick = async () => {
+    const body = {};
+    ['vendas_ativo','cadencia_ativa','desconto_max','desconto_avista','parcelas_max','validade_proposta_dias','condicoes_pagamento','frete_info','pos_venda_mensagem',
+     'agenda_inicio','agenda_fim','reuniao_minutos','reuniao_local']
+      .forEach((k) => { const el = $('#v_' + k); if (el) body[k] = el.value; });
+    body.agenda_dias = [...document.querySelectorAll('[data-dia]')].filter((c) => c.checked).map((c) => c.dataset.dia).join(',') || '1,2,3,4,5';
+    try { const nt = await api(`/tenants/${TENANT.id}`, { method:'PUT', body }); Object.assign(TENANT, nt); toast('Configuração salva'); vendas(); } catch (e) { toast(e.message); }
+  };
+}
+
+// ---------- AvaShop: pedidos, loja e produto ----------
+const PEDST = { aguardando_pagamento:'Aguardando pagamento', pago:'Pago — separar', separando:'Separando', enviado:'Enviado', entregue:'Entregue', cancelado:'Cancelado' };
+async function vPedidos() {
+  const os = await api(`/tenants/${TENANT.id}/orders`);
+  const pend = os.filter((o) => o.status === 'pago').length;
+  $('#vbody').innerHTML = `${pend ? `<div class="card pad" style="margin-bottom:12px;border-color:var(--warn)"><b>${pend} pedido(s) pago(s) para separar e enviar.</b></div>` : ''}
+    <div class="card"><table><thead><tr><th>Nº</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Entrega</th><th>Situação</th><th></th></tr></thead><tbody>
+    ${os.map((o) => `<tr><td><b>${o.numero}</b><div class="muted" style="font-size:12px">${when(o.criado_em)}</div></td>
+      <td><b>${esc(o.cliente_nome || o.contato_nome || o.telefone)}</b><div class="muted" style="font-size:12px">${esc(o.telefone)}${o.endereco?.cidade ? ' · ' + esc(o.endereco.cidade + '/' + (o.endereco.uf || '')) : ''}</div></td>
+      <td style="font-size:13px">${o.itens.map((i) => `${i.quantidade}× ${esc(i.nome)}${i.variacao ? ' (' + esc(i.variacao) + ')' : ''}`).join('<br>')}</td>
+      <td><b>${brl2(o.total)}</b><div class="muted" style="font-size:12px">frete ${brl2(o.frete)}</div></td>
+      <td style="font-size:13px">${esc(o.entrega.nome || '')}${o.rastreio ? `<div><code>${esc(o.rastreio)}</code></div>` : ''}${o.me_order_id ? '<div class="muted" style="font-size:12px">etiqueta no Melhor Envio</div>' : ''}</td>
+      <td><select data-ost="${o.id}" style="width:auto" ${ME.pode.vender ? '' : 'disabled'}>${Object.entries(PEDST).map(([k, n]) => `<option value="${k}" ${k === o.status ? 'selected' : ''}>${n}</option>`).join('')}</select></td>
+      <td>${o.status === 'aguardando_pagamento' && o.pagamento_url ? `<a class="btn small" href="${esc(o.pagamento_url)}" target="_blank" rel="noopener">Link</a>` : ''}</td></tr>`).join('')
+      || '<tr><td colspan="7" class="muted">Nenhum pedido ainda. Quando a IA vender pela loja, os pedidos aparecem aqui.</td></tr>'}</tbody></table></div>
+    <p class="muted" style="font-size:12px">Ao mudar para "Enviado", "Entregue" ou "Cancelado", a IA avisa o cliente no WhatsApp. Com o Melhor Envio, o rastreio é atualizado sozinho.</p>`;
+  document.querySelectorAll('[data-ost]').forEach((s) => (s.onchange = async () => {
+    const body = { status: s.value };
+    if (s.value === 'enviado') { const r = prompt('Código de rastreio (opcional):') || ''; if (r) body.rastreio = r.trim(); }
+    try { await api(`/orders/${s.dataset.ost}/status`, { method:'POST', body }); toast('Pedido atualizado e cliente avisado'); vPedidos(); } catch (e) { toast(e.message); }
+  }));
+}
+
+async function vLoja() {
+  const L = await api(`/tenants/${TENANT.id}/loja`); const edit = ME.pode.configurar; const dono = ME.pode.conexoes;
+  const el = L.entrega_local || {}; const rm = L.remetente || {};
+  if (!L.plano_permite) { $('#vbody').innerHTML = '<div class="card pad">O AvaShop faz parte dos planos Profissional e Premium.</div>'; return; }
+  const f = (id, lbl, v, extra = '') => `<div><label>${lbl}</label><input id="lj_${id}" value="${esc(v ?? '')}" ${edit ? '' : 'disabled'} ${extra}></div>`;
+  $('#vbody').innerHTML = `<div class="card pad" style="max-width:900px">
+    <div class="row"><b style="font-size:16px;margin-right:auto">AvaShop — a IA vendendo seus produtos 24h</b>
+      <select id="lj_ativa" style="width:auto" ${edit ? '' : 'disabled'}><option value="0" ${!L.loja_ativa ? 'selected' : ''}>Loja desligada</option><option value="1" ${L.loja_ativa ? 'selected' : ''}>Loja ligada</option></select></div>
+    <p class="muted">Ligue a habilidade <b>Loja</b> em um agente (Configurações → Agentes). Cadastre fotos, opções e estoque em Catálogo.</p>
+    ${L.link ? `<p>Vitrine para divulgar no Instagram: <a href="${esc(L.link)}" target="_blank" rel="noopener">${esc(L.link)}</a></p>` : ''}
+    <div class="grid" style="grid-template-columns:1fr 2fr">${f('slug', 'Endereço da vitrine (/loja/...)', L.loja_slug)}${f('desc', 'Frase da vitrine', L.loja_descricao, 'placeholder="Moda feminina com entrega para todo o Brasil"')}</div>
+    <h3 style="font-size:15px;margin:22px 0 0">Entrega</h3>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr)">${f('cep', 'CEP de onde sai o produto', L.cep_origem)}${f('gratis', 'Frete grátis acima de (R$)', L.frete_gratis_acima, 'type="number" step="0.01"')}${f('retirada', 'Endereço para retirada (opcional)', L.retirada_endereco)}</div>
+    <div class="grid" style="grid-template-columns:2fr 1fr 1fr 1fr">${f('el_ceps', 'Entrega própria: começo dos CEPs atendidos', el.ceps, 'placeholder="25850, 25851"')}${f('el_taxa', 'Taxa (R$)', el.taxa, 'type="number" step="0.01"')}${f('el_prazo', 'Prazo', el.prazo, 'placeholder="hoje até 18h"')}${f('el_nome', 'Nome', el.nome || 'Entrega própria')}</div>
+    <h3 style="font-size:15px;margin:22px 0 0">Melhor Envio (Correios e transportadoras)</h3>
+    <p class="muted" style="margin:4px 0 0">Crie a conta em melhorenvio.com.br e gere um token em Integrações → Permissões de acesso. A IA calcula o frete na hora e, quando o pedido é pago, a etiqueta vai para o seu carrinho no Melhor Envio.</p>
+    ${dono ? `<div class="grid" style="grid-template-columns:2fr 1fr 1fr">${f('me_tok', `Token ${L.melhorenvio_configurado ? '(conectado — vazio mantém)' : ''}`, '', 'type="password" autocomplete="off"')}
+      <div><label>Ambiente</label><select id="lj_me_sb"><option value="0" ${!L.melhorenvio_sandbox ? 'selected' : ''}>Produção</option><option value="1" ${L.melhorenvio_sandbox ? 'selected' : ''}>Teste (sandbox)</option></select></div>
+      <div><label>Etiqueta</label><select id="lj_auto"><option value="0" ${!L.etiqueta_automatica ? 'selected' : ''}>Só colocar no carrinho</option><option value="1" ${L.etiqueta_automatica ? 'selected' : ''}>Comprar e gerar sozinha</option></select></div></div>
+      <label>Remetente (vai na etiqueta)</label><div class="grid" style="grid-template-columns:2fr 1fr 1fr">${f('r_nome', 'Nome', rm.nome)}${f('r_tel', 'Telefone', rm.telefone)}${f('r_doc', 'CPF ou CNPJ', rm.cnpj || rm.cpf)}</div>
+      <div class="grid" style="grid-template-columns:2fr 1fr 1fr 1.4fr 1.4fr .6fr">${f('r_rua', 'Rua', rm.rua)}${f('r_num', 'Número', rm.numero)}${f('r_comp', 'Compl.', rm.complemento)}${f('r_bairro', 'Bairro', rm.bairro)}${f('r_cidade', 'Cidade', rm.cidade)}${f('r_uf', 'UF', rm.uf)}</div>`
+      : `<p class="muted">${L.melhorenvio_configurado ? 'Melhor Envio conectado.' : 'Só o dono conecta o Melhor Envio.'}</p>`}
+    <div class="row" style="margin-top:18px">${edit ? '<button class="btn primary" id="lj_save">Salvar loja</button>' : ''}
+      <input id="lj_cep_teste" placeholder="CEP para testar o frete" style="max-width:200px"><button class="btn" id="lj_teste">Testar frete</button></div>
+    <div id="lj_res" class="muted" style="margin-top:8px"></div></div>`;
+  const v = (id) => $('#lj_' + id)?.value?.trim() ?? '';
+  if ($('#lj_save')) $('#lj_save').onclick = async () => {
+    const doc = v('r_doc').replace(/\D/g, '');
+    const body = { loja_ativa: v('ativa') === '1', loja_slug: v('slug'), loja_descricao: v('desc'), cep_origem: v('cep'), frete_gratis_acima: v('gratis'), retirada_endereco: v('retirada'),
+      entrega_local: v('el_ceps') ? { ceps: v('el_ceps'), taxa: v('el_taxa'), prazo: v('el_prazo'), nome: v('el_nome') } : null };
+    if (dono) Object.assign(body, { melhorenvio_sandbox: v('me_sb') === '1', etiqueta_automatica: v('auto') === '1',
+      remetente: { nome: v('r_nome'), telefone: v('r_tel'), [doc.length === 14 ? 'cnpj' : 'cpf']: doc || undefined, rua: v('r_rua'), numero: v('r_num'), complemento: v('r_comp'), bairro: v('r_bairro'), cidade: v('r_cidade'), uf: v('r_uf') } },
+      v('me_tok') ? { melhorenvio_token: v('me_tok') } : {});
+    try { await api(`/tenants/${TENANT.id}/loja`, { method:'PUT', body }); toast('Loja salva'); vLoja(); } catch (e) { toast(e.message); }
+  };
+  $('#lj_teste').onclick = async () => { try { const ops = await api(`/tenants/${TENANT.id}/loja/frete-teste`, { method:'POST', body:{ cep: v('cep_teste') } });
+    $('#lj_res').innerHTML = ops.map((o) => `${esc(o.nome)}: <b>${o.preco ? brl2(o.preco) : 'grátis'}</b> (${esc(o.prazo)})`).join(' · '); } catch (e) { $('#lj_res').textContent = e.message; } };
+}
+
+// Redimensiona a foto no navegador antes de enviar (máx. 1200 px, JPEG).
+function reduzirFoto(file) {
+  return new Promise((ok, falha) => { const img = new Image(); const url = URL.createObjectURL(file);
+    img.onload = () => { const k = Math.min(1, 1200 / Math.max(img.width, img.height)); const c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); ok(c.toDataURL('image/jpeg', 0.82)); };
+    img.onerror = () => falha(new Error('Imagem inválida')); img.src = url; });
+}
+async function produtoLojaModal(p) {
+  const fotos = await api(`/products/${p.id}/fotos`);
+  const J = (x, d) => { try { return JSON.parse(x || '') ?? d; } catch { return d; } };
+  let atrs = J(p.atributos, []); let vars = J(p.variacoes, []);
+  if (!atrs.length && vars.length && !vars[0].opcoes) atrs = [{ nome: 'Opção', opcoes: vars.map((v) => v.nome) }]; // cadastro antigo (lista simples)
+  if (!atrs.length && vars.length && vars[0].opcoes) atrs = Object.keys(vars[0].opcoes).map((k) => ({ nome: k, opcoes: [...new Set(vars.map((v) => v.opcoes[k]))] }));
+  const m = openModal(`<h2>${esc(p.nome)}</h2><p class="muted" style="margin-top:0">Fotos, variações e estoque para a IA vender pelo WhatsApp.</p>
+    <label>Fotos (até 6)</label><div class="row" id="pf">${fotos.map((f, i) => `<div style="position:relative;text-align:center"><img src="${f.url}" style="width:78px;height:78px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">
+      <div class="muted" style="font-size:11px">Foto ${i + 1}</div><button class="btn small danger" data-rmf="${f.id}" style="position:absolute;top:2px;right:2px;padding:0 6px">×</button></div>`).join('')}
+      <label class="btn small" style="margin:0;cursor:pointer">+ Foto<input type="file" accept="image/*" id="pf_in" multiple style="display:none"></label></div>
+    <div class="grid" style="grid-template-columns:1fr 1fr 1fr 1fr"><div><label>Categoria</label><input id="pl_cat" value="${esc(p.categoria || '')}"></div>
+      <div><label>Preço promocional (R$)</label><input id="pl_promo" type="number" step="0.01" value="${p.preco_promocional ?? ''}" placeholder="de ${brl2(p.preco)} por..."></div>
+      <div><label>SKU / código</label><input id="pl_sku" value="${esc(p.sku || '')}"></div>
+      <div><label>Estoque (sem variações)</label><input id="pl_est" type="number" min="0" value="${p.estoque ?? ''}" placeholder="vazio = não controlar"></div></div>
+    <h3 style="font-size:15px;margin:20px 0 2px">Variações</h3>
+    <p class="muted" style="margin:0">Até 3 atributos (ex.: <b>Cor</b>: Azul, Preto · <b>Tamanho</b>: P, M, G · <b>Modelo</b>: Básico, Pro). Cada combinação pode ter preço, promoção, estoque, código, peso e foto próprios.</p>
+    <div id="atrs"></div>
+    <div class="row" style="margin-top:8px"><button class="btn small" id="at_add">+ Atributo</button><button class="btn small primary" id="at_gerar">Gerar combinações</button></div>
+    <div id="mx" style="margin-top:12px;overflow-x:auto"></div>
+    <label>Embalagem para o frete (padrão: 300 g, 16×11×5 cm)</label>
+    <div class="grid" style="grid-template-columns:repeat(4,1fr)"><input id="pl_peso" placeholder="peso (g)" value="${p.peso_g ?? ''}"><input id="pl_alt" placeholder="altura (cm)" value="${p.altura_cm ?? ''}">
+      <input id="pl_lar" placeholder="largura (cm)" value="${p.largura_cm ?? ''}"><input id="pl_com" placeholder="compr. (cm)" value="${p.comprimento_cm ?? ''}"></div>
+    <div class="row" style="margin-top:16px"><button class="btn primary" id="pl_save">Salvar produto</button><span class="muted" id="pl_info"></span></div>`);
+  m.querySelector('.modal').style.width = 'min(920px,100%)';
+  const desenharAtributos = () => {
+    $('#atrs', m).innerHTML = atrs.map((a, i) => `<div class="grid" style="grid-template-columns:1fr 3fr auto;align-items:end;margin-top:6px">
+      <div><label>Atributo</label><input data-an="${i}" value="${esc(a.nome)}" placeholder="Cor"></div>
+      <div><label>Opções (separe por vírgula)</label><input data-ao="${i}" value="${esc(a.opcoes.join(', '))}" placeholder="Azul, Preto, Branco"></div>
+      <button class="btn small danger" data-ar="${i}">Remover</button></div>`).join('') || '<p class="muted" style="margin:8px 0 0">Sem variações: o produto tem um preço e um estoque só.</p>';
+    m.querySelectorAll('[data-an]').forEach((el) => (el.oninput = () => (atrs[+el.dataset.an].nome = el.value.trim())));
+    m.querySelectorAll('[data-ao]').forEach((el) => (el.oninput = () => (atrs[+el.dataset.ao].opcoes = el.value.split(',').map((x) => x.trim()).filter(Boolean))));
+    m.querySelectorAll('[data-ar]').forEach((b) => (b.onclick = () => { atrs.splice(+b.dataset.ar, 1); desenharAtributos(); }));
+  };
+  const lerMatriz = () => [...m.querySelectorAll('tr[data-v]')].map((tr) => { const g = (k) => tr.querySelector(`[data-k="${k}"]`);
+    return { nome: tr.dataset.v, opcoes: J(tr.dataset.o, null), preco: g('preco').value, preco_promocional: g('promo').value, estoque: g('est').value, sku: g('sku').value,
+      peso_g: g('peso').value, foto_id: g('foto').value || null, ativo: g('ativo').checked }; });
+  const desenharMatriz = () => {
+    if (!vars.length) { $('#mx', m).innerHTML = ''; return; }
+    $('#mx', m).innerHTML = `<div class="row" style="margin-bottom:6px;font-size:13px">Preencher todas:
+      <input id="bk_preco" type="number" step="0.01" placeholder="preço" style="width:100px"><input id="bk_est" type="number" placeholder="estoque" style="width:90px">
+      <button class="btn small" id="bk_ok">Aplicar</button><span class="muted">${vars.length} combinações</span></div>
+      <table style="font-size:13px"><thead><tr><th>Combinação</th><th>Preço</th><th>Promoção</th><th>Estoque</th><th>SKU</th><th>Peso (g)</th><th>Foto</th><th>Ativa</th></tr></thead><tbody>
+      ${vars.map((v) => `<tr data-v="${esc(v.nome)}" data-o="${esc(JSON.stringify(v.opcoes || null))}"><td><b>${esc(v.nome)}</b></td>
+        <td><input data-k="preco" type="number" step="0.01" value="${v.preco ?? ''}" placeholder="${p.preco}" style="width:90px"></td>
+        <td><input data-k="promo" type="number" step="0.01" value="${v.preco_promocional ?? ''}" style="width:90px"></td>
+        <td><input data-k="est" type="number" min="0" value="${v.estoque ?? ''}" placeholder="∞" style="width:70px"></td>
+        <td><input data-k="sku" value="${esc(v.sku || '')}" style="width:100px"></td>
+        <td><input data-k="peso" type="number" value="${v.peso_g ?? ''}" style="width:70px"></td>
+        <td><select data-k="foto" style="width:auto"><option value="">—</option>${fotos.map((f, i) => `<option value="${f.id}" ${Number(v.foto_id) === f.id ? 'selected' : ''}>Foto ${i + 1}</option>`).join('')}</select></td>
+        <td><input data-k="ativo" type="checkbox" ${v.ativo !== false ? 'checked' : ''} style="width:auto"></td></tr>`).join('')}</tbody></table>`;
+    $('#bk_ok', m).onclick = () => { const pr = $('#bk_preco', m).value, es = $('#bk_est', m).value;
+      m.querySelectorAll('tr[data-v]').forEach((tr) => { if (pr) tr.querySelector('[data-k="preco"]').value = pr; if (es !== '') tr.querySelector('[data-k="est"]').value = es; }); };
+  };
+  desenharAtributos(); desenharMatriz();
+  $('#at_add', m).onclick = () => { if (atrs.length >= 3) return toast('Até 3 atributos'); atrs.push({ nome: '', opcoes: [] }); desenharAtributos(); };
+  $('#at_gerar', m).onclick = () => {
+    const validos = atrs.filter((a) => a.nome && a.opcoes.length);
+    const atuais = Object.fromEntries((m.querySelector('tr[data-v]') ? lerMatriz() : vars).map((v) => [v.nome, v]));
+    let combos = [{}];
+    for (const a of validos) combos = combos.flatMap((c) => a.opcoes.map((o) => ({ ...c, [a.nome]: o })));
+    if (combos.length > 300) return toast('Mais de 300 combinações. Reduza as opções.');
+    const antigos = Object.values(atuais);
+    // Mantém o que já foi preenchido; ao acrescentar um atributo, herda preço, promoção, peso e foto da combinação "mãe".
+    const herdar = (op) => { const mae = antigos.find((v) => v.opcoes && Object.entries(v.opcoes).every(([k, x]) => op[k] === x));
+      return mae ? { preco: mae.preco, preco_promocional: mae.preco_promocional, peso_g: mae.peso_g, foto_id: mae.foto_id } : {}; };
+    vars = validos.length ? combos.map((op) => { const nome = Object.values(op).join(' / '); return { ...(atuais[nome] || herdar(op)), nome, opcoes: op }; }) : [];
+    desenharMatriz(); $('#pl_info', m).textContent = vars.length ? `${vars.length} combinações geradas. Preencha e salve.` : '';
+  };
+  $('#pf_in', m).onchange = async (e) => { for (const file of e.target.files) { try { await api(`/products/${p.id}/fotos`, { method:'POST', body:{ dados: await reduzirFoto(file) } }); } catch (er) { toast(er.message); } }
+    m.remove(); produtoLojaModal(p); };
+  m.querySelectorAll('[data-rmf]').forEach((b) => (b.onclick = async () => { await api(`/fotos/${b.dataset.rmf}`, { method:'DELETE' }); m.remove(); produtoLojaModal(p); }));
+  $('#pl_save', m).onclick = async () => {
+    const variacoes = m.querySelector('tr[data-v]') ? lerMatriz() : vars;
+    const atributos = atrs.filter((a) => a.nome && a.opcoes.length);
+    try { const np = await api(`/products/${p.id}/loja`, { method:'PUT', body:{ categoria: $('#pl_cat', m).value, preco_promocional: $('#pl_promo', m).value, sku: $('#pl_sku', m).value,
+      estoque: $('#pl_est', m).value, atributos, variacoes, peso_g: $('#pl_peso', m).value, altura_cm: $('#pl_alt', m).value, largura_cm: $('#pl_lar', m).value, comprimento_cm: $('#pl_com', m).value } });
+      Object.assign(p, np); toast('Produto salvo'); m.remove(); if (VIEW === 'vendas') vendas(); } catch (e) { toast(e.message); } };
+}
+
 // ---------- Tarefas ----------
 async function tarefas() {
   const ts = await api(`/tenants/${TENANT.id}/tasks`); const t = today();
@@ -430,20 +874,26 @@ async function tarefas() {
 }
 
 // ---------- Simulador ----------
+let SIM_AGENT = null;
 async function simulador() {
+  const ags = await api(`/tenants/${TENANT.id}/agents`).catch(() => []);
   const phone = 'sim-' + (store.get('ava_sim') || (() => { const v = Math.random().toString(36).slice(2, 8); store.set('ava_sim', v); return v; })());
   $('#view').innerHTML = `<div class="card thread" style="max-width:640px;height:calc(100vh - 110px);min-height:420px">
     <div class="head row"><div style="margin-right:auto"><b>Teste como se fosse um cliente</b><div class="muted" style="font-size:12px">${esc(TENANT.nome)} · nada é enviado ao WhatsApp</div></div>
+    ${ags.length > 1 ? `<select id="simAg" style="width:auto">${ags.map((a) => `<option value="${a.id}" ${a.id === SIM_AGENT ? 'selected' : ''}>${esc(a.nome)} · ${esc(a.funcao)}</option>`).join('')}</select>` : ''}
     <button class="btn small" id="reset">Nova conversa</button></div>
     <div class="msgs" id="smsgs"></div>
-    <div class="composer"><textarea id="stext" placeholder="Ex.: Olá, quanto custa uma rampa niveladora?"></textarea><button class="btn primary" id="ssend">Enviar</button></div></div>`;
+    <div class="composer"><textarea id="stext" placeholder="Ex.: Olá, quanto custa 1.000 caixas personalizadas?"></textarea><button class="btn primary" id="ssend">Enviar</button></div></div>`;
   const box = $('#smsgs');
   const add = (who, t, cls) => { box.insertAdjacentHTML('beforeend', `<div class="msg ${cls}"><div class="who">${who}</div>${esc(t)}</div>`); box.scrollTop = box.scrollHeight; };
   const send = async () => {
     const t = $('#stext').value.trim(); if (!t) return; $('#stext').value = ''; add('Você', t, 'cliente');
-    try { const r = await api(`/tenants/${TENANT.id}/simulate`, { method:'POST', body:{ texto: t, telefone: phone, nome: 'Cliente teste' } });
-      (r.ferramentas || []).forEach((f) => add('Sistema', f.nome === 'registrar_lead' ? `Lead registrado no CRM: ${f.input.interesse || ''}`
-        : f.nome === 'agendar_retorno' ? `Tarefa de retorno criada${f.input.data ? ' para ' + f.input.data : ''}: ${f.input.motivo}` : `Transferido para humano: ${f.input.motivo}`, 'sistema'));
+    try { const r = await api(`/tenants/${TENANT.id}/simulate`, { method:'POST', body:{ texto: t, telefone: phone, nome: 'Cliente teste', agent_id: $('#simAg')?.value || SIM_AGENT || null } });
+      const ROT = { registrar_lead: (i) => `Lead registrado no CRM: ${i.interesse || ''}`, agendar_retorno: (i) => `Retorno agendado${i.data ? ' para ' + i.data : ''}: ${i.motivo}`,
+        transferir_humano: (i) => `Transferido para humano: ${i.motivo}`, iniciar_diagnostico: () => 'Diagnóstico iniciado', criar_proposta: (i) => `Proposta montada${i.desconto_percentual ? ' com ' + i.desconto_percentual + '% de desconto' : ''}`,
+        gerar_cobranca: (i) => `Cobrança gerada (${i.forma}${i.parcelas > 1 ? ' ' + i.parcelas + 'x' : ''})`, consultar_horarios: () => 'Agenda consultada', agendar_reuniao: (i) => `Reunião marcada: ${i.data_hora}`,
+        enviar_email: (i) => `E-mail enviado: ${i.assunto}`, registrar_perda: (i) => `Perda registrada: ${i.motivo}` };
+      (r.ferramentas || []).forEach((f) => add('Sistema', (ROT[f.nome] || (() => f.nome))(f.input || {}), 'sistema'));
       r.respostas.forEach((x) => add(TENANT.nome_assistente || 'AVA', x, 'ia'));
       if (!r.respostas.length && r.status === 'humano') add('Sistema', 'Conversa com atendente humano: a IA não responde. Responda pela aba Conversas.', 'sistema');
     } catch (e) { add('Sistema', e.message, 'sistema'); }
@@ -453,55 +903,634 @@ async function simulador() {
 }
 
 // ---------- Configurar IA (empresa) ----------
-async function empresa() {
+async function cfgEmpresa() {
   const t = await api(`/tenants/${TENANT.id}`);
   const lim = t.plano_info.limite_base_conhecimento;
-  $('#view').innerHTML = `<div class="card pad" style="max-width:860px">
+  $('#cbody').innerHTML = `<div class="card pad" style="max-width:860px">
     <div class="grid" style="grid-template-columns:1fr 1fr">
       <div><label>Nome da empresa</label><input id="f_nome" value="${esc(t.nome)}"></div>
-      <div><label>Nome da assistente</label><input id="f_nome_assistente" value="${esc(t.nome_assistente)}"></div>
+      <div><label>Nome padrão da assistente (os agentes têm nome próprio)</label><input id="f_nome_assistente" value="${esc(t.nome_assistente)}"></div>
       <div><label>Horário de atendimento humano</label><input id="f_horario_atendimento" value="${esc(t.horario_atendimento)}"></div>
       <div><label>WhatsApp do responsável (aviso de transbordo, com DDI)</label><input id="f_telefone_responsavel" value="${esc(t.telefone_responsavel || '')}" placeholder="5524999999999"></div>
     </div>
     <label>Como a IA deve se comportar</label>
-    <textarea id="f_persona" placeholder="Ex.: Somos fabricantes de equipamentos de movimentação de carga. Atenda de forma consultiva, pergunte a altura da doca e a capacidade de carga antes de falar em modelo.">${esc(t.persona)}</textarea>
+    <textarea id="f_persona" placeholder="Ex.: Somos fabricantes de embalagens. Atenda de forma consultiva: pergunte a medida, a quantidade e se tem impressão antes de falar em preço.">${esc(t.persona)}</textarea>
     <label>Base de conhecimento (produtos, preços, prazos, formas de pagamento, perguntas frequentes) <span id="cnt"></span></label>
     <textarea id="f_base_conhecimento" style="min-height:240px">${esc(t.base_conhecimento)}</textarea>
-    ${ME.admin ? `<h3 style="margin:22px 0 4px;font-size:15px">Conexão WhatsApp e contrato</h3>
+    <h3 style="margin:22px 0 4px;font-size:15px">Funil de diagnóstico e consultoria</h3>
+    ${ME.admin ? `<div class="grid" style="grid-template-columns:1fr 1fr">
+      <div><label>Diagnóstico Empresarial</label><select id="f_diagnostico_ativo"><option value="0" ${!t.diagnostico_ativo ? 'selected' : ''}>Desativado</option><option value="1" ${t.diagnostico_ativo ? 'selected' : ''}>Ativo: a IA oferece e aplica</option></select></div>
+      <div><label>Preço do relatório completo (R$)</label><input id="f_diagnostico_preco" type="number" step="1" value="${t.diagnostico_preco ?? 297}"></div>
+      <div><label>Modelo aprovado na Meta para o contato D+1</label><input id="f_wa_template_followup" value="${esc(t.wa_template_followup || '')}" placeholder="ex.: avantte_followup_consultoria"></div>
+    </div>` : ''}
+    <label>Link da agenda para a reunião gratuita</label><input id="f_link_agendamento" value="${esc(t.link_agendamento || '')}" placeholder="https://calendar.app.google/...">
+    <label>Como a IA apresenta a consultoria</label><textarea id="f_consultoria_descricao" style="min-height:70px" placeholder="Ex.: A consultoria Avantte executa o plano de melhorias junto com o empresário, com reuniões quinzenais e acompanhamento mensal dos indicadores.">${esc(t.consultoria_descricao || '')}</textarea>
+    ${ME.admin ? `<h3 style="margin:22px 0 4px;font-size:15px">Contrato (plataforma)</h3>
     <div class="grid" style="grid-template-columns:1fr 1fr">
       <div><label>Plano</label><select id="f_plano">${['essencial','profissional','premium'].map((p) => `<option ${p === t.plano ? 'selected' : ''}>${p}</option>`).join('')}</select></div>
       <div><label>Status</label><select id="f_status">${['ativo','pausado','cancelado'].map((p) => `<option ${p === t.status ? 'selected' : ''}>${p}</option>`).join('')}</select></div>
-      <div><label>Phone Number ID (Meta)</label><input id="f_wa_phone_number_id" value="${esc(t.wa_phone_number_id || '')}"></div>
-      <div><label>Token de acesso Meta ${t.wa_token_configurado ? '(configurado — deixe vazio para manter)' : ''}</label><input id="f_wa_token" type="password"></div>
     </div>
     <label>Token do painel do cliente</label><div class="row"><code>${esc(t.painel_token)}</code><button class="btn small" id="rot">Gerar novo</button></div>` : ''}
     <div class="row" style="margin-top:18px"><button class="btn primary" id="save">Salvar</button><span class="muted" style="font-size:12px">Uso do mês: ${t.uso.conversas} de ${t.plano_info.conversas_mes} conversas (plano ${esc(t.plano_info.nome)})</span></div></div>`;
   const kb = $('#f_base_conhecimento'); const cnt = () => ($('#cnt').textContent = `· ${kb.value.length.toLocaleString('pt-BR')} / ${lim.toLocaleString('pt-BR')}`); kb.oninput = cnt; cnt();
   $('#save').onclick = async () => {
-    const body = {}; ['nome','nome_assistente','horario_atendimento','telefone_responsavel','persona','base_conhecimento','plano','status','wa_phone_number_id','wa_token']
-      .forEach((f) => { const el = $('#f_' + f); if (el && !(f === 'wa_token' && !el.value)) body[f] = el.value; });
+    const body = {}; ['nome','nome_assistente','horario_atendimento','telefone_responsavel','persona','base_conhecimento','plano','status','wa_phone_number_id','wa_token','diagnostico_ativo','diagnostico_preco','wa_template_followup','link_agendamento','consultoria_descricao']
+      .forEach((f) => { const el = $('#f_' + f); if (el && !(f === 'wa_token' && !el.value)) body[f] = ['diagnostico_ativo','diagnostico_preco'].includes(f) ? Number(el.value) : el.value; });
     try { await api(`/tenants/${TENANT.id}`, { method:'PUT', body }); toast('Configuração salva'); await loadTenants(); } catch (e) { toast(e.message); }
   };
-  if ($('#rot')) $('#rot').onclick = async () => { await api(`/tenants/${TENANT.id}/rotate-token`, { method:'POST' }); empresa(); };
+  if ($('#rot')) $('#rot').onclick = async () => { await api(`/tenants/${TENANT.id}/rotate-token`, { method:'POST' }); cfgEmpresa(); };
 }
 
 // ---------- Empresas (admin) ----------
-async function empresas() {
-  const list = await api('/tenants');
-  $('#view').innerHTML = `<div class="card pad" style="margin-bottom:14px"><div class="row">
-      <input id="n_nome" placeholder="Nome da nova empresa" style="max-width:320px">
-      <select id="n_plano" style="width:auto"><option>essencial</option><option>profissional</option><option>premium</option></select>
-      <button class="btn primary" id="add">Cadastrar empresa</button></div></div>
-    <div class="card"><table><thead><tr><th>Empresa</th><th>Plano</th><th>Status</th><th>WhatsApp</th><th>Conversas no mês</th></tr></thead><tbody>
-    ${list.map((t) => `<tr class="click" data-id="${t.id}"><td><b>${esc(t.nome)}</b><div class="muted" style="font-size:12px">desde ${when(t.criado_em)}</div></td><td>${t.plano}</td>
-      <td><span class="pill ${t.status}">${t.status}</span></td><td>${t.wa_phone_number_id ? 'Conectado' : '<span class="muted">Não conectado</span>'}</td><td>${t.uso.conversas} / ${t.limite}</td></tr>`).join('')
-      || '<tr><td colspan="5" class="muted">Nenhuma empresa ainda.</td></tr>'}</tbody></table></div>`;
-  $('#add').onclick = async () => {
-    const nome = $('#n_nome').value.trim(); if (!nome) return toast('Informe o nome');
-    const t = await api('/tenants', { method:'POST', body:{ nome, plano: $('#n_plano').value } });
-    await loadTenants(); TENANT = (await api('/tenants')).find((x) => x.id === t.id); $('#tenantSel').value = t.id; toast('Empresa cadastrada'); go('empresa');
+// ---------- Conectar WhatsApp pela Meta (Cadastro incorporado) ----------
+let META = null;
+async function metaCfg() { if (!META) META = await api('/meta/config').catch(() => ({ ativo: false })); return META; }
+function carregarFB(cfg) {
+  return new Promise((ok, falha) => {
+    if (window.FB) return ok();
+    window.fbAsyncInit = () => { FB.init({ appId: cfg.app_id, autoLogAppEvents: true, xfbml: false, version: cfg.versao }); ok(); };
+    const s = document.createElement('script'); s.src = 'https://connect.facebook.net/pt_BR/sdk.js'; s.async = true; s.crossOrigin = 'anonymous';
+    s.onerror = () => falha(new Error('Não foi possível abrir o Facebook. Verifique bloqueadores de anúncio.')); document.body.appendChild(s);
+  });
+}
+async function conectarWhatsAppMeta({ agentId = null, coexistencia = false, nome = 'Principal' } = {}) {
+  const cfg = await metaCfg(); if (!cfg.ativo) throw new Error('Conexão pela Meta ainda não disponível. Use a conexão manual.');
+  await carregarFB(cfg);
+  return new Promise((resolve, reject) => {
+    let sessao = null, code = null, done = false;
+    const sair = () => window.removeEventListener('message', ouvir);
+    const fim = async () => { if (done || !code || !sessao) return; done = true; sair();
+      try { resolve(await api(`/tenants/${TENANT.id}/numbers/meta`, { method:'POST', body:{ code, phone_number_id: sessao.phone_number_id, waba_id: sessao.waba_id, coexistencia, agent_id: agentId, nome } })); }
+      catch (e) { reject(e); } };
+    function ouvir(ev) {
+      let host = ''; try { host = new URL(ev.origin).hostname; } catch {} if (!/(^|\.)facebook\.com$/.test(host)) return;
+      let d; try { d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data; } catch { return; }
+      if (d?.type !== 'WA_EMBEDDED_SIGNUP') return;
+      if (String(d.event).startsWith('FINISH')) { sessao = d.data || {}; fim(); }
+      else if (d.event === 'CANCEL' && !done) { done = true; sair(); reject(new Error('Conexão cancelada' + (d.data?.current_step ? ` (etapa: ${d.data.current_step})` : ''))); }
+    }
+    window.addEventListener('message', ouvir);
+    FB.login((resp) => {
+      if (resp.authResponse?.code) { code = resp.authResponse.code; fim(); setTimeout(() => { if (!done && !sessao) { sessao = {}; fim(); } }, 4000); }
+      else if (!done) { done = true; sair(); reject(new Error('Conexão não concluída')); }
+    }, { config_id: cfg.config_id, response_type: 'code', override_default_response_type: true,
+      extras: { setup: {}, featureType: coexistencia ? 'whatsapp_business_app_onboarding' : '', sessionInfoVersion: '3' } });
+  });
+}
+function blocoMeta(id, ativo) {
+  return ativo ? `<div class="card pad" style="background:linear-gradient(90deg,rgba(31,111,255,.08),rgba(18,216,196,.10));border-color:transparent;margin-bottom:12px">
+    <b style="font-size:15px">Conecte em 2 minutos com o Facebook</b>
+    <p class="muted" style="margin:4px 0 10px">Entre com o Facebook da empresa, escolha (ou crie) a conta do WhatsApp Business e confirme o número com o código SMS. Nós cuidamos do resto.</p>
+    <label style="display:flex;gap:8px;align-items:center;margin:0 0 10px;color:var(--ink)"><input type="checkbox" id="${id}_coex" style="width:auto">Esse número já usa o app WhatsApp Business no celular (manter o app funcionando junto)</label>
+    <button class="btn primary" id="${id}_btn" style="background:#1877f2">Conectar WhatsApp com o Facebook</button> <span id="${id}_msg" class="muted"></span></div>` : '';
+}
+function ligarBlocoMeta(id, aoConectar, agentId = null) {
+  const b = $('#' + id + '_btn'); if (!b) return;
+  b.onclick = async () => { b.disabled = true; $('#' + id + '_msg').textContent = 'Abrindo o Facebook...';
+    try { const r = await conectarWhatsAppMeta({ agentId, coexistencia: $('#' + id + '_coex').checked });
+      toast(`WhatsApp conectado: ${r.telefone || r.phone_number_id}`); await aoConectar(r); }
+    catch (e) { $('#' + id + '_msg').textContent = e.message; } finally { b.disabled = false; } };
+}
+
+// ---------- Bloqueio por inadimplência: trava o painel inteiro até o pagamento ----------
+let BLOQ_ABERTO = false;
+async function telaBloqueio() {
+  if (BLOQ_ABERTO || !TENANT) return; BLOQ_ABERTO = true;
+  const sx = await api(`/tenants/${TENANT.id}/situacao`).catch(() => ({}));
+  const d = document.createElement('div');
+  d.setAttribute('role', 'alertdialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-labelledby', 'bloqTit');
+  d.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(6,17,42,.92);display:flex;align-items:center;justify-content:center;padding:20px';
+  d.innerHTML = `<div class="card pad" style="max-width:460px;text-align:center"><div style="font-size:34px">🔒</div>
+    <h2 id="bloqTit" style="margin:8px 0">Sistema bloqueado por falta de pagamento</h2>
+    <p class="muted">Não identificamos o pagamento da parcela do AVA Connect. A assistente parou de atender e o painel fica travado. Assim que o pagamento for identificado, tudo volta a funcionar sozinho.</p>
+    ${sx.fatura_aberta_url ? `<p style="margin:18px 0"><a class="btn primary" href="${esc(sx.fatura_aberta_url)}" target="_blank" rel="noopener">Pagar agora</a></p>` : '<p>Fale com a Avantte para receber o link: contato@grupoavantte.com.br</p>'}
+    <p><button class="btn" onclick="location.reload()">Já paguei, atualizar</button> <button class="btn" onclick="logout()">Sair</button></p></div>`;
+  document.body.appendChild(d);
+}
+
+// ---------- Situação da conta (pagamento pendente, atraso, suspensão) ----------
+async function bannerSituacao() {
+  const sx = await api(`/tenants/${TENANT.id}/situacao`).catch(() => null); if (!sx) return '';
+  const caixa = (cor, titulo, txt, btn) => `<div class="card pad" style="margin-bottom:14px;border-color:${cor};background:color-mix(in srgb, ${cor} 8%, var(--panel))"><div class="row">
+    <div style="margin-right:auto"><b style="font-size:15px">${titulo}</b><div class="muted">${txt}</div></div>${btn || ''}</div></div>`;
+  if (sx.status === 'pendente') return caixa('#e8a317', 'Falta só o pagamento para ativar sua conta',
+    `Você já pode configurar tudo. A assistente começa a atender no WhatsApp quando o pagamento de ${sx.pagamento_pendente?.valor ? brl2(sx.pagamento_pendente.valor) : 'implantação + 1ª parcela'} for confirmado.`,
+    sx.pagamento_pendente?.url ? `<a class="btn primary" href="${esc(sx.pagamento_pendente.url)}" target="_blank" rel="noopener">Pagar e ativar</a>` : '<span class="muted">A Avantte vai enviar o link de pagamento.</span>');
+  const pagar = sx.fatura_aberta_url ? `<a class="btn primary" href="${esc(sx.fatura_aberta_url)}" target="_blank" rel="noopener">Pagar agora</a>` : '';
+  if (sx.cobranca_status === 'suspensa') { telaBloqueio(); return caixa('#d64545', 'Sistema bloqueado por falta de pagamento', 'Assim que o pagamento for identificado, tudo volta a funcionar sozinho.', pagar); }
+  if (sx.cobranca_status === 'atrasada') return caixa('#e8a317', 'Parcela em atraso',
+    `${sx.bloqueio_em ? `Se o pagamento não for identificado até <b>${sx.bloqueio_em.split('-').reverse().join('/')}</b>, o sistema e a assistente serão bloqueados.` : 'Pague para evitar o bloqueio do sistema.'}`, pagar);
+  return '';
+}
+
+// ---------- Assistente de configuração (passo a passo do cliente) ----------
+let WZ = 0; let WZD = null;
+const SEGMENTOS = ['Indústria', 'Distribuidor / atacado', 'Comércio / loja', 'Serviços', 'Saúde e bem-estar', 'Educação', 'Imobiliária', 'Construção e reformas', 'Alimentação', 'Automotivo', 'Tecnologia', 'Outro'];
+const PERGUNTAS = [
+  ['sobre', 'Conte sobre a empresa', 'Há quanto tempo existe, o que faz de melhor, para quem vende.', 'Ex.: Estamos no mercado desde 2015, atendemos empresas e consumidores da região e somos conhecidos pelo atendimento rápido.'],
+  ['produtos', 'O que vocês vendem?', 'Produtos ou serviços, modelos, faixas de preço se puder divulgar.', 'Ex.: Liste seus principais produtos ou serviços e, se puder, os preços ou faixas de preço.'],
+  ['diferenciais', 'Por que o cliente deve escolher vocês?', 'Garantia maior, prazo, atendimento, qualidade, certificações.', 'Ex.: Atendimento no mesmo dia, garantia estendida, equipe certificada, melhor preço da região.'],
+  ['entrega', 'Onde vocês atendem e como entregam?', 'Cidades/estados, frete, retirada, instalação.', 'Ex.: Atendemos a cidade e a região; entregamos/enviamos para ...; ou atendimento só no local.'],
+  ['pagamento', 'Formas de pagamento', 'Pix, boleto, cartão, parcelamento, entrada + saldo.', 'Ex.: Pix ou boleto à vista com 5% de desconto, ou cartão em até 6x.'],
+  ['prazos', 'Prazos', 'Fabricação, entrega, resposta de orçamento, instalação.', 'Ex.: Entrega em até 5 dias úteis; agendamentos com 2 dias de antecedência.'],
+  ['garantia', 'Garantia, trocas e assistência', 'Como funciona e como o cliente aciona.', 'Ex.: Garantia de 90 dias; trocas em até 7 dias com nota fiscal.'],
+  ['limites', 'Quando a assistente deve passar para uma pessoa?', 'Assuntos que só a equipe resolve.', 'Ex.: Reclamações, pedidos especiais, negociações fora da tabela.'],
+  ['outras', 'Outras informações úteis', 'Endereço, horários especiais, políticas.', ''],
+];
+const TOM_NOME = { formal: ['Formal', 'Respeitoso, sem gírias nem emojis.'], amigavel: ['Amigável', 'Próximo e profissional. Recomendado.'], descontraido: ['Descontraído', 'Leve e bem-humorado.'] };
+
+async function configurar() {
+  const [t, ags, nums, us, prods, cx, segs, meta] = await Promise.all([api(`/tenants/${TENANT.id}`), api(`/tenants/${TENANT.id}/agents`), api(`/tenants/${TENANT.id}/numbers`),
+    api(`/tenants/${TENANT.id}/users`), api(`/tenants/${TENANT.id}/products`), api(`/tenants/${TENANT.id}/conexoes`), api('/public/segmentos'), metaCfg()]);
+  const rc = await api(`/tenants/${TENANT.id}/recebimento`).catch(() => null);
+  let g = {}; try { g = JSON.parse(t.base_guiada || '{}'); } catch {}
+  const ag = ags.find((a) => a.padrao) || ags[0];
+  const vende = !!t.plano_info.vendas;
+  const segAtual = segs.find((x) => x.id === t.segmento || x.nome === t.segmento);
+  WZD = { t, ags, ag, nums, us, prods, cx, g, vende, segs, segAtual, meta, rc };
+  const passos = wzPassos();
+  WZ = Math.min(WZ, passos.length - 1);
+  const p = passos[WZ];
+  const aviso = ME.admin ? '' : await bannerSituacao();
+  $('#view').innerHTML = aviso + `<div class="wz">
+    <ol class="wz-steps">${passos.map((x, i) => `<li class="${i === WZ ? 'on' : ''} ${x.feito() ? 'done' : ''}" data-wz="${i}"><span>${x.feito() ? '✓' : i + 1}</span>${esc(x.titulo)}</li>`).join('')}</ol>
+    <div class="card pad wz-card"><div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px">Passo ${WZ + 1} de ${passos.length}</div>
+      <h2 style="margin:4px 0 4px;font-size:20px">${esc(p.titulo)}</h2><p class="muted" style="margin:0 0 16px">${p.sub}</p>
+      <div id="wzBody">${p.html()}</div>
+      <div class="row wz-nav">${WZ > 0 ? '<button class="btn" id="wzVoltar">Voltar</button>' : ''}<span style="margin-left:auto"></span>
+        ${p.opcional ? '<button class="btn" id="wzPular">Pular por agora</button>' : ''}
+        <button class="btn primary" id="wzOk">${WZ === passos.length - 1 ? 'Concluir configuração' : 'Salvar e continuar'}</button></div></div></div>`;
+  document.querySelectorAll('[data-wz]').forEach((li) => (li.onclick = () => { WZ = +li.dataset.wz; configurar(); }));
+  if ($('#wzVoltar')) $('#wzVoltar').onclick = () => { WZ--; configurar(); };
+  if ($('#wzPular')) $('#wzPular').onclick = () => { WZ++; configurar(); };
+  $('#wzOk').onclick = async () => { const b = $('#wzOk'); b.disabled = true;
+    try { if ((await p.salvar()) === false) return; if (WZ < passos.length - 1) { WZ++; configurar(); } } catch (e) { toast(e.message); } finally { b.disabled = false; } };
+  p.depois?.();
+  window.scrollTo(0, 0);
+}
+
+function wzPassos() {
+  const { t, ag, nums, us, prods, cx, g, vende, segs, segAtual, meta } = WZD;
+  const exSeg = segAtual?.exemplos || {};
+  const podeCx = ME.pode.conexoes, podeUs = ME.pode.usuarios;
+  const val = (id) => ($('#' + id)?.value ?? '').trim();
+  const passos = [
+    { titulo: 'Sua empresa', sub: 'O básico que a assistente precisa saber e onde avisar você.', feito: () => !!(t.nome && t.segmento && t.horario_atendimento),
+      html: () => `<div class="grid" style="grid-template-columns:1fr 1fr">
+        <div><label>Nome da empresa</label><input id="w_nome" value="${esc(t.nome)}"></div>
+        <div><label>Segmento</label><select id="w_segmento"><option value="">Escolha</option>${segs.map((x) => `<option value="${x.id}" ${x.id === segAtual?.id ? 'selected' : ''}>${esc(x.nome)}</option>`).join('')}</select></div>
+        <div><label>Cidade / estado</label><input id="w_cidade" value="${esc(t.cidade || '')}" placeholder="Paraíba do Sul, RJ"></div>
+        <div><label>Site ou Instagram</label><input id="w_site" value="${esc(t.site || '')}" placeholder="@suaempresa"></div>
+        <div><label>Horário de atendimento da equipe</label><input id="w_horario" value="${esc(t.horario_atendimento || '')}" placeholder="Segunda a sexta, 8h às 18h"></div>
+        <div><label>Seu WhatsApp (avisos e aprovações)</label><input id="w_resp" value="${esc(t.telefone_responsavel || '')}" placeholder="5524999999999"></div></div>
+        <p class="muted" style="font-size:12px">A assistente atende 24h. O horário acima é o da sua equipe, usado quando ela precisa passar a conversa para uma pessoa.</p>
+        <p class="muted" style="font-size:12px">Ao escolher o segmento, a assistente recebe o jeito de atender e as regras do seu setor (por exemplo: na saúde, nunca dar diagnóstico; na advocacia, nunca prometer resultado). Você pode ajustar depois.</p>`,
+      salvar: async () => { if (!val('w_nome') || !val('w_segmento')) { toast('Preencha o nome e o segmento'); return false; }
+        if (val('w_segmento') !== segAtual?.id) { await api(`/tenants/${t.id}/segmento`, { method:'POST', body:{ segmento: val('w_segmento') } }); toast('Modelo do segmento aplicado à assistente'); }
+        WZD.t = await api(`/tenants/${t.id}`, { method:'PUT', body:{ nome: val('w_nome'), cidade: val('w_cidade'), site: val('w_site'),
+          horario_atendimento: val('w_horario') || 'Segunda a sexta, 8h às 18h', telefone_responsavel: val('w_resp').replace(/\D/g, '') } }); Object.assign(TENANT, WZD.t); await loadTenants(); } },
+
+    { titulo: 'Seu negócio', sub: 'Responda como se estivesse treinando um vendedor novo. A assistente só responde com o que estiver aqui.',
+      feito: () => (t.base_conhecimento || '').length >= 300,
+      html: () => `${segAtual?.tem_regras ? `<div class="card pad" style="background:var(--bubble-ia);border-color:transparent;margin-bottom:6px;font-size:13px">✅ Regras do setor <b>${esc(segAtual.nome)}</b> já aplicadas à assistente.</div>` : ''}${PERGUNTAS.map(([k, tit, dica, ex0]) => { const ex = exSeg[k] || ex0; return `<label style="font-size:13px;color:var(--ink);font-weight:600;margin-top:14px">${tit}</label>
+        <div class="muted" style="font-size:12px;margin-bottom:4px">${dica}</div><textarea id="g_${k}" style="min-height:${k === 'sobre' || k === 'produtos' ? 90 : 60}px" placeholder="${esc(ex)}">${esc(g[k] || '')}</textarea>`; }).join('')}
+        <label style="font-size:13px;color:var(--ink);font-weight:600;margin-top:18px">Perguntas que os clientes mais fazem</label>
+        <div id="faqs">${(g.faq?.length ? g.faq : [{}, {}, {}]).map((f) => wzFaq(f)).join('')}</div>
+        <button class="btn small" id="faqAdd" style="margin-top:6px">+ Adicionar pergunta</button>
+        <p class="muted" style="font-size:12px" id="wzCnt"></p>`,
+      depois: () => { $('#faqAdd').onclick = () => $('#faqs').insertAdjacentHTML('beforeend', wzFaq({})); },
+      salvar: async () => {
+        const guiada = Object.fromEntries(PERGUNTAS.map(([k]) => [k, val('g_' + k)]));
+        guiada.faq = [...document.querySelectorAll('.faq')].map((d) => ({ p: d.querySelector('.fp').value.trim(), r: d.querySelector('.fr').value.trim() })).filter((f) => f.p && f.r);
+        if (!guiada.produtos) { toast('Conte pelo menos o que vocês vendem'); return false; }
+        const r = await api(`/tenants/${t.id}/negocio`, { method:'PUT', body:{ guiada } }); WZD.g = guiada; WZD.t.base_conhecimento = r.base_conhecimento;
+        toast(`Base salva (${r.caracteres.toLocaleString('pt-BR')} caracteres)`); } },
+
+    { titulo: 'Sua assistente', sub: 'Como ela se chama, como fala e o que pode fazer.', feito: () => !!ag,
+      html: () => !ag ? '<p>Nenhum agente cadastrado. Fale com a Avantte.</p>' : `<div class="grid" style="grid-template-columns:1fr 1fr">
+        <div><label>Nome da assistente</label><input id="w_ag_nome" value="${esc(ag.nome)}"></div>
+        <div><label>Função</label><select id="w_ag_func"><option value="recepcao">Atendimento (responde, registra e agenda)</option>
+          <option value="vendas" ${ag.habilidades.includes('vendas') ? 'selected' : ''} ${vende ? '' : 'disabled'}>Vendedora (proposta, negociação e cobrança)${vende ? '' : ' — plano Profissional'}</option></select></div></div>
+        <label>Jeito de falar</label><div class="grid" style="grid-template-columns:repeat(3,1fr)">${Object.entries(TOM_NOME).map(([k, [n, d]]) => `
+          <label class="tom ${ag.tom === k ? 'on' : ''}"><input type="radio" name="tom" value="${k}" ${ag.tom === k ? 'checked' : ''}><b>${n}</b><span>${d}</span></label>`).join('')}</div>
+        <label>Instruções extras (opcional)</label><textarea id="w_ag_inst" style="min-height:70px">${esc(ag.instrucoes)}</textarea>`,
+      depois: () => document.querySelectorAll('.tom input').forEach((r) => (r.onchange = () => document.querySelectorAll('.tom').forEach((l) => l.classList.toggle('on', l.querySelector('input').checked)))),
+      salvar: async () => { if (!ag) return;
+        const vend = $('#w_ag_func').value === 'vendas';
+        const habs = vend ? [...new Set([...ag.habilidades.filter((h) => h !== 'vendas'), 'transferir', 'agenda', 'vendas'])] : ag.habilidades.filter((h) => h !== 'vendas').concat(ag.habilidades.includes('agenda') ? [] : ['agenda']);
+        await api(`/agents/${ag.id}`, { method:'PUT', body:{ nome: val('w_ag_nome') || 'AVA', tom: document.querySelector('.tom input:checked')?.value || 'amigavel',
+          instrucoes: val('w_ag_inst'), habilidades: habs, funcao: vend ? 'Vendedora' : 'Atendimento' } });
+        if (vend && !t.vendas_ativo) WZD.t = await api(`/tenants/${t.id}`, { method:'PUT', body:{ vendas_ativo: 1 } });
+        WZD.ag = (await api(`/tenants/${t.id}/agents`)).find((a) => a.id === ag.id); } },
+  ];
+  if (vende) passos.push({ titulo: 'Produtos e preços', sub: 'O catálogo que a assistente usa para montar propostas, e até onde ela pode negociar.', opcional: true,
+    feito: () => prods.length > 0,
+    html: () => `<table style="margin-bottom:8px"><tbody>${prods.map((p) => `<tr><td>${esc(p.nome)}</td><td>${brl2(p.preco)} / ${esc(p.unidade)}</td><td class="muted">${p.preco_minimo ? 'mín. ' + brl2(p.preco_minimo) : ''}</td></tr>`).join('') || '<tr><td class="muted">Nenhum produto ainda.</td></tr>'}</tbody></table>
+      <div class="grid" style="grid-template-columns:2fr 1fr 1fr auto;align-items:end"><div><label>Produto ou serviço</label><input id="wp_nome"></div>
+        <div><label>Preço (R$)</label><input id="wp_preco" type="number" step="0.01"></div><div><label>Mínimo (opcional)</label><input id="wp_min" type="number" step="0.01"></div>
+        <button class="btn" id="wpAdd">Adicionar</button></div>
+      <h3 style="font-size:15px;margin:22px 0 0">Até onde a assistente pode negociar</h3>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+        <div><label>Desconto que ela dá sozinha (%)</label><input id="w_dmax" type="number" min="0" max="50" step="0.5" value="${t.desconto_max}"></div>
+        <div><label>Desconto extra à vista (%)</label><input id="w_dav" type="number" min="0" step="0.5" value="${t.desconto_avista}"></div>
+        <div><label>Parcelas no cartão</label><input id="w_parc" type="number" min="1" max="21" value="${t.parcelas_max}"></div></div>
+      <p class="muted" style="font-size:12px">Acima disso, ela pede a sua aprovação pelo WhatsApp.</p>`,
+    depois: () => { $('#wpAdd').onclick = async () => { try { await api(`/tenants/${t.id}/products`, { method:'POST', body:{ nome: val('wp_nome'), preco: val('wp_preco'), preco_minimo: val('wp_min') || null } });
+      WZD.prods = await api(`/tenants/${t.id}/products`); configurar(); } catch (e) { toast(e.message); } }; },
+    salvar: async () => { WZD.t = await api(`/tenants/${t.id}`, { method:'PUT', body:{ desconto_max: val('w_dmax'), desconto_avista: val('w_dav'), parcelas_max: val('w_parc') } }); } });
+
+  passos.push({ titulo: 'Conectar o WhatsApp', sub: 'Usamos o WhatsApp oficial da Meta. O número fica no nome da sua empresa.', opcional: true,
+    feito: () => nums.some((n) => n.status_teste === 'ok'),
+    html: () => `${nums.length ? `<table style="margin-bottom:12px"><tbody>${nums.map((n) => `<tr><td><b>${esc(n.nome)}</b> ${esc(n.telefone || '')}</td><td>${n.status_teste === 'ok' ? '<span class="pill ativo">conectado</span>' : '<span class="pill humano">verificar</span>'}</td></tr>`).join('')}</tbody></table>` : ''}
+      ${podeCx ? `${blocoMeta('wm', meta.ativo)}
+      <details ${meta.ativo ? '' : 'open'}><summary class="muted" style="cursor:pointer">${meta.ativo ? 'Conectar manualmente (avançado)' : 'Conectar com os dados da Meta'}</summary>
+      <ol class="muted" style="padding-left:18px;margin:10px 0 12px;line-height:1.7">
+        <li>Em <b>developers.facebook.com</b>, crie um app do tipo Empresa e adicione o produto <b>WhatsApp</b>.</li>
+        <li>Cadastre o número da empresa e copie o <b>Phone Number ID</b>.</li>
+        <li>Crie um <b>usuário do sistema</b> com token permanente (permissão whatsapp_business_messaging).</li>
+        <li>No webhook do app, use <code>${esc(cx.whatsapp.webhook)}</code> (o token de verificação é fornecido pela Avantte).</li></ol>
+      <div class="grid" style="grid-template-columns:1fr 2fr"><div><label>Phone Number ID</label><input id="wn_pid"></div><div><label>Token permanente</label><input id="wn_tok" type="password" autocomplete="off"></div></div></details>
+      <p class="muted" style="font-size:12px">Precisa de ajuda? Fale com a Avantte: <a href="mailto:contato@grupoavantte.com.br">contato@grupoavantte.com.br</a></p>`
+      : '<p>Só o dono da conta conecta o WhatsApp. Peça a ele ou pule este passo.</p>'}`,
+    depois: () => ligarBlocoMeta('wm', async () => { WZD.nums = await api(`/tenants/${t.id}/numbers`); WZ++; configurar(); }, ag?.id || null),
+    salvar: async () => { if (!podeCx || !val('wn_pid')) return;
+      const r = await api(`/tenants/${t.id}/numbers`, { method:'POST', body:{ nome: 'Principal', phone_number_id: val('wn_pid'), token: val('wn_tok'), agent_id: ag?.id || null } });
+      toast(r.teste.ok ? 'WhatsApp conectado: ' + r.teste.msg : 'Número salvo, mas o teste falhou: ' + r.teste.msg); WZD.nums = await api(`/tenants/${t.id}/numbers`); } });
+
+  if (vende) passos.push({ titulo: 'Receber pagamentos', sub: 'O dinheiro das vendas cai direto na sua conta. Escolha como quer receber: Asaas, Mercado Pago, Pagar.me ou Pix direto.', opcional: true,
+    feito: () => !!WZD.rc?.ativo || cx.asaas.usa_conta_avantte,
+    html: () => podeCx && WZD.rc ? blocoRecebimento(WZD.rc, true) : '<p>Só o dono da conta conecta a forma de recebimento. Peça a ele ou pule este passo.</p>',
+    depois: () => { if (podeCx && WZD.rc) ligarRecebimento($('#wzBody'), WZD.rc, true, async () => { WZD.rc = await api(`/tenants/${t.id}/recebimento`); }); },
+    salvar: async () => {} });
+
+  passos.push({ titulo: 'Sua equipe', sub: 'Quem mais vai usar o painel. Cada pessoa recebe um link para criar a senha.', opcional: true,
+    feito: () => us.length > 1,
+    html: () => `<table style="margin-bottom:12px"><tbody>${us.map((u) => `<tr><td><b>${esc(u.nome)}</b></td><td class="muted">${esc(u.email)}</td><td>${PAPEL_NOME[u.papel]}</td><td>${u.pendente ? '<span class="pill humano">convite enviado</span>' : ''}</td></tr>`).join('')}</tbody></table>
+      ${podeUs ? `<div class="grid" style="grid-template-columns:1fr 1.3fr 1fr auto;align-items:end"><div><label>Nome</label><input id="we_nome"></div><div><label>E-mail</label><input id="we_email" type="email"></div>
+        <div><label>Papel</label><select id="we_papel"><option value="atendente">Atendente</option><option value="gestor">Gestor</option></select></div><button class="btn" id="weAdd">Convidar</button></div>
+        <div id="weLink" class="muted" style="margin-top:8px;font-size:12px"></div>` : '<p class="muted">Só o dono da conta convida pessoas.</p>'}`,
+    depois: () => { if ($('#weAdd')) $('#weAdd').onclick = async () => { try { const r = await api(`/tenants/${t.id}/users`, { method:'POST', body:{ nome: val('we_nome'), email: val('we_email'), papel: $('#we_papel').value } });
+      WZD.us = await api(`/tenants/${t.id}/users`); await configurar(); $('#weLink').innerHTML = `${r.email_enviado ? 'Convite enviado por e-mail.' : 'Envie este link para a pessoa criar a senha:'} <code>${esc(r.link_convite)}</code>`; } catch (e) { toast(e.message); } }; },
+    salvar: async () => {} });
+
+  passos.push({ titulo: 'Testar a assistente', sub: 'Converse como se fosse um cliente. Nada é enviado ao WhatsApp.', feito: () => !!t.onboarding_concluido,
+    html: () => `<div class="msgs" id="wsMsgs" style="min-height:260px;max-height:420px;border:1px solid var(--line);border-radius:12px"></div>
+      <div class="row" style="margin-top:8px"><input id="wsTxt" placeholder="Ex.: Olá, quanto custa?" style="flex:1"><button class="btn" id="wsEnv">Enviar</button></div>
+      <p class="muted" style="font-size:12px">Ajuste as respostas voltando ao passo "Seu negócio". Quando estiver bom, conclua.</p>`,
+    depois: () => { const tel = 'sim-wz-' + Math.random().toString(36).slice(2, 7); const box = $('#wsMsgs');
+      const add = (who, txt, cls) => { box.insertAdjacentHTML('beforeend', `<div class="msg ${cls}"><div class="who">${who}</div>${esc(txt)}</div>`); box.scrollTop = box.scrollHeight; };
+      const env = async () => { const x = val('wsTxt'); if (!x) return; $('#wsTxt').value = ''; add('Você', x, 'cliente');
+        try { const r = await api(`/tenants/${t.id}/simulate`, { method:'POST', body:{ texto: x, telefone: tel, nome: 'Cliente teste', agent_id: ag?.id } }); r.respostas.forEach((m) => add(ag?.nome || 'AVA', m, 'ia')); }
+        catch (e) { add('Sistema', e.message, 'sistema'); } };
+      $('#wsEnv').onclick = env; $('#wsTxt').onkeydown = (e) => e.key === 'Enter' && env(); },
+    salvar: async () => { await api(`/tenants/${t.id}`, { method:'PUT', body:{ onboarding_concluido: 1 } }); TENANT.onboarding_concluido = 1; toast('Configuração concluída! 🎉'); WZ = 0; go('inicio'); return false; } });
+  return passos;
+}
+const wzFaq = (f) => `<div class="faq grid" style="grid-template-columns:1fr 1.4fr;margin-top:6px"><input class="fp" placeholder="Pergunta" value="${esc(f.p || '')}"><input class="fr" placeholder="Resposta" value="${esc(f.r || '')}"></div>`;
+
+// ---------- Início (roteiro de implantação) ----------
+async function inicio() {
+  const [imp, st, t] = await Promise.all([api(`/tenants/${TENANT.id}/implantacao`), api(`/tenants/${TENANT.id}/vendas-stats`).catch(() => null), api(`/tenants/${TENANT.id}`)]);
+  const pct = Math.round(100 * imp.concluidos / imp.total);
+  const banner = !t.onboarding_concluido && ME.pode.configurar ? `<div class="card pad" style="margin-bottom:14px;background:linear-gradient(90deg,rgba(31,111,255,.10),rgba(18,216,196,.12));border-color:transparent">
+    <div class="row"><div style="margin-right:auto"><b style="font-size:16px">Vamos configurar sua assistente</b><div class="muted">Leva uns 15 minutos. Você pode parar e continuar depois.</div></div>
+    <button class="btn primary" id="goWz">${pct > 30 ? 'Continuar configuração' : 'Começar agora'}</button></div></div>` : '';
+  $('#view').innerHTML = (await bannerSituacao()) + banner + `<div class="grid" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr);align-items:start">
+    <div class="card pad"><div class="row"><div style="margin-right:auto"><b style="font-size:16px">Implantação do AVA Connect</b><div class="muted">${esc(t.nome)} · plano ${esc(t.plano_info.nome)}</div></div>
+      <div style="font-size:22px;font-weight:700">${pct}%</div></div><div class="bar" style="margin:10px 0 6px"><i style="width:${pct}%"></i></div>
+      <ul class="tl">${imp.passos.map((p) => `<li><div class="ico" style="${p.feito ? 'background:var(--bubble-ia);border-color:var(--accent)' : ''}">${p.feito ? '✓' : ''}</div>
+        <div style="flex:1;${p.feito ? 'color:var(--muted)' : ''}">${esc(p.titulo)}</div>${p.feito ? '' : `<button class="btn small" data-ir="${p.onde}">Fazer</button>`}</li>`).join('')}</ul></div>
+    <div class="grid">
+      <div class="card pad kpi"><div class="label">Conversas no mês</div><div class="value">${t.uso.conversas}</div><div class="muted">de ${t.plano_info.conversas_mes.toLocaleString('pt-BR')} do plano</div></div>
+      ${st ? `<div class="card pad kpi"><div class="label">Vendido no mês</div><div class="value">${brl(st.vendido_mes.v)}</div></div>` : ''}
+      <div class="card pad"><b>Precisa de ajuda?</b><p class="muted" style="margin:6px 0 0">Fale com a Avantte: <a href="mailto:contato@grupoavantte.com.br">contato@grupoavantte.com.br</a></p></div>
+    </div></div>`;
+  if ($('#goWz')) $('#goWz').onclick = () => go('configurar');
+  document.querySelectorAll('[data-ir]').forEach((b) => (b.onclick = () => { const [v, sub] = b.dataset.ir.split(':'); if (v === 'config') CTAB = sub; if (v === 'vendas') VTAB = sub; go(v === 'config' ? 'empresa' : v); }));
+}
+
+// ---------- Configurações ----------
+let CTAB = 'empresa';
+async function empresa() {
+  const abas = [['empresa', 'Empresa e IA', ME.pode.configurar], ['agentes', 'Agentes', true], ['usuarios', 'Usuários', true], ['atendimento', 'Atendimento', true], ['modelos', 'Modelos Meta', true], ['conexoes', 'Conexões', true]].filter((a) => a[2]);
+  if (!abas.some((a) => a[0] === CTAB)) CTAB = abas[0][0];
+  $('#view').innerHTML = `<div class="row" style="margin-bottom:12px">${abas.map(([k, n]) => `<button class="btn small ${CTAB === k ? 'primary' : ''}" data-ct="${k}">${n}</button>`).join('')}</div><div id="cbody"></div>`;
+  document.querySelectorAll('[data-ct]').forEach((b) => (b.onclick = () => { CTAB = b.dataset.ct; empresa(); }));
+  await ({ empresa: cfgEmpresa, agentes: cfgAgentes, usuarios: cfgUsuarios, atendimento: cfgAtendimento, modelos: cfgModelos, conexoes: cfgConexoes })[CTAB]();
+}
+
+const HAB_NOMES = { transferir: 'Passar para humano', agenda: 'Agenda', vendas: 'Vendas (proposta, cobrança, follow-up)', diagnostico: 'Diagnóstico Empresarial', loja: 'Loja (AvaShop)' };
+async function cfgAgentes() {
+  const [ags, info, t] = await Promise.all([api(`/tenants/${TENANT.id}/agents`), api('/agentes/modelos'), api(`/tenants/${TENANT.id}`)]);
+  const lim = t.plano_info.agentes; const edit = ME.pode.configurar;
+  $('#cbody').innerHTML = `<p class="muted" style="margin-top:0">Cada agente é uma assistente com uma função. Ligue cada número de WhatsApp a um agente em <b>Conexões</b>. Plano ${esc(t.plano_info.nome)}: ${ags.filter((a) => a.ativo).length} de ${lim} agente(s).</p>
+    ${ags.map((a) => `<div class="card pad" style="margin-bottom:12px">
+      <div class="row"><b style="font-size:15px;margin-right:auto">${esc(a.nome)} <span class="muted" style="font-weight:500">· ${esc(a.funcao)}</span></b>
+        ${a.padrao ? '<span class="pill ativo">Padrão</span>' : edit ? `<button class="btn small" data-pad="${a.id}">Tornar padrão</button>` : ''}
+        ${a.numeros.length ? `<span class="pill">${a.numeros.map(esc).join(', ')}</span>` : ''}<span class="pill ${a.ativo ? 'ativo' : 'pausado'}">${a.ativo ? 'ativo' : 'pausado'}</span></div>
+      <div class="grid" style="grid-template-columns:1fr 1fr">
+        <div><label>Nome que o cliente vê</label><input data-a="${a.id}" data-f="nome" value="${esc(a.nome)}" ${edit ? '' : 'disabled'}></div>
+        <div><label>Função</label><input data-a="${a.id}" data-f="funcao" value="${esc(a.funcao)}" ${edit ? '' : 'disabled'}></div></div>
+      <label>Como este agente trabalha</label><textarea data-a="${a.id}" data-f="instrucoes" style="min-height:70px" ${edit ? '' : 'disabled'}>${esc(a.instrucoes)}</textarea>
+      <label>Habilidades</label><div class="row">${Object.keys(info.habilidades).map((h) => `<label style="margin:0;display:flex;gap:5px;align-items:center">
+        <input type="checkbox" data-hab="${a.id}" value="${h}" ${a.habilidades.includes(h) ? 'checked' : ''} ${edit ? '' : 'disabled'} style="width:auto">${HAB_NOMES[h]}</label>`).join('')}</div>
+      <div class="row" style="margin-top:10px">${edit ? `<select data-a="${a.id}" data-f="modelo_ia" style="width:auto"><option value="padrao" ${a.modelo_ia === 'padrao' ? 'selected' : ''}>IA padrão (econômica)</option>
+        <option value="avancado" ${a.modelo_ia === 'avancado' ? 'selected' : ''}>IA avançada${t.plano_info.modelo_avancado ? '' : ' (só no Premium)'}</option></select>
+        <button class="btn primary small" data-salva="${a.id}">Salvar agente</button><button class="btn small" data-at="${a.id}" data-v="${a.ativo ? 0 : 1}">${a.ativo ? 'Pausar' : 'Ativar'}</button>
+        <button class="btn small danger" data-del="${a.id}">Excluir</button>` : ''}<button class="btn small" data-sim="${a.id}">Testar no simulador</button></div></div>`).join('')}
+    ${edit ? `<div class="card pad"><b>Novo agente</b><div class="row" style="margin-top:8px">
+      <select id="na_modelo" style="width:auto">${Object.entries(info.modelos).map(([k, m]) => `<option value="${k}">${esc(m.nome)} — ${esc(m.funcao)}</option>`).join('')}</select>
+      <input id="na_nome" placeholder="Nome (ex.: AVA)" style="max-width:200px"><button class="btn primary" id="na_add">Criar</button></div></div>` : ''}`;
+  const salvar = async (id, body) => { try { await api(`/agents/${id}`, { method:'PUT', body }); toast('Agente salvo'); cfgAgentes(); } catch (e) { toast(e.message); } };
+  document.querySelectorAll('[data-salva]').forEach((b) => (b.onclick = () => { const id = b.dataset.salva; const body = {};
+    document.querySelectorAll(`[data-a="${id}"]`).forEach((el) => (body[el.dataset.f] = el.value));
+    body.habilidades = [...document.querySelectorAll(`[data-hab="${id}"]`)].filter((c) => c.checked).map((c) => c.value); salvar(id, body); }));
+  document.querySelectorAll('[data-pad]').forEach((b) => (b.onclick = () => salvar(b.dataset.pad, { padrao: 1 })));
+  document.querySelectorAll('[data-at]').forEach((b) => (b.onclick = () => salvar(b.dataset.at, { ativo: Number(b.dataset.v) })));
+  document.querySelectorAll('[data-del]').forEach((b) => (b.onclick = () => twice(b, async () => { try { await api(`/agents/${b.dataset.del}`, { method:'DELETE' }); cfgAgentes(); } catch (e) { toast(e.message); } })));
+  document.querySelectorAll('[data-sim]').forEach((b) => (b.onclick = () => { SIM_AGENT = +b.dataset.sim; store.set('ava_sim', null); go('simulador'); }));
+  if ($('#na_add')) $('#na_add').onclick = async () => { try { await api(`/tenants/${TENANT.id}/agents`, { method:'POST', body:{ modelo: $('#na_modelo').value, nome: $('#na_nome').value.trim() || undefined } }); toast('Agente criado'); cfgAgentes(); } catch (e) { toast(e.message); } };
+}
+
+const PAPEL_NOME = { dono:'Dono', gestor:'Gestor', atendente:'Atendente' };
+const VER_CONV = { todas: 'Todas', setor: 'Do setor dela', minhas: 'Só as dela' };
+const VER_NEG = { todos: 'Todos os negócios', meus: 'Só os dela' };
+async function cfgUsuarios() {
+  const [us, t] = await Promise.all([api(`/tenants/${TENANT.id}/users`), api(`/tenants/${TENANT.id}`)]);
+  const edit = ME.pode.usuarios;
+  $('#cbody').innerHTML = `<p class="muted" style="margin-top:0"><b>Dono</b>: tudo, inclusive usuários e conexões. <b>Gestor</b>: configura a IA, o catálogo e aprova descontos. <b>Atendente</b>: conversas, CRM e tarefas.
+    Usuários ilimitados: convide toda a equipe. <b>Vê conversas</b> e <b>Vê no CRM</b>: o dono ou gestor define se a pessoa vê tudo ou só o que é dela (no CRM: negócios em que ela é a responsável ou de clientes da carteira dela).</p>
+    <div class="card" style="margin-bottom:14px"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Papel</th><th>Vê conversas</th><th>Vê no CRM</th><th>WhatsApp (avisos)</th><th>Último acesso</th><th></th></tr></thead><tbody>
+    ${us.map((u) => `<tr><td><b>${esc(u.nome)}</b>${u.pendente ? ' <span class="pill humano">convite pendente</span>' : ''}${u.ativo ? '' : ' <span class="pill pausado">desativado</span>'}</td><td>${esc(u.email)}</td>
+      <td>${edit ? `<select data-up="${u.id}" data-f="papel" style="width:auto">${Object.entries(PAPEL_NOME).map(([k, n]) => `<option value="${k}" ${k === u.papel ? 'selected' : ''}>${n}</option>`).join('')}</select>` : PAPEL_NOME[u.papel]}</td>
+      <td>${u.papel === 'dono' ? '<span class="muted">Todas</span>' : ME.pode.configurar ? `<select data-vis="${u.id}" style="width:auto">${Object.entries(VER_CONV).map(([k, n]) => `<option value="${k}" ${k === u.ver_conversas ? 'selected' : ''}>${n}</option>`).join('')}</select>` : VER_CONV[u.ver_conversas]}</td>
+      <td>${u.papel === 'dono' ? '<span class="muted">Todos</span>' : ME.pode.configurar ? `<select data-neg="${u.id}" style="width:auto">${Object.entries(VER_NEG).map(([k, n]) => `<option value="${k}" ${k === u.ver_negocios ? 'selected' : ''}>${n}</option>`).join('')}</select>` : VER_NEG[u.ver_negocios]}</td>
+      <td>${edit ? `<input data-up="${u.id}" data-f="telefone" value="${esc(u.telefone || '')}" placeholder="5524999999999" style="width:150px">` : esc(u.telefone || '')}</td>
+      <td>${u.ultimo_login ? when(u.ultimo_login) : '—'}</td>
+      <td style="white-space:nowrap">${edit ? `<button class="btn small" data-conv-u="${u.id}">${u.pendente ? 'Reenviar convite' : 'Redefinir senha'}</button>
+        <button class="btn small ${u.ativo ? 'danger' : ''}" data-at-u="${u.id}" data-v="${u.ativo ? 0 : 1}">${u.ativo ? 'Desativar' : 'Reativar'}</button>` : ''}</td></tr>`).join('')
+      || '<tr><td colspan="8" class="muted">Nenhum usuário ainda.</td></tr>'}</tbody></table></div>
+    ${edit ? `<div class="card pad"><b>Convidar pessoa</b><div class="grid" style="grid-template-columns:1.1fr 1.3fr .9fr 1fr 1fr 1fr auto;align-items:end">
+      <div><label>Nome</label><input id="nu_nome"></div><div><label>E-mail</label><input id="nu_email" type="email"></div>
+      <div><label>Papel</label><select id="nu_papel"><option value="atendente">Atendente</option><option value="gestor">Gestor</option><option value="dono">Dono</option></select></div>
+      <div><label>Vê conversas</label><select id="nu_vis">${Object.entries(VER_CONV).map(([k, n]) => `<option value="${k}">${n}</option>`).join('')}</select></div>
+      <div><label>Vê no CRM</label><select id="nu_neg">${Object.entries(VER_NEG).map(([k, n]) => `<option value="${k}">${n}</option>`).join('')}</select></div>
+      <div><label>WhatsApp (opcional)</label><input id="nu_tel" placeholder="5524..."></div><button class="btn primary" id="nu_add">Convidar</button></div>
+      <div id="nu_link" class="muted" style="margin-top:10px"></div></div>` : ''}`;
+  const mostrarLink = (r) => { $('#nu_link').innerHTML = `${r.email_enviado ? 'Convite enviado por e-mail. ' : 'E-mail ainda não configurado: envie este link pelo WhatsApp. '}
+    Link (vale 7 dias): <code>${esc(r.link_convite)}</code> <button class="btn small" id="cp">Copiar</button>`;
+    $('#cp').onclick = () => { navigator.clipboard?.writeText(r.link_convite); toast('Link copiado'); }; };
+  if ($('#nu_add')) $('#nu_add').onclick = async () => {
+    try { const r = await api(`/tenants/${TENANT.id}/users`, { method:'POST', body:{ nome: $('#nu_nome').value.trim(), email: $('#nu_email').value.trim(), papel: $('#nu_papel').value, telefone: $('#nu_tel').value.trim() || null, ver_conversas: $('#nu_vis').value, ver_negocios: $('#nu_neg').value } });
+      await cfgUsuarios(); mostrarLink(r); } catch (e) { toast(e.message); } };
+  document.querySelectorAll('[data-up]').forEach((el) => (el.onchange = async () => { try { await api(`/users/${el.dataset.up}`, { method:'PUT', body:{ [el.dataset.f]: el.value } }); toast('Salvo'); } catch (e) { toast(e.message); cfgUsuarios(); } }));
+  document.querySelectorAll('[data-neg]').forEach((el) => (el.onchange = async () => { try { await api(`/users/${el.dataset.neg}/negocios`, { method:'PUT', body:{ ver_negocios: el.value } }); toast('Salvo'); } catch (e) { toast(e.message); cfgUsuarios(); } }));
+  document.querySelectorAll('[data-vis]').forEach((el) => (el.onchange = async () => { try { await api(`/users/${el.dataset.vis}/visibilidade`, { method:'PUT', body:{ ver_conversas: el.value } }); toast('Salvo'); } catch (e) { toast(e.message); cfgUsuarios(); } }));
+  document.querySelectorAll('[data-at-u]').forEach((b) => (b.onclick = () => twice(b, async () => { try { await api(`/users/${b.dataset.atU}`, { method:'PUT', body:{ ativo: Number(b.dataset.v) } }); cfgUsuarios(); } catch (e) { toast(e.message); } })));
+  document.querySelectorAll('[data-conv-u]').forEach((b) => (b.onclick = async () => { const r = await api(`/users/${b.dataset.convU}/convite`, { method:'POST' }); mostrarLink(r); }));
+}
+
+async function cfgAtendimento() {
+  const a = await api(`/tenants/${TENANT.id}/atendimento`); const edit = ME.pode.configurar;
+  const s = a.satisfacao || {};
+  $('#cbody').innerHTML = `<div class="grid" style="grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card pad"><b style="font-size:15px">Setores e distribuição</b>
+      <p class="muted" style="margin:4px 0 0">Quando a IA transfere uma conversa, ela escolhe o setor e o sistema entrega para a pessoa do setor com menos conversas abertas. Se o cliente já tem um responsável (carteira), vai direto para ele.</p>
+      <label>Setores (separe por vírgula)</label><input id="at_set" value="${esc(a.setores.join(', '))}" ${edit ? '' : 'disabled'}>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:12px"><input type="checkbox" id="at_cart" style="width:auto" ${a.carteira_ativa ? 'checked' : ''} ${edit ? '' : 'disabled'}> Carteira de clientes: quem atende primeiro vira o responsável pelo cliente</label></div>
+    <div class="card pad"><b style="font-size:15px">Encerramento e satisfação</b>
+      <p class="muted" style="margin:4px 0 0">Ao encerrar, o sistema registra o motivo do atendimento e pergunta a nota de 1 a 5. Nota 3 ou menos vira tarefa e aviso para o responsável.</p>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:12px"><input type="checkbox" id="at_pesq" style="width:auto" ${a.pesquisa_ativa ? 'checked' : ''} ${edit ? '' : 'disabled'}> Enviar pesquisa de satisfação</label>
+      <label>Encerrar conversas da IA paradas há (horas)</label><input id="at_h" type="number" min="1" max="23" value="${a.encerrar_apos_h}" ${edit ? '' : 'disabled'}>
+      <div class="muted" style="margin-top:10px;font-size:13px">Últimos 30 dias: ${s.avaliacoes ? `nota média <b>${String(s.media).replace('.', ',')}</b> em ${s.avaliacoes} avaliações (${Math.round(100 * s.boas / s.avaliacoes)}% notas 4 e 5)` : 'sem avaliações'}
+        ${a.motivos.length ? `<br>Motivos: ${a.motivos.map((m) => `${esc(m.motivo)} (${m.n})`).join(' · ')}` : ''}</div></div></div>
+    ${edit ? '<div class="row" style="margin:12px 0"><button class="btn primary" id="at_save">Salvar</button></div>' : ''}
+    <div class="card"><table><thead><tr><th>Pessoa</th><th>Setores em que atende</th><th>Conversas abertas</th></tr></thead><tbody>
+    ${a.users.map((u) => `<tr><td><b>${esc(u.nome)}</b><div class="muted" style="font-size:12px">${PAPEL_NOME[u.papel] || u.papel}${u.telefone ? '' : ' · sem WhatsApp para avisos'}</div></td>
+      <td>${a.setores.map((st) => `<label style="display:inline-flex;gap:4px;align-items:center;margin-right:10px;font-weight:500"><input type="checkbox" style="width:auto" data-us="${u.id}" value="${esc(st)}" ${!u.setores.length || u.setores.includes(st) ? 'checked' : ''} ${edit ? '' : 'disabled'}>${esc(st)}</label>`).join('')}</td>
+      <td>${u.abertas}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">Convide a equipe em Usuários.</td></tr>'}</tbody></table></div>`;
+  if (!edit) return;
+  $('#at_save').onclick = async () => { await api(`/tenants/${TENANT.id}/atendimento`, { method:'PUT', body:{ setores: $('#at_set').value.split(',').map((x) => x.trim()).filter(Boolean),
+    carteira_ativa: $('#at_cart').checked, pesquisa_ativa: $('#at_pesq').checked, encerrar_apos_h: Number($('#at_h').value) } }); toast('Atendimento salvo'); cfgAtendimento(); };
+  document.querySelectorAll('[data-us]').forEach((el) => (el.onchange = async () => {
+    const marcados = [...document.querySelectorAll(`[data-us="${el.dataset.us}"]`)].filter((x) => x.checked).map((x) => x.value);
+    await api(`/users/${el.dataset.us}/setores`, { method:'PUT', body:{ setores: marcados.length === a.setores.length ? [] : marcados } }); toast('Setores atualizados'); }));
+}
+
+async function cfgModelos(dados) {
+  const d = dados || await api(`/tenants/${TENANT.id}/modelos`); const edit = ME.pode.configurar;
+  const ST = { nao_enviado: ['Não enviado', ''], PENDING: ['Em análise', 'humano'], APPROVED: ['Aprovado', 'ativo'], REJECTED: ['Reprovado', 'cancelado'], PAUSED: ['Pausado', 'pausado'], DISABLED: ['Desativado', 'cancelado'], erro: ['Erro', 'cancelado'], existente: ['Já existe na conta', 'humano'] };
+  const fases = [...new Set(d.modelos.map((m) => m.fase))];
+  const aprov = d.modelos.filter((m) => m.status === 'APPROVED').length;
+  $('#cbody').innerHTML = `<div class="card pad" style="margin-bottom:14px"><div class="row"><div style="margin-right:auto"><b style="font-size:15px">Modelos de mensagem da Meta</b>
+      <div class="muted">Fora das 24h depois da última mensagem do cliente, o WhatsApp só entrega mensagens de modelos aprovados. Com estes ${d.modelos.length} modelos, a AVA e o AvaShop
+      conseguem fazer follow-up, lembrar pagamento e reunião, avisar o pedido e avisar a equipe a qualquer hora. Sem eles, o sistema cria uma tarefa para alguém chamar o cliente.
+      <br><b>Custo:</b> a Meta cobra por modelo entregue. Utilidade (pedido, pagamento, proposta) é barata; Marketing (promoção, carrinho parado) é a mais cara. Dentro das 24h a conversa é texto normal, sem modelo.</div></div>
+      <div style="text-align:right"><div style="font-size:22px;font-weight:800">${aprov}/${d.modelos.length}</div><div class="muted" style="font-size:12px">aprovados</div></div></div>
+    ${d.conectado ? (edit ? `<div class="row" style="margin-top:10px"><button class="btn primary" id="md_env">Enviar todos para aprovação</button><button class="btn" id="md_sync">Atualizar status</button><span class="muted">A Meta costuma responder em minutos; às vezes leva até 24h.</span></div>` : '')
+      : '<p style="background:#fff7e6;padding:8px 10px;border-radius:8px;margin:10px 0 0">Conecte o WhatsApp pelo botão da Meta (Configurações → Conexões) para enviar os modelos. O texto deles já está pronto abaixo.</p>'}</div>
+    ${fases.map((f) => `<div class="card" style="margin-bottom:12px"><div class="pad" style="padding-bottom:0"><b>${esc(f)}</b></div><table><thead><tr><th style="width:24%">Quando é usado</th><th>Texto</th><th>Categoria</th><th>Situação</th></tr></thead><tbody>
+      ${d.modelos.filter((m) => m.fase === f).map((m) => `<tr><td><b>${esc(m.uso)}</b><div class="muted" style="font-size:12px"><code>${m.chave}</code></div></td>
+        <td style="font-size:13px">${esc(m.corpo).replace(/\{\{(\d+)\}\}/g, (_, n) => `<b title="exemplo">[${esc(m.exemplo[n - 1])}]</b>`)}${m.botoes?.length ? `<div class="muted" style="font-size:12px;margin-top:4px">Botões: ${m.botoes.map(esc).join(' · ')}</div>` : ''}</td>
+        <td><span class="pill">${(m.categoria_meta || m.categoria) === 'MARKETING' ? 'Marketing' : 'Utilidade'}</span></td>
+        <td><span class="pill ${ST[m.status]?.[1] || ''}">${ST[m.status]?.[0] || esc(m.status)}</span>${m.motivo ? `<div style="font-size:12px;color:#d64545">${esc(m.motivo)}</div>` : ''}</td></tr>`).join('')}</tbody></table></div>`).join('')}`;
+  if ($('#md_env')) $('#md_env').onclick = async (ev) => { ev.target.disabled = true; ev.target.textContent = 'Enviando...';
+    try { const r = await api(`/tenants/${TENANT.id}/modelos/enviar`, { method:'POST' }); const erros = r.enviados.filter((x) => x.status === 'erro').length;
+      toast(r.enviados.length ? `${r.enviados.length - erros} enviados para aprovação${erros ? `, ${erros} com erro` : ''}` : 'Todos já estavam enviados'); } catch (e) { toast(e.message); }
+    cfgModelos(); };
+  if ($('#md_sync')) $('#md_sync').onclick = async () => { try { cfgModelos(await api(`/tenants/${TENANT.id}/modelos/sincronizar`, { method:'POST' }).then((r) => ({ ...d, modelos: r.modelos }))); toast('Status atualizado'); } catch (e) { toast(e.message); } };
+}
+
+// ---------- Recebimentos (gateway de pagamento da empresa) ----------
+const RC_AJUDA = {
+  asaas: (rc) => `No Asaas, em Integrações, gere a <b>chave da API</b>. Em Integrações → Webhooks, cadastre <code>${esc(rc.webhooks.asaas)}</code> com o token abaixo e os eventos de cobrança recebida, confirmada e vencida.`,
+  mercadopago: () => 'No Mercado Pago, em <b>Suas integrações</b>, crie uma aplicação e copie o <b>Access token de produção</b>. O aviso de pagamento é automático: não precisa cadastrar webhook.',
+  pagarme: (rc) => `Na Pagar.me, copie a <b>chave secreta</b> (sk_...). Em Configurações → Webhooks, cadastre <code>${esc(rc.webhooks.pagarme)}</code> com o evento <b>order.paid</b>.`,
+  pix: () => 'Sem gateway e sem taxa. O cliente recebe o QR Code e o Pix copia e cola; o dinheiro cai na conta da chave. Como o banco não avisa o sistema, a confirmação é manual: quando o cliente mandar o comprovante, você recebe um aviso e confirma em Vendas → Cobranças.',
+};
+function blocoRecebimento(rc, edit) {
+  const sel = rc.gateway || 'asaas';
+  return `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px">${rc.gateways.map((g) => `<label style="border:1.5px solid ${g.id === sel ? 'var(--accent)' : 'var(--line)'};border-radius:12px;padding:10px 12px;cursor:pointer;margin:0;font-weight:500">
+      <input type="radio" name="rc_gw" value="${g.id}" ${g.id === sel ? 'checked' : ''} ${edit ? '' : 'disabled'} style="width:auto;margin-right:6px"><b>${esc(g.nome)}</b>
+      <div class="muted" style="font-size:12px;margin-top:4px">${esc(g.descricao)}</div></label>`).join('')}</div>
+    <div id="rc_campos"></div>`;
+}
+function ligarRecebimento(root, rc, edit, aoSalvar) {
+  const desenhar = () => {
+    const g = root.querySelector('[name=rc_gw]:checked')?.value || 'asaas';
+    const def = rc.gateways.find((x) => x.id === g);
+    root.querySelectorAll('[name=rc_gw]').forEach((r) => (r.closest('label').style.borderColor = r.checked ? 'var(--accent)' : 'var(--line)'));
+    const mesmo = g === rc.gateway || (g === 'asaas' && rc.asaas_legado);
+    root.querySelector('#rc_campos').innerHTML = `<p class="muted" style="margin:12px 0 4px;font-size:13px;line-height:1.55">${RC_AJUDA[g](rc)}</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${def.campos.map((c) => `<div><label>${esc(c.rotulo)}${c.segredo && mesmo && rc.config[c.k] ? ' (vazio mantém a atual)' : ''}</label>
+        <input data-rc="${c.k}" ${c.segredo ? 'type="password" autocomplete="off"' : ''} placeholder="${esc(c.placeholder || '')}" value="${c.segredo ? '' : esc(mesmo ? rc.config[c.k] || '' : '')}" ${edit ? '' : 'disabled'}></div>`).join('')}
+        ${g === 'asaas' ? `<div><label>Token do webhook</label><input id="rc_whk" value="${esc(rc.webhook_token || ('whk_' + Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, '0')).join('')))}" ${edit ? '' : 'disabled'}></div>` : ''}</div>
+      ${edit ? '<div class="row" style="margin-top:10px"><button class="btn primary" id="rc_save">Salvar e testar</button><span class="muted" id="rc_msg"></span></div>' : ''}`;
+    const btn = root.querySelector('#rc_save'); if (!btn) return;
+    btn.onclick = async () => {
+      const config = Object.fromEntries([...root.querySelectorAll('[data-rc]')].map((i) => [i.dataset.rc, i.value.trim() || (rc.config[i.dataset.rc] && mesmo ? rc.config[i.dataset.rc] : '')]));
+      btn.disabled = true; btn.textContent = 'Testando...';
+      try {
+        const r = await api(`/tenants/${TENANT.id}/recebimento`, { method:'PUT', body:{ gateway: g, config } });
+        if (g === 'asaas' && root.querySelector('#rc_whk')) await api(`/tenants/${TENANT.id}/conexoes`, { method:'PUT', body:{ asaas_webhook_token: root.querySelector('#rc_whk').value.trim() } });
+        toast(`${def.nome} conectado${r.teste?.msg ? ': ' + r.teste.msg : ''}`); aoSalvar && aoSalvar();
+      } catch (e) { root.querySelector('#rc_msg').textContent = e.message; toast(e.message); }
+      finally { btn.disabled = false; btn.textContent = 'Salvar e testar'; }
+    };
   };
-  document.querySelectorAll('tr[data-id]').forEach((r) => (r.onclick = async () => { TENANT = list.find((t) => t.id == r.dataset.id); $('#tenantSel').value = TENANT.id; go('empresa'); }));
+  root.querySelectorAll('[name=rc_gw]').forEach((r) => (r.onchange = desenhar));
+  desenhar();
+}
+
+// ---------- Campanhas ----------
+async function campanhas() {
+  const [cs, meta] = await Promise.all([api(`/tenants/${TENANT.id}/campanhas`), api(`/tenants/${TENANT.id}/conexoes`).catch(() => ({}))]);
+  const ST = { agendada: 'Agendada', enviando: 'Enviando', concluida: 'Concluída', cancelada: 'Cancelada' };
+  const pct = (a, b) => (b ? Math.round(100 * a / b) + '%' : '—');
+  $('#view').innerHTML = `<div class="card pad" style="margin-bottom:14px"><div class="row"><div style="margin-right:auto"><b style="font-size:15px">Campanhas no WhatsApp</b>
+      <div class="muted">Promoções, reativação de clientes parados e avisos. Usa os modelos de mensagem aprovados pela Meta; quem responder é atendido pela IA na hora. A Meta cobra cada mensagem de marketing enviada.</div></div>
+      ${ME.pode.configurar ? '<button class="btn primary" id="cp_nova">Nova campanha</button>' : ''}</div></div>
+    <div class="card"><table><thead><tr><th>Campanha</th><th>Situação</th><th>Enviadas</th><th>Responderam</th><th>Compraram</th><th>Vendido</th><th></th></tr></thead><tbody>
+    ${cs.map((c) => `<tr><td><b>${esc(c.nome)}</b><div class="muted" style="font-size:12px">modelo ${esc(c.modelo)} · ${c.status === 'agendada' ? 'para ' + when(c.agendada_para) : 'criada ' + when(c.criado_em)}</div>
+        ${c.erros.length ? `<div style="font-size:12px;color:var(--danger,#d64545)">${c.falhas} falharam: ${esc(c.erros[0].erro)}</div>` : ''}</td>
+      <td><span class="pill ${c.status === 'concluida' ? 'ativo' : c.status === 'cancelada' ? 'cancelado' : 'humano'}">${ST[c.status]}</span></td>
+      <td>${c.enviados || 0} de ${c.total}</td><td>${c.responderam || 0} <span class="muted">(${pct(c.responderam, c.enviados)})</span></td>
+      <td>${c.compraram || 0} <span class="muted">(${pct(c.compraram, c.enviados)})</span></td><td><b>${brl2(c.vendido)}</b></td>
+      <td>${['agendada', 'enviando'].includes(c.status) && ME.pode.configurar ? `<button class="btn small danger" data-cc="${c.id}">Cancelar</button>` : ''}</td></tr>`).join('')
+      || '<tr><td colspan="7" class="muted">Nenhuma campanha ainda.</td></tr>'}</tbody></table></div>`;
+  document.querySelectorAll('[data-cc]').forEach((b) => (b.onclick = () => twice(b, async () => { await api(`/campanhas/${b.dataset.cc}/cancelar`, { method:'POST' }); campanhas(); })));
+  if (!$('#cp_nova')) return;
+  const mods = (await api(`/tenants/${TENANT.id}/modelos`).catch(() => ({ modelos: [] }))).modelos.filter((x) => x.fase === 'Campanhas');
+  $('#cp_nova').onclick = () => {
+    const m = openModal(`<h2>Nova campanha</h2>
+      ${meta.wa_token_configurado || TENANT.wa_phone_number_id ? '' : '<p class="muted" style="background:#fff7e6;padding:8px 10px;border-radius:8px">WhatsApp ainda não conectado: a campanha roda em modo de teste (nada é enviado de verdade).</p>'}
+      <div class="two"><div><label>Nome da campanha</label><input id="cp_nome" placeholder="Ex.: Promoção de dezembro"></div>
+        <div><label>Modelo aprovado na Meta</label><select id="cp_pre">${mods.map((x) => `<option value="${x.chave}">${esc(x.uso)}${x.status === 'APPROVED' ? '' : ' (ainda não aprovado)'}</option>`).join('')}<option value="">Outro modelo da minha conta...</option></select>
+          <input id="cp_modelo" placeholder="nome exato do modelo" style="margin-top:6px" class="hidden"></div></div>
+      <label>Variáveis do modelo, na ordem {{1}}, {{2}}... (use {nome} para o primeiro nome do cliente)</label>
+      <div id="cp_vars"></div><button class="btn small" id="cp_addv">+ Variável</button>
+      <label>Texto da mensagem (como o cliente vai ler; fica no histórico para a IA continuar a conversa)</label>
+      <textarea id="cp_texto" rows="3" placeholder="Oi {nome}! Esta semana tem 10% de desconto em toda a linha..."></textarea>
+      <h3 style="font-size:15px;margin:16px 0 4px">Quem recebe</h3>
+      <div class="two"><div><label>Etapa no CRM</label><select id="cp_et" multiple size="5">${['novo','qualificado','proposta','fechado','perdido'].map((e) => `<option value="${e}">${e}</option>`).join('')}</select><div class="muted" style="font-size:12px">Nada marcado = todas (Ctrl para várias)</div></div>
+        <div><label>Compras</label><select id="cp_comp"><option value="">Todos</option><option value="sim">Já compraram</option><option value="nao">Nunca compraram</option></select>
+          <label>Sem conversar há mais de (dias)</label><input id="cp_sem" type="number" min="0" placeholder="ex.: 30">
+          <label>Etiqueta (opcional)</label><input id="cp_tag" placeholder="ex.: atacado"></div></div>
+      <div class="row" style="margin-top:8px"><button class="btn small" id="cp_ver">Ver público</button><span class="muted" id="cp_pub"></span></div>
+      <label>Quando enviar</label><div class="row"><input id="cp_quando" type="datetime-local" style="width:auto"><span class="muted">vazio = agora · horário de Brasília</span></div>
+      <p class="muted" style="font-size:12px">Quem responder "SAIR" não recebe mais campanhas. Os envios vão em lotes por minuto para proteger a qualidade do número.</p>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="cp_ok">Criar campanha</button></div>`);
+    m.querySelector('.modal').style.width = 'min(760px,100%)';
+    const addVar = (v = '') => { const d = document.createElement('div'); d.className = 'row'; d.style.marginBottom = '6px';
+      d.innerHTML = `<span class="muted" style="width:38px">{{${$('#cp_vars', m).children.length + 1}}}</span><input class="cpv" value="${esc(v)}" style="flex:1">`; $('#cp_vars', m).appendChild(d); };
+    const aplicarModelo = () => { const x = mods.find((y) => y.chave === $('#cp_pre', m).value);
+      $('#cp_modelo', m).classList.toggle('hidden', !!x); $('#cp_modelo', m).value = x ? x.chave : '';
+      $('#cp_vars', m).innerHTML = '';
+      if (x) { x.exemplo.forEach((ex, i) => addVar(i === 0 ? '{nome}' : /Loja Exemplo/.test(ex) ? '{empresa}' : ''));
+        m.querySelectorAll('.cpv').forEach((inp, i) => { if (!inp.value) inp.placeholder = 'ex.: ' + x.exemplo[i]; });
+        $('#cp_texto', m).value = x.corpo; } else addVar('{nome}'); };
+    if (mods.length) { $('#cp_pre', m).onchange = aplicarModelo; aplicarModelo(); } else { $('#cp_pre', m).classList.add('hidden'); $('#cp_modelo', m).classList.remove('hidden'); addVar('{nome}'); }
+    $('#cp_addv', m).onclick = () => addVar();
+    const filtro = () => ({ etapas: [...$('#cp_et', m).selectedOptions].map((o) => o.value), compradores: $('#cp_comp', m).value || undefined,
+      sem_contato_dias: Number($('#cp_sem', m).value) || undefined, tag: $('#cp_tag', m).value.trim() || undefined });
+    $('#cp_ver', m).onclick = async () => { const r = await api(`/tenants/${TENANT.id}/campanhas/publico`, { method:'POST', body:{ filtro: filtro() } });
+      $('#cp_pub', m).textContent = `${r.total} ${r.total === 1 ? 'contato' : 'contatos'}${r.amostra.length ? ': ' + r.amostra.join(', ') + (r.total > r.amostra.length ? '…' : '') : ''}${r.optout ? ` · ${r.optout} pediram para sair` : ''}`; };
+    $('#cp_ok', m).onclick = async () => { try {
+      await api(`/tenants/${TENANT.id}/campanhas`, { method:'POST', body:{ nome: $('#cp_nome', m).value.trim(), modelo: $('#cp_modelo', m).value.trim(),
+        variaveis: [...m.querySelectorAll('.cpv')].map((i) => i.value).filter((v, i, arr) => v.trim() || i < arr.length - 1),
+        texto: $('#cp_texto', m).value.trim().replace(/\{\{(\d+)\}\}/g, (_, n) => m.querySelectorAll('.cpv')[n - 1]?.value || ''),
+        filtro: filtro(), agendar_para: $('#cp_quando', m).value || null } });
+      toast('Campanha criada'); m.remove(); campanhas(); } catch (e) { toast(e.message); } };
+  };
+}
+
+async function cfgConexoes() {
+  const [cx, nums, ags, meta, rc] = await Promise.all([api(`/tenants/${TENANT.id}/conexoes`), api(`/tenants/${TENANT.id}/numbers`), api(`/tenants/${TENANT.id}/agents`), metaCfg(),
+    api(`/tenants/${TENANT.id}/recebimento`).catch(() => null)]);
+  const edit = ME.pode.conexoes;
+  const status = (s) => !s ? '<span class="pill">não testado</span>' : s === 'ok' ? '<span class="pill ativo">conectado</span>' : `<span class="pill humano" title="${esc(s)}">erro</span>`;
+  $('#cbody').innerHTML = `<div class="card pad" style="margin-bottom:14px"><div class="row"><b style="font-size:15px;margin-right:auto">WhatsApp (API oficial da Meta)</b></div>
+    ${edit ? blocoMeta('cm', meta.ativo) : ''}
+    <table><thead><tr><th>Número</th><th>Phone Number ID</th><th>Agente</th><th>Status</th><th></th></tr></thead><tbody>
+    ${nums.map((n) => `<tr><td><b>${esc(n.nome)}</b>${n.principal ? ' <span class="pill">principal</span>' : ''}<div class="muted" style="font-size:12px">${esc(n.telefone || '')}</div></td><td><code>${esc(n.phone_number_id)}</code></td>
+      <td>${edit ? `<select data-nag="${n.id}" style="width:auto"><option value="">Agente padrão</option>${ags.map((a) => `<option value="${a.id}" ${a.id === n.agent_id ? 'selected' : ''}>${esc(a.nome)} · ${esc(a.funcao)}</option>`).join('')}</select>` : esc(ags.find((a) => a.id === n.agent_id)?.nome || 'Agente padrão')}</td>
+      <td>${status(n.status_teste)}${n.coexistencia ? ' <span class="pill">app + IA</span>' : ''}${n.pin ? `<div class="muted" style="font-size:11px">PIN 2 etapas: ${esc(n.pin)}</div>` : ''}</td><td style="white-space:nowrap">${edit ? `<button class="btn small" data-tst="${n.id}">Testar</button>${n.principal ? '' : ` <button class="btn small" data-prin="${n.id}">Principal</button>`} <button class="btn small danger" data-rm="${n.id}">Remover</button>` : ''}</td></tr>`).join('')
+      || '<tr><td colspan="5" class="muted">Nenhum número conectado.</td></tr>'}</tbody></table>
+    ${edit ? `<details style="margin-top:10px" ${meta.ativo ? '' : 'open'}><summary class="muted" style="cursor:pointer">${meta.ativo ? 'Conectar manualmente (avançado)' : 'Conectar com os dados da Meta'}</summary>
+      <p class="muted" style="margin:6px 0 0;font-size:12px">Webhook do app na Meta: <code>${esc(cx.whatsapp.webhook)}</code> (campo <b>messages</b>; token de verificação fornecido pela Avantte).</p>
+      <div class="grid" style="grid-template-columns:1fr 1.2fr 2fr 1fr auto;align-items:end;margin-top:6px">
+      <div><label>Nome</label><input id="nn_nome" placeholder="Comercial"></div><div><label>Phone Number ID</label><input id="nn_pid"></div>
+      <div><label>Token permanente (usuário do sistema)</label><input id="nn_tok" type="password" autocomplete="off"></div>
+      <div><label>Agente</label><select id="nn_ag"><option value="">Padrão</option>${ags.map((a) => `<option value="${a.id}">${esc(a.nome)}</option>`).join('')}</select></div>
+      <button class="btn primary" id="nn_add">Conectar</button></div></details>` : ''}
+    <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:10px">
+      <div><label>Modelo aprovado para retomar conversa após 24h ({{1}} = nome)</label><input id="cx_wa_template_reengajar" value="${esc(cx.whatsapp.template_reengajar || '')}" ${edit ? '' : 'disabled'} placeholder="retomar_atendimento"></div>
+      <div><label>Modelo aprovado do contato D+1 do diagnóstico</label><input id="cx_wa_template_followup" value="${esc(cx.whatsapp.template_followup || '')}" ${edit ? '' : 'disabled'}></div></div></div>
+
+    <div class="card pad" style="margin-bottom:14px" id="cx_receb"><div class="row"><b style="font-size:15px;margin-right:auto">Recebimentos</b>
+      ${rc?.ativo ? `<span class="pill ativo">${esc(rc.gateways.find((g) => g.id === rc.ativo)?.nome || rc.ativo)}</span>` : cx.asaas.usa_conta_avantte ? '<span class="pill ativo">conta Avantte</span>' : '<span class="pill humano">não conectado</span>'}</div>
+    <p class="muted" style="margin:6px 0 12px">O dinheiro das vendas cai direto na conta da sua empresa. O AVA só gera o link ou o Pix e acompanha o pagamento.</p>
+    ${rc ? blocoRecebimento(rc, edit) : ''}</div>
+
+    <div class="card pad" style="margin-bottom:14px"><div class="row"><b style="font-size:15px;margin-right:auto">E-mail das propostas</b>
+      <span class="pill ${cx.email.modo === 'resend' ? 'ativo' : 'humano'}">${cx.email.modo === 'resend' ? 'ativo' : 'simulado'}</span></div>
+    <p class="muted" style="margin:6px 0 10px">Enviado por ${esc(cx.email.remetente)} em nome da sua empresa. As respostas do cliente vão para o e-mail abaixo.</p>
+    <div class="grid" style="grid-template-columns:1fr 1fr"><div><label>Nome do remetente</label><input id="cx_email_remetente_nome" value="${esc(cx.email.nome)}" ${edit ? '' : 'disabled'}></div>
+      <div><label>Respostas vão para</label><input id="cx_email_resposta" type="email" value="${esc(cx.email.resposta)}" ${edit ? '' : 'disabled'}></div></div></div>
+
+    <div class="card pad" style="margin-bottom:14px"><div class="row"><b style="font-size:15px;margin-right:auto">Inteligência Artificial</b><span class="pill ${cx.ia.modo === 'claude' ? 'ativo' : 'humano'}">${cx.ia.modo === 'claude' ? 'Claude conectado' : 'modo demonstração'}</span></div>
+    <p class="muted" style="margin:6px 0 0">Gerenciada pela Avantte. IA avançada nos agentes: ${cx.ia.avancado_no_plano ? 'disponível no seu plano' : 'disponível no plano Premium'}.</p></div>
+    ${edit ? '<button class="btn primary" id="cx_save">Salvar conexões</button>' : ''}`;
+  const salvar = async (extra = {}) => { const body = { ...extra };
+    ['wa_template_reengajar','wa_template_followup','asaas_api_key','asaas_webhook_token','email_remetente_nome','email_resposta'].forEach((k) => { const el = $('#cx_' + k); if (el && !el.disabled) body[k] = el.value; });
+    if (!body.asaas_api_key) delete body.asaas_api_key;
+    const r = await api(`/tenants/${TENANT.id}/conexoes`, { method:'PUT', body }); toast(r.teste_asaas ? (r.teste_asaas.ok ? 'Asaas conectado' : 'Asaas: ' + r.teste_asaas.msg) : 'Conexões salvas'); cfgConexoes(); };
+  if ($('#cx_save')) $('#cx_save').onclick = () => salvar().catch((e) => toast(e.message));
+  if ($('#cx_gerar')) $('#cx_gerar').onclick = () => { $('#cx_asaas_webhook_token').value = 'whk_' + Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, '0')).join(''); };
+  if ($('#cx_testar')) $('#cx_testar').onclick = async () => { const r = await api(`/tenants/${TENANT.id}/conexoes/asaas/testar`, { method:'POST' }); toast(r.ok ? 'Asaas OK' : r.msg); };
+  ligarBlocoMeta('cm', () => cfgConexoes());
+  if (rc) ligarRecebimento($('#cx_receb'), rc, edit, () => cfgConexoes());
+  if ($('#nn_add')) $('#nn_add').onclick = async () => {
+    try { const r = await api(`/tenants/${TENANT.id}/numbers`, { method:'POST', body:{ nome: $('#nn_nome').value.trim() || 'Principal', phone_number_id: $('#nn_pid').value.trim(), token: $('#nn_tok').value.trim(), agent_id: $('#nn_ag').value || null } });
+      toast(r.teste.ok ? 'WhatsApp conectado: ' + r.teste.msg : 'Salvo, mas o teste falhou: ' + r.teste.msg); cfgConexoes(); } catch (e) { toast(e.message); } };
+  document.querySelectorAll('[data-nag]').forEach((s) => (s.onchange = async () => { await api(`/numbers/${s.dataset.nag}`, { method:'PUT', body:{ agent_id: s.value || null } }); toast('Agente do número atualizado'); }));
+  document.querySelectorAll('[data-tst]').forEach((b) => (b.onclick = async () => { const r = await api(`/numbers/${b.dataset.tst}/testar`, { method:'POST' }); toast(r.ok ? 'Conectado: ' + r.msg : 'Falhou: ' + r.msg); cfgConexoes(); }));
+  document.querySelectorAll('[data-prin]').forEach((b) => (b.onclick = async () => { await api(`/numbers/${b.dataset.prin}`, { method:'PUT', body:{ principal: 1 } }); cfgConexoes(); }));
+  document.querySelectorAll('[data-rm]').forEach((b) => (b.onclick = () => twice(b, async () => { await api(`/numbers/${b.dataset.rm}`, { method:'DELETE' }); cfgConexoes(); })));
+}
+
+// ---------- Empresas (plataforma) ----------
+async function empresas() {
+  const [list, plats, mods] = await Promise.all([api('/tenants'), api('/plataforma/usuarios'), api('/agentes/modelos')]);
+  const prog = await Promise.all(list.map((t) => api(`/tenants/${t.id}/implantacao`).catch(() => null)));
+  $('#view').innerHTML = `<div class="card pad" style="margin-bottom:14px"><b style="font-size:15px">Nova empresa cliente</b>
+    <div class="grid" style="grid-template-columns:2fr 1fr 1fr">
+      <div><label>Nome da empresa</label><input id="ne_nome"></div>
+      <div><label>Plano</label><select id="ne_plano"><option value="essencial">Essencial</option><option value="profissional" selected>Profissional</option><option value="premium">Premium</option></select></div>
+      <div><label>Cobrança</label><select id="ne_ciclo"><option value="contrato">Contrato 12 meses em 12x</option><option value="anual">Anual à vista</option><option value="mensal">Mensal sem fidelidade (exceção)</option></select></div>
+      <div><label>Nome da assistente</label><input id="ne_assist" value="AVA"></div>
+      <div><label>Nome do dono</label><input id="ne_dnome"></div><div><label>E-mail do dono</label><input id="ne_demail" type="email"></div><div><label>WhatsApp do dono</label><input id="ne_dtel" placeholder="5524999999999"></div></div>
+    <label>Agentes iniciais</label><div class="row">${Object.entries(mods.modelos).map(([k, m]) => `<label style="margin:0;display:flex;gap:5px;align-items:center"><input type="checkbox" data-nm="${k}" ${['recepcao','vendas'].includes(k) ? 'checked' : ''} style="width:auto">${esc(m.nome)}</label>`).join('')}</div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="ne_add">Cadastrar e gerar convite</button></div><div id="ne_res" class="muted" style="margin-top:10px"></div></div>
+    <div class="card" style="margin-bottom:14px"><table><thead><tr><th>Empresa</th><th>Plano</th><th>Status</th><th>Implantação</th><th>Conversas no mês</th></tr></thead><tbody>
+    ${list.map((t, i) => { const p = prog[i]; const pct = p ? Math.round(100 * p.concluidos / p.total) : 0;
+      return `<tr class="click" data-id="${t.id}"><td><b>${esc(t.nome)}</b><div class="muted" style="font-size:12px">desde ${when(t.criado_em)}</div></td><td>${t.plano}</td>
+      <td><span class="pill ${t.status}">${t.status}</span></td><td style="min-width:140px">${pct}%<div class="bar"><i style="width:${pct}%"></i></div></td><td>${t.uso.conversas} / ${t.limite}</td></tr>`; }).join('')
+      || '<tr><td colspan="5" class="muted">Nenhuma empresa ainda.</td></tr>'}</tbody></table></div>
+    <div class="card pad"><b>Equipe da plataforma (Avantte)</b><p class="muted" style="margin:4px 0 8px">Veem e administram todas as empresas.</p>
+      <ul style="margin:0 0 10px;padding-left:18px">${plats.map((u) => `<li>${esc(u.nome)} · ${esc(u.email)}${u.pendente ? ' <span class="pill humano">convite pendente</span>' : ''}</li>`).join('')}</ul>
+      <div class="row"><input id="pu_nome" placeholder="Nome" style="max-width:200px"><input id="pu_email" type="email" placeholder="E-mail" style="max-width:260px"><button class="btn" id="pu_add">Convidar</button></div><div id="pu_res" class="muted" style="margin-top:8px"></div></div>`;
+  $('#ne_add').onclick = async () => {
+    const body = { nome: $('#ne_nome').value.trim(), plano: $('#ne_plano').value, ciclo: $('#ne_ciclo').value, nome_assistente: $('#ne_assist').value.trim() || 'AVA',
+      dono_nome: $('#ne_dnome').value.trim(), dono_email: $('#ne_demail').value.trim(), dono_telefone: $('#ne_dtel').value.trim() || null,
+      agentes: [...document.querySelectorAll('[data-nm]')].filter((c) => c.checked).map((c) => c.dataset.nm) };
+    if (!body.nome) return toast('Informe o nome da empresa');
+    try { const t = await api('/plataforma/empresas', { method:'POST', body }); await loadTenants(); TENANT = (await api('/tenants')).find((x) => x.id === t.id); $('#tenantSel').value = t.id;
+      await empresas(); $('#ne_res').innerHTML = `<b>${esc(t.nome)}</b> cadastrada. ${t.link_convite_dono ? `Envie ao dono o link para criar a senha (vale 7 dias): <code>${esc(t.link_convite_dono)}</code>` : 'Convide o dono em Configurações → Usuários.'}`;
+    } catch (e) { toast(e.message); } };
+  $('#pu_add').onclick = async () => { try { const r = await api('/plataforma/usuarios', { method:'POST', body:{ nome: $('#pu_nome').value.trim(), email: $('#pu_email').value.trim() } });
+    $('#pu_res').innerHTML = `Link para criar a senha: <code>${esc(r.link_convite)}</code>`; } catch (e) { toast(e.message); } };
+  document.querySelectorAll('tr[data-id]').forEach((r) => (r.onclick = async () => { TENANT = list.find((t) => t.id == r.dataset.id); $('#tenantSel').value = TENANT.id; go('inicio'); }));
 }
 
 // ---------- Planos ----------
@@ -509,13 +1538,21 @@ async function planos() {
   const ps = await api('/plans');
   $('#view').innerHTML = `<div class="grid plans">${ps.map((p) => `<div class="card pad plan"><h3>${p.nome}</h3>
     <div class="price">${brl(p.preco_mensal)}<span class="muted" style="font-size:13px;font-weight:500">/mês</span></div>
-    <div class="muted">Implantação ${brl(p.implantacao)}</div>
-    <ul><li>${p.conversas_mes.toLocaleString('pt-BR')} conversas/mês</li><li>${p.usuarios_painel} usuários no painel</li>${p.recursos.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`).join('')}</div>`;
+    <div class="muted">Contrato de 12 meses em 12x · ou ${brl(p.preco_anual)} à vista · Implantação ${brl(p.implantacao)}</div>
+    <ul><li>${p.conversas_mes.toLocaleString('pt-BR')} conversas/mês</li><li>${p.usuarios_painel ? p.usuarios_painel + ' usuários' : 'Usuários ilimitados'}</li>${p.recursos.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`).join('')}</div>`;
 }
 
-$('#btnLogin').onclick = login; $('#tok').onkeydown = (e) => e.key === 'Enter' && login();
+$('#btnLogin').onclick = login; ['#tok', '#lg_senha', '#lg_email'].forEach((x) => ($(x).onkeydown = (e) => e.key === 'Enter' && login(e)));
+$('#lgVer').onclick = () => { const i = $('#lg_senha'); i.type = i.type === 'password' ? 'text' : 'password'; $('#lgVer').textContent = i.type === 'password' ? 'Mostrar' : 'Ocultar'; };
+$('#lgModo').onclick = (e) => { e.preventDefault(); const tok = $('#lgEmail').classList.toggle('hidden'); $('#lgTok').classList.toggle('hidden', !tok); $('#lgModo').textContent = tok ? 'Entrar com e-mail e senha' : 'Entrar com token de acesso'; };
+$('#lgEsqueci').onclick = (e) => { e.preventDefault(); $('#rc_email').value = $('#lg_email').value; $('#lgEntrar').classList.add('hidden'); $('#lgRecuperar').classList.remove('hidden'); $('#rc_email').focus(); };
+$('#rcVoltar').onclick = (e) => { e.preventDefault(); $('#lgRecuperar').classList.add('hidden'); $('#lgEntrar').classList.remove('hidden'); };
+$('#rcEnviar').onclick = async () => { const email = $('#rc_email').value.trim(); const m = $('#rcMsg'); m.classList.remove('ok');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { m.textContent = 'Digite um e-mail válido.'; return; }
+  const r = await fetch('/api/auth/esqueci', { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify({ email }) }).then((x) => x.json()).catch(() => ({ mensagem: 'Não foi possível enviar agora.' }));
+  m.textContent = r.mensagem; m.classList.add('ok'); };
 $('#logout').onclick = (e) => { e.preventDefault(); logout(); };
-if (TOKEN) login();
+if (TOKEN) login(); else mostrarLogin();
 </script>
 </body>
 </html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criar conta — AVA Connect</title>
+<link rel="icon" href="/brand/favicon.png" type="image/png">
+<meta name="theme-color" content="#06112a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#06112a;--ink:#0f1a2e;--muted:#5b6780;--line:#dfe5ef;--grad:linear-gradient(90deg,#1f6fff,#12d8c4)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}body{font:15px/1.5 Inter,system-ui,sans-serif;color:var(--ink);background:#fff}
+h1,h2,h3{font-family:Montserrat,Inter,sans-serif;letter-spacing:-.3px;margin:0}
+.pg{min-height:100vh;display:grid;grid-template-columns:1fr 1.1fr}
+.side{color:#e8edf6;padding:40px 48px;display:flex;flex-direction:column;gap:22px;
+  background:radial-gradient(700px 420px at 0% 0%,rgba(18,216,196,.28),transparent 60%),radial-gradient(800px 500px at 100% 100%,rgba(31,111,255,.35),transparent 60%),var(--navy)}
+.wm{display:flex;align-items:center;gap:10px;font-family:Montserrat,Inter,sans-serif;color:#fff;text-decoration:none}
+.wm img{width:32px}.wm .bar{width:1px;height:28px;background:rgba(255,255,255,.5)}.wm .name{font-size:19px;line-height:1}.wm .name b{font-weight:800}
+.wm .name i{font-style:normal;font-weight:500;color:#19e0c9;margin-left:3px}.wm .by{font-size:8px;letter-spacing:2.6px;margin-top:4px;text-align:center}
+.side h2{font-size:28px;line-height:1.2}.side p{color:#c6d2e8;margin:0}
+.planos{display:grid;gap:10px}
+.pl{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);cursor:pointer}
+.pl input{margin-top:4px;accent-color:#19e0c9}.pl b{display:block;color:#fff}.pl span{color:#9fb0cc;font-size:13px}
+.pl .pr{margin-left:auto;text-align:right;white-space:nowrap}.pl .pr b{font-family:Montserrat}
+.ciclo{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);margin-bottom:12px}
+.ciclo button{border:0;background:transparent;color:#c9d3e6;font:600 14px Inter,sans-serif;padding:9px 14px;border-radius:9px;cursor:pointer}.ciclo button.on{background:#19e0c9;color:#06112a}
+.ciclo em{font-style:normal;font-size:12px;font-weight:700}
+.pl.on{border-color:#19e0c9;background:rgba(25,224,201,.10)}
+.resumo{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px}
+.resumo .l{display:flex;justify-content:space-between;color:#c6d2e8;font-size:14px;padding:3px 0}
+.resumo .t{display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.14);margin-top:8px;padding-top:10px;font-weight:700;color:#fff;font-size:17px}
+.resumo small{display:block;color:#8ea0bf;margin-top:8px;font-size:12px}
+.main{display:grid;place-items:center;padding:36px 22px}.box{width:100%;max-width:460px}
+.box h1{font-size:26px;margin-bottom:6px}.sub{color:var(--muted);margin:0 0 20px}
+label{display:block;font-size:13px;color:#3a4660;margin:12px 0 4px;font-weight:500}
+input[type=text],input[type=email],input[type=password],input[type=tel]{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:10px;background:#f5f7fb;font:inherit;color:var(--ink);outline:none}
+input:focus{border-color:#12b8a8;background:#fff;box-shadow:0 0 0 3px rgba(18,216,196,.15)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.ck{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:13px;color:var(--muted)}.ck input{margin-top:3px;accent-color:#12b8a8}
+.ck a{color:#1f6fff}
+.btn{width:100%;margin-top:18px;padding:14px;border:0;border-radius:10px;background:var(--grad);color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:wait}
+.err{min-height:20px;margin-top:10px;font-size:13px;color:#d64545}
+.foot{text-align:center;margin-top:16px;font-size:14px;color:var(--muted)}.foot a{color:#1f6fff;text-decoration:none;font-weight:500}
+.seg{display:flex;gap:8px;align-items:center;margin-top:14px;color:var(--muted);font-size:12px}
+@media (max-width:920px){.pg{grid-template-columns:1fr}.side{padding:28px 22px}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pg">
+  <div class="side">
+    <a class="wm" href="/" aria-label="AVA Connect by Avantte"><img src="/brand/simbolo.webp" alt=""><span class="bar"></span><div><div class="name"><b>AVA</b><i>Connect</i></div><div class="by">by AVANTTE</div></div></a>
+    <div><h2>Coloque a AVA para atender e vender pela sua empresa</h2><p style="margin-top:8px">Escolha o plano. Depois do pagamento, você configura tudo num passo a passo.</p></div>
+    <div class="ciclo" role="radiogroup" aria-label="Forma de pagamento do plano"><button type="button" data-ciclo="contrato" class="on">12x no contrato</button><button type="button" data-ciclo="anual">À vista <em id="cicloEco"></em></button></div>
+    <div class="planos" id="planos"></div>
+    <div class="resumo" id="resumo"></div>
+  </div>
+  <div class="main"><div class="box">
+    <h1>Criar sua conta</h1>
+    <p class="sub">Leva 2 minutos. Você será o dono da conta da sua empresa.</p>
+    <form id="f" novalidate>
+      <div class="two">
+        <div><label for="empresa">Nome da empresa</label><input id="empresa" type="text" autocomplete="organization" required></div>
+        <div><label for="segmento">Segmento</label><select id="segmento" required style="width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:10px;background:#f5f7fb;font:inherit;color:var(--ink)"><option value="">Escolha</option></select></div>
+      </div>
+      <div class="two">
+        <div><label for="nome">Seu nome completo</label><input id="nome" type="text" autocomplete="name" required></div>
+        <div><label for="whatsapp">Seu WhatsApp</label><input id="whatsapp" type="tel" autocomplete="tel" placeholder="(24) 99999-9999" required></div>
+      </div>
+      <div class="two">
+        <div><label for="email">E-mail</label><input id="email" type="email" autocomplete="email" required></div>
+        <div><label for="doc">CPF ou CNPJ</label><input id="doc" type="text" inputmode="numeric" placeholder="Usado na cobrança" required></div>
+      </div>
+      <label for="senha">Crie uma senha</label><input id="senha" type="password" autocomplete="new-password" placeholder="8+ caracteres, com letras e números" required>
+      <label class="ck"><input type="checkbox" id="aceite"><span>Li e aceito os <a href="/termos" target="_blank">Termos de uso</a> e a <a href="/privacidade" target="_blank">Política de privacidade</a>.</span></label>
+      <button class="btn" id="go" type="submit">Criar conta e ir para o pagamento</button>
+      <div class="err" id="err" role="alert"></div>
+      <div class="seg">🔒 Pagamento por Pix, boleto ou cartão, processado pelo Asaas. Contrato de 12 meses, com garantia de <span id="garDias">30</span> dias para cancelar sem multa.</div>
+    </form>
+    <p class="foot">Já tem conta? <a href="/entrar">Entrar</a> · Dúvidas? <a href="/">Fale com a AVA</a></p>
+  </div></div>
+</div>
+<script>
+const $ = (s) => document.querySelector(s);
+const brl = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+let PLANOS = [], SEL = new URLSearchParams(location.search).get('plano') || 'profissional', CICLO = new URLSearchParams(location.search).get('ciclo') === 'anual' ? 'anual' : 'contrato', MESES = 10;
+function render() {
+  $('#planos').innerHTML = PLANOS.map((p) => `<label class="pl ${p.id === SEL ? 'on' : ''}"><input type="radio" name="pl" value="${p.id}" ${p.id === SEL ? 'checked' : ''}>
+    <div><b>${p.nome}</b><span>${p.conversas_mes.toLocaleString('pt-BR')} conversas · ${p.agentes} ${p.agentes > 1 ? 'agentes' : 'agente'}${p.vendas ? ' · agente de vendas' : ''}</span></div>
+    <div class="pr">${CICLO === 'anual' ? `<b>${brl(p.preco_anual)}</b><span>/ano</span><br><span>equivale a ${brl(p.preco_anual / 12)}/mês</span>` : `<b>12x ${brl(p.preco_mensal)}</b><span>/mês</span>`}</div></label>`).join('');
+  document.querySelectorAll('[data-ciclo]').forEach((b) => { b.classList.toggle('on', b.dataset.ciclo === CICLO); b.setAttribute('aria-pressed', b.dataset.ciclo === CICLO); });
+  $('#cicloEco').textContent = MESES < 12 ? `· ${12 - MESES} meses grátis` : '';
+  document.querySelectorAll('[name=pl]').forEach((r) => (r.onchange = () => { SEL = r.value; render(); }));
+  const p = PLANOS.find((x) => x.id === SEL) || PLANOS[0]; if (!p) return;
+  const v = CICLO === 'anual' ? p.preco_anual : p.preco_mensal;
+  $('#resumo').innerHTML = `<div class="l"><span>Implantação (uma vez)</span><span>${brl(p.implantacao)}</span></div>
+    <div class="l"><span>${CICLO === 'anual' ? `Plano anual à vista (12 meses, paga ${MESES})` : 'Parcela 1 de 12'}</span><span>${brl(v)}</span></div>
+    <div class="t"><span>Total hoje</span><span>${brl(p.implantacao + v)}</span></div>
+    <small>${CICLO === 'anual' ? `Renova automaticamente a cada 12 meses por ${brl(p.preco_anual)}.` : `Depois, mais 11 parcelas de ${brl(p.preco_mensal)}, cobradas automaticamente todo mês. Contrato de 12 meses, renovação automática.`} As mensagens do WhatsApp são cobradas pela Meta direto no cartão da sua empresa.</small>`;
+}
+fetch('/api/public/segmentos').then((r) => r.json()).then((ss) => { $('#segmento').innerHTML += ss.map((x) => `<option value="${x.id}">${x.nome}</option>`).join(''); });
+document.querySelectorAll('[data-ciclo]').forEach((b) => (b.onclick = () => { CICLO = b.dataset.ciclo; render(); }));
+fetch('/api/public/site').then((r) => r.json()).then((d) => { PLANOS = d.planos; MESES = d.meses_pagos_anual || 10; if ($('#garDias')) $('#garDias').textContent = d.garantia_dias ?? 30; if (!PLANOS.some((p) => p.id === SEL)) SEL = 'profissional'; render(); });
+$('#whatsapp').oninput = (e) => { const d = e.target.value.replace(/\D/g, '').slice(0, 11); e.target.value = d.length > 6 ? `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}` : d.length > 2 ? `(${d.slice(0, 2)}) ${d.slice(2)}` : d; };
+$('#doc').oninput = (e) => { const d = e.target.value.replace(/\D/g, '').slice(0, 14);
+  e.target.value = d.length <= 11 ? d.replace(/(\d{3})(\d{3})?(\d{3})?(\d{1,2})?/, (m, a, b, c, x) => [a, b, c].filter(Boolean).join('.') + (x ? '-' + x : ''))
+    : d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})?/, (m, a, b, c, x, y) => `${a}.${b}.${c}/${x}${y ? '-' + y : ''}`); };
+$('#f').onsubmit = async (e) => {
+  e.preventDefault(); const b = $('#go'); b.disabled = true; b.textContent = 'Criando sua conta...'; $('#err').textContent = '';
+  try {
+    const r = await fetch('/api/public/cadastro', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({
+      plano: SEL, ciclo: CICLO, segmento: $('#segmento').value, empresa: $('#empresa').value, nome: $('#nome').value, email: $('#email').value, whatsapp: $('#whatsapp').value,
+      cpf_cnpj: $('#doc').value, senha: $('#senha').value, aceite: $('#aceite').checked }) });
+    const d = await r.json(); if (!r.ok) throw new Error(d.erro || 'Não foi possível criar a conta.');
+    try { localStorage.setItem('ava_token', d.token); } catch {}
+    location.href = d.pagamento_url || '/app';
+  } catch (err) { $('#err').textContent = err.message; b.disabled = false; b.textContent = 'Criar conta e ir para o pagamento'; }
+};
+</script>
+</body>
+</html>

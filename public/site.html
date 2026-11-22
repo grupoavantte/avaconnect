@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AVA Connect — seu melhor vendedor nunca dorme | Atendimento e vendas com IA no WhatsApp</title>
+<meta name="description" content="A AVA atende seus clientes no WhatsApp 24 horas, envia proposta, cobra e faz o acompanhamento até o pagamento cair. Um produto Avantte.">
+<link rel="icon" href="/brand/favicon.png">
+<meta property="og:title" content="AVA Connect — atendimento e vendas com IA no WhatsApp">
+<meta property="og:description" content="Do primeiro oi ao pagamento, sem ninguém esperar.">
+<meta property="og:image" content="/brand/simbolo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#06112A;--navy2:#0B1A3A;--line-d:#1E3A66;--ink:#0F1A2E;--muted:#5B6780;--muted-d:#93A0B8;--soft-d:#C9D3E6;--bg:#F5F7FB;--line:#E3E8F0;--teal:#12D8C4;--teal-ink:#0B6E66;--mint:#E3F8F6;--blue:#1F6FFF}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+a{color:var(--teal-ink)}a:hover{color:var(--navy)}img{max-width:100%}
+h1,h2,h3{margin:0;font-family:Montserrat,Inter,sans-serif;letter-spacing:-.5px}
+.w{max-width:1200px;margin:0 auto}
+.sec{padding:88px 24px}.dark{background:var(--navy);color:#fff}
+.eyebrow{margin:0;font-size:14px;font-weight:700;color:var(--teal-ink);letter-spacing:.4px;text-transform:uppercase}
+.h2{margin-top:10px;font-weight:800;font-size:clamp(30px,3.6vw,44px);line-height:1.1;max-width:760px}
+.btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:16px;padding:16px 24px;border-radius:12px;border:1.5px solid transparent}
+.btn-teal{background:var(--teal);color:var(--navy)}.btn-teal:hover{color:var(--navy);filter:brightness(1.05)}
+.btn-ghost{color:#fff;border-color:#2B4470}.btn-ghost:hover{color:#fff;border-color:#4A6799}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{color:#fff}
+.btn-line{color:var(--navy);border-color:var(--navy)}
+header{background:var(--navy);padding:0 24px}
+.top{min-height:76px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;padding:12px 0}
+.top .logo{margin-right:auto;display:flex;text-decoration:none}
+.wm{display:flex;align-items:center;gap:10px;color:#fff}.wm img{width:34px;height:34px;object-fit:contain}.wm b{display:block;font:800 21px/1 Montserrat,sans-serif;letter-spacing:-.4px}.wm b i{font-style:normal;color:var(--teal)}
+.wm small{display:block;font:500 10px/1.6 Inter,sans-serif;letter-spacing:3px;color:var(--muted-d)}
+.top nav{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:15px;font-weight:500}.top nav a{color:var(--soft-d);text-decoration:none}.top nav a:hover{color:#fff}
+.top .acts{display:flex;gap:10px;align-items:center}.top .acts a.entrar{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 14px}
+.top .acts .btn{font-size:15px;padding:12px 20px;border-radius:10px}
+.hero{padding:56px 24px 88px}.hero .w{display:flex;flex-wrap:wrap;gap:48px;align-items:center}
+.hero .txt{flex:1 1 480px;min-width:0}
+.pill{margin:0 0 18px;display:inline-block;font-size:13px;font-weight:600;letter-spacing:.4px;color:var(--teal);border:1px solid var(--line-d);border-radius:999px;padding:7px 14px}
+.hero h1{font-weight:800;font-size:clamp(38px,5.2vw,64px);line-height:1.05;letter-spacing:-1.2px}
+.hero .lead{margin:22px 0 0;font-size:19px;line-height:1.6;color:var(--soft-d);max-width:560px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.hero .nota{margin:18px 0 0;font-size:14px;color:var(--muted-d)}
+.phone{flex:0 1 400px;min-width:0;margin:0 auto}
+.phone .tela{background:var(--navy2);border:1px solid var(--line-d);border-radius:28px;padding:14px}
+.phone .cab{display:flex;align-items:center;gap:10px;padding:8px 8px 14px;border-bottom:1px solid var(--line-d)}
+.phone .cab img{width:34px;height:34px;object-fit:contain;background:var(--navy);border-radius:50%;padding:5px}
+.phone .cab b{display:block;font-size:15px}.phone .cab span{font-size:12px;color:var(--teal)}
+.chat{display:flex;flex-direction:column;gap:10px;padding:16px 4px 6px;font-size:14px;line-height:1.45}
+.b{margin:0;max-width:84%;padding:10px 12px}
+.b.cli{align-self:flex-end;background:#1E3A66;color:#fff;border-radius:14px 14px 4px 14px}
+.b.ava{align-self:flex-start;background:var(--mint);color:var(--navy);border-radius:14px 14px 14px 4px}
+.b .card{margin:8px 0 0;background:#fff;border-radius:10px;padding:10px;font-size:13px}.b .card span{color:var(--teal-ink);font-weight:600}
+.ok{align-self:center;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--navy);background:var(--teal);padding:6px 12px;border-radius:999px;margin-top:4px}
+.ex{margin:10px 0 0;text-align:center;font-size:12px;color:var(--muted-d)}
+.passos{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.passos li,.card-b{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+.passos .n{margin:0;font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:var(--blue)}
+.passos h3{margin:10px 0 6px;font-size:18px;letter-spacing:0;font-family:Inter,sans-serif}.passos p{margin:0;font-size:15px;line-height:1.55;color:var(--muted)}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.grid4 > div{border-radius:20px;padding:32px}.grid4 h3{font-weight:800;font-size:24px}.grid4 p{margin:12px 0 0;font-size:16px;line-height:1.6}
+.segs{margin-top:44px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.segs div{border:1px solid var(--line);border-radius:16px;padding:24px}.segs h3{font-size:19px;color:var(--navy);font-family:Inter,sans-serif;letter-spacing:0;margin-bottom:8px}.segs p{margin:0;font-size:15px;line-height:1.55;color:var(--muted)}
+.shop .w{display:flex;flex-wrap:wrap;gap:48px;align-items:center}.shop .txt{flex:1 1 460px;min-width:0}
+.shop ul{list-style:none;margin:26px 0 0;padding:0;display:flex;flex-direction:column;gap:14px;font-size:16px}.shop li{display:flex;gap:12px}
+.shop .chatbox{flex:0 1 380px;min-width:0;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:28px;padding:18px;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:1.45}
+.shop .chatbox .cli{align-self:flex-end;background:#E6EEFF;padding:10px 12px;border-radius:14px 14px 4px 14px;margin:0;max-width:80%}
+.shop .chatbox .ava{align-self:flex-start;background:var(--mint);color:var(--navy);padding:10px 12px;border-radius:14px 14px 14px 4px;margin:0;max-width:88%}
+.foto{height:140px;border-radius:10px;background:linear-gradient(135deg,#CFEFEA,#E6EEFF);display:grid;place-items:center;font-size:40px}
+.tag{align-self:center;font-size:12px;font-weight:600;color:#fff;background:var(--navy);padding:6px 12px;border-radius:999px;margin-top:4px}
+.ciclo{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:var(--navy2);border:1px solid var(--line-d);margin-top:24px}
+.ciclo button{border:0;background:transparent;color:var(--soft-d);font:600 15px Inter,sans-serif;padding:10px 16px;border-radius:9px;cursor:pointer}.ciclo button.on{background:var(--teal);color:var(--navy)}
+.planos{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.plano{background:var(--navy2);border:1px solid var(--line-d);border-radius:20px;padding:28px;display:flex;flex-direction:column}
+.plano.dest{border:2px solid var(--teal);padding:27px}.plano .sel{align-self:flex-start;margin:0 0 10px;font-size:12px;font-weight:700;color:var(--navy);background:var(--teal);border-radius:999px;padding:4px 10px}
+.plano h3{font-size:20px;font-family:Inter,sans-serif;letter-spacing:0}.plano .preco{margin:14px 0 0;font-family:Montserrat,sans-serif;font-weight:800;font-size:36px}.plano .preco span{font:500 15px Inter,sans-serif;color:var(--muted-d)}
+.plano .sub{margin:4px 0 0;font-size:14px;color:var(--muted-d)}.plano ul{margin:18px 0 22px;padding-left:18px;color:var(--soft-d);font-size:15px;line-height:1.7}.plano li.no{color:#5d6b85;text-decoration:line-through}
+.plano .btn{margin-top:auto;justify-content:center}
+.faq{max-width:860px}details{border-top:1px solid var(--line);padding:20px 0}details:last-of-type{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;list-style:none;font-size:18px;font-weight:600}summary::-webkit-details-marker{display:none}summary::after{content:'+';float:right;color:var(--teal-ink);font-weight:700}details[open] summary::after{content:'–'}
+details p{margin:12px 0 0;font-size:16px;line-height:1.6;color:var(--muted)}
+.final{background:var(--mint);border-radius:24px;padding:48px 32px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between}
+.final h2{flex:1 1 420px;font-weight:800;font-size:clamp(26px,3vw,36px);line-height:1.15;color:var(--navy)}
+footer{background:var(--navy);color:var(--muted-d);padding:40px 24px}
+footer .w{display:flex;flex-wrap:wrap;gap:20px 32px;align-items:center}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px}footer nav a{color:var(--soft-d)}
+footer .legal{flex:1 1 100%;margin:8px 0 0;font-size:13px;line-height:1.6}
+@media (max-width:720px){.sec{padding:64px 20px}.hero{padding:40px 20px 64px}.top nav{display:none}.final{padding:36px 22px}}
+</style>
+</head>
+<body>
+<header><div class="w top">
+  <a href="#topo" class="logo" aria-label="AVA Connect by Avantte"><span class="wm"><img src="/brand/simbolo.webp" alt="" width="34" height="34"><span><b>AVA <i>Connect</i></b><small>by AVANTTE</small></span></span></a>
+  <nav aria-label="Principal"><a href="#como-funciona">Como funciona</a><a href="#segmentos">Segmentos</a><a href="#avashop">AvaShop</a><a href="#planos">Planos</a><a href="#duvidas">Dúvidas</a></nav>
+  <div class="acts"><a href="/entrar" class="entrar">Entrar</a><a href="/cadastro" class="btn btn-teal">Criar conta</a></div>
+</div></header>
+
+<section id="topo" class="dark hero"><div class="w">
+  <div class="txt">
+    <p class="pill">Atendimento e vendas com Inteligência Artificial</p>
+    <h1>Seu melhor vendedor nunca dorme.</h1>
+    <p class="lead">A AVA atende seus clientes no WhatsApp 24 horas, entende o que cada um precisa, envia a proposta, cobra e faz o acompanhamento até o pagamento cair. Sua equipe entra só quando precisa.</p>
+    <div class="ctas">
+      <a href="/cadastro" class="btn btn-teal js-wa"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.5 7.4L3 20.5l1.6-5.3A8.4 8.4 0 1 1 21 11.5z"/></svg><span>Ver a AVA atendendo</span></a>
+      <a href="/cadastro" class="btn btn-ghost">Criar conta e testar</a>
+    </div>
+    <p class="nota">Funciona no número que você já usa. Teste a IA com o seu catálogo antes de pagar.</p>
+  </div>
+  <div class="phone" aria-label="Exemplo de conversa da AVA com um cliente">
+    <div class="tela">
+      <div class="cab"><img src="/brand/simbolo.webp" alt=""><div><b>AVA · Sua Empresa</b><span>online agora · 22:14</span></div></div>
+      <div class="chat">
+        <p class="b cli">Boa noite! Vocês fazem caixa de papelão personalizada?</p>
+        <p class="b ava">Fazemos sim! Para te passar o valor certo: qual a medida e quantas unidades você precisa?</p>
+        <p class="b cli">30x20x15 cm, mil unidades. Tem desconto à vista?</p>
+        <div class="b ava"><p style="margin:0">Tenho 5% no Pix. Te mandei a proposta completa:</p><p class="card"><b>Proposta nº 37</b><br>1.000 caixas 30x20x15 · Pix com 5% de desconto<br><span>Ver proposta e pagar</span></p></div>
+        <p class="b cli">Fechado, vou pagar no Pix.</p>
+        <p class="ok"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Pagamento confirmado · equipe avisada</p>
+      </div>
+    </div>
+    <p class="ex">Exemplo de conversa</p>
+  </div>
+</div></section>
+
+<section id="como-funciona" class="sec"><div class="w">
+  <p class="eyebrow">Como funciona</p>
+  <h2 class="h2">Do primeiro "oi" ao pagamento, sem ninguém esperar.</h2>
+  <ol class="passos">
+    <li><p class="n">01</p><h3>Atende na hora</h3><p>Responde em segundos, de dia, de noite e no fim de semana. Entende texto, áudio, foto e PDF.</p></li>
+    <li><p class="n">02</p><h3>Entende o cliente</h3><p>Faz as perguntas certas, registra no CRM e separa quem está pronto para comprar.</p></li>
+    <li><p class="n">03</p><h3>Propõe e negocia</h3><p>Monta a proposta, envia por WhatsApp e e-mail e negocia só até o limite que você definiu.</p></li>
+    <li><p class="n">04</p><h3>Cobra e recebe</h3><p>Gera o Pix, boleto ou link de cartão na sua conta e avisa você quando o dinheiro cai.</p></li>
+    <li><p class="n">05</p><h3>Acompanha</h3><p>Retoma quem parou de responder, lembra pagamento e reunião. Nenhuma venda esfria.</p></li>
+  </ol>
+</div></section>
+
+<section class="sec" style="padding-top:0"><div class="w grid4">
+  <div class="dark"><h3>Você no controle</h3><p style="color:var(--soft-d)">A AVA só responde com o que está na base da sua empresa. Desconto acima do seu limite chega no seu WhatsApp: responda APROVAR ou RECUSAR. Cada conversa fica registrada.</p></div>
+  <div class="card-b"><h3>Sua equipe, organizada</h3><p style="color:var(--muted)">Quando precisa de uma pessoa, a AVA passa para o setor certo: Vendas, Financeiro ou Suporte. Cada cliente volta sempre para o mesmo vendedor, e a IA sugere a resposta.</p></div>
+  <div class="card-b"><h3>Números na mão</h3><p style="color:var(--muted)">CRM com funil de vendas, nota de satisfação de cada atendimento, motivos de contato e quanto cada campanha vendeu.</p></div>
+  <div style="background:var(--mint)"><h3 style="color:var(--navy)">Clientes de volta</h3><p style="color:#24404A">Campanhas no WhatsApp para promoções, clientes parados e produtos de volta ao estoque. Quem responde já é atendido pela AVA.</p></div>
+</div></section>
+
+<section id="segmentos" class="sec" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="w">
+  <p class="eyebrow">Para o seu negócio</p>
+  <h2 class="h2">Uma IA que conhece as regras do seu setor.</h2>
+  <div class="segs">
+    <div><h3>Indústria e distribuidores</h3><p>Pergunta técnica às 22h vira proposta na hora, com acompanhamento em dois dias e boleto quando o cliente aprova.</p></div>
+    <div><h3>Clínicas e saúde</h3><p>Agenda, confirma e lembra a consulta. Não dá diagnóstico e orienta procurar atendimento em caso de urgência.</p></div>
+    <div><h3>Advocacia e contabilidade</h3><p>Recebe o caso, organiza os documentos e marca a reunião, dentro das regras de publicidade da OAB.</p></div>
+    <div><h3>Lojas e comércio</h3><p>Mostra a foto, confirma tamanho e cor, calcula o frete e fecha o pedido, respeitando o Código de Defesa do Consumidor.</p></div>
+    <div><h3>Serviços</h3><p>Qualifica o pedido, envia o orçamento, agenda a visita e cobra o sinal.</p></div>
+    <div><h3>Imobiliárias, escolas e restaurantes</h3><p>Modelos prontos para cada tipo de negócio, com o tom e as perguntas certas desde o primeiro dia.</p></div>
+  </div>
+</div></section>
+
+<section id="avashop" class="sec shop"><div class="w">
+  <div class="txt">
+    <p class="eyebrow">AvaShop</p>
+    <h2 class="h2">Sua loja vendendo pelo WhatsApp, sem ninguém online.</h2>
+    <p style="margin:18px 0 0;font-size:17px;line-height:1.6;color:var(--muted)">Não é mais uma loja virtual para você cuidar. É a AVA vendendo produto físico na conversa, do jeito que o cliente já compra.</p>
+    <ul>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Mostra a foto da cor e do tamanho que o cliente pediu</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Calcula o frete: motoboy, retirada ou Correios e transportadoras pelo Melhor Envio</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Fecha o pedido, cobra na sua conta e baixa o estoque sozinha</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Gera a etiqueta e manda o rastreio para o cliente</span></li>
+      <li><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B6E66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L20 7"/></svg><span>Retoma quem viu o frete e não fechou</span></li>
+    </ul>
+  </div>
+  <div class="chatbox" aria-label="Exemplo de venda pelo AvaShop">
+    <p class="cli">Tem o tênis preto no 40?</p>
+    <div class="ava"><div class="foto" aria-hidden="true">👟</div><p style="margin:8px 0 0">Tênis Run · Preto / 40 · últimas 2 unidades. Qual o seu CEP para eu calcular o frete?</p></div>
+    <p class="cli">25600-000</p>
+    <p class="ava">Motoboy hoje ou PAC em até 6 dias úteis. Qual prefere?</p>
+    <p class="tag">Pedido nº 1042 pago · rastreio enviado</p>
+  </div>
+</div></section>
+
+<section id="planos" class="sec dark"><div class="w">
+  <h2 class="h2">Tudo incluído. Você escolhe o volume.</h2>
+  <p style="margin:14px 0 0;font-size:17px;color:var(--soft-d)">Usuários ilimitados em todos os planos. Implantação feita pela equipe Avantte.</p>
+  <div class="ciclo" role="group" aria-label="Forma de pagamento"><button type="button" data-ciclo="contrato" class="on" aria-pressed="true">12x no contrato</button><button type="button" data-ciclo="anual" aria-pressed="false">À vista <span id="eco"></span></button></div>
+  <div class="planos" id="planosBox"></div>
+  <p style="margin:22px 0 0;font-size:14px;color:var(--muted-d)">As mensagens fora da janela de 24 horas e as campanhas têm a tarifa da Meta, cobrada direto da sua empresa. O dinheiro das suas vendas cai na sua conta (Asaas, Mercado Pago, Pagar.me ou Pix).</p>
+</div></section>
+
+<section id="duvidas" class="sec"><div class="w faq">
+  <h2 class="h2" style="margin-bottom:28px">Dúvidas</h2>
+  <details><summary>Preciso trocar o número de WhatsApp?</summary><p>Não. A conexão é feita com a API oficial da Meta em poucos cliques, e você pode continuar usando o mesmo número no aplicativo WhatsApp Business.</p></details>
+  <details><summary>E se a IA não souber responder?</summary><p>Ela não inventa. Responde só com o que está na base da sua empresa e, quando não sabe, passa a conversa para o setor certo da sua equipe.</p></details>
+  <details><summary>A IA pode dar desconto sem eu saber?</summary><p>Só até o limite que você definir. Acima disso, ela pede sua aprovação pelo WhatsApp e espera a resposta.</p></details>
+  <details><summary>O dinheiro das vendas passa pela Avantte?</summary><p>Não. Você conecta a sua conta (Asaas, Mercado Pago, Pagar.me ou uma chave Pix) e os pagamentos caem direto nela. A AVA só gera a cobrança e acompanha.</p></details>
+  <details><summary>Em quanto tempo começo a usar?</summary><p>Você testa a IA no mesmo dia, no simulador. Depois da implantação com a equipe Avantte, ela passa a atender no seu número.</p></details>
+  <details><summary>Como funciona o contrato?</summary><p>O contrato é de 12 meses. Você escolhe pagar em 12 parcelas mensais ou à vista, com meses grátis. Nos primeiros 30 dias você pode cancelar sem multa. Os recursos são os mesmos nas duas formas.</p></details>
+</div></section>
+
+<section class="sec" style="padding-top:0"><div class="w final">
+  <h2>Converse com a AVA agora e veja como ela venderia para você.</h2>
+  <div class="ctas" style="margin:0"><a href="/cadastro" class="btn btn-navy js-wa">Falar com a AVA no WhatsApp</a><a href="/cadastro" class="btn btn-line">Criar conta</a></div>
+</div></section>
+
+<footer><div class="w">
+  <a href="#topo" class="logo" style="margin-right:auto;text-decoration:none" aria-label="AVA Connect by Avantte"><span class="wm"><img src="/brand/simbolo.webp" alt="" width="34" height="34"><span><b>AVA <i>Connect</i></b><small>by AVANTTE</small></span></span></a>
+  <nav aria-label="Rodapé"><a href="/termos">Termos de uso</a><a href="/privacidade">Privacidade</a><a href="/entrar">Entrar</a><a href="mailto:contato@grupoavantte.com.br">contato@grupoavantte.com.br</a></nav>
+  <p class="legal">AVA Connect é um produto Avantte · AVANTTE ASSESSORIA EMPRESARIAL LTDA · CNPJ 62.699.610/0001-82 · Av. Brigadeiro Faria Lima, 1811, sala 1119, Jardim Paulistano, São Paulo/SP, CEP 01452-001</p>
+</div></footer>
+
+<script>
+const brl = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+let D = null, CICLO = 'contrato';
+function planos() {
+  if (!D) return;
+  const meses = D.meses_pagos_anual || 10;
+  document.getElementById('eco').textContent = meses < 12 ? `· ${12 - meses} meses grátis` : '';
+  document.querySelectorAll('[data-ciclo]').forEach((b) => { b.classList.toggle('on', b.dataset.ciclo === CICLO); b.setAttribute('aria-pressed', b.dataset.ciclo === CICLO); });
+  document.getElementById('planosBox').innerHTML = D.planos.map((p) => `<div class="plano ${p.id === 'profissional' ? 'dest' : ''}">
+    ${p.id === 'profissional' ? '<p class="sel">Mais escolhido</p>' : ''}<h3>${p.nome}</h3>
+    ${CICLO === 'anual' ? `<p class="preco">${brl(p.preco_anual)}<span>/ano</span></p><p class="sub">equivale a ${brl(p.preco_anual / 12)}/mês · implantação ${brl(p.implantacao)}</p>`
+      : `<p class="preco">${brl(p.preco_mensal)}<span>/mês</span></p><p class="sub">contrato de 12 meses · ou ${brl(p.preco_anual)} à vista · implantação ${brl(p.implantacao)}</p>`}
+    <ul><li>${p.conversas_mes.toLocaleString('pt-BR')} conversas por mês</li><li>${p.agentes} ${p.agentes > 1 ? 'agentes' : 'agente'} de IA · ${p.numeros_whatsapp} ${p.numeros_whatsapp > 1 ? 'números' : 'número'} de WhatsApp</li>
+      <li>Usuários ilimitados, CRM, campanhas e pesquisa de satisfação</li><li class="${p.vendas ? '' : 'no'}">Agente de vendas e AvaShop</li><li class="${p.modelo_avancado ? '' : 'no'}">IA avançada nos agentes</li></ul>
+    <a class="btn ${p.id === 'profissional' ? 'btn-teal' : 'btn-ghost'}" href="/cadastro?plano=${p.id}${CICLO === 'anual' ? '&ciclo=anual' : ''}">Assinar o ${p.nome}</a></div>`).join('');
+}
+document.querySelectorAll('[data-ciclo]').forEach((b) => (b.onclick = () => { CICLO = b.dataset.ciclo; planos(); }));
+fetch('/api/public/site').then((r) => r.json()).then((d) => {
+  D = d; planos();
+  if (d.whatsapp) document.querySelectorAll('.js-wa').forEach((a) => { a.href = d.whatsapp; a.target = '_blank'; a.rel = 'noopener'; });
+}).catch(() => {});
+</script>
+</body>
+</html>
