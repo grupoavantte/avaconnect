@@ -1,19 +1,24 @@
 {
   "name": "ava-connect",
   "version": "1.0.0",
-  "description": "AVA Connect — atendimento com IA no WhatsApp para várias empresas (Avantte)",
+  "description": "AVA Connect — atendimento e vendas com IA no WhatsApp para várias empresas (Avantte)",
   "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node --no-warnings src/server.js",
     "dev": "node --no-warnings --watch src/server.js",
-    "test": "node --no-warnings test/smoke.js"
+    "test": "node --no-warnings test/smoke.js && node --no-warnings test/vendas.js && node --no-warnings test/plataforma.js && node --no-warnings test/cadastro.js",
+    "test:cadencia": "node --no-warnings test/vendas-cadencia.js",
+    "test:unit": "node --no-warnings test/vendas-cadencia.js && node --no-warnings test/midia.js && node --no-warnings test/loja.js && node --no-warnings test/meta.js && node --no-warnings test/ai-mock.js && node --no-warnings test/operacao.js && node --no-warnings test/modelos.js && node --no-warnings test/gateways.js"
   },
-  "engines": { "node": ">=22.5" },
+  "engines": {
+    "node": ">=22.5"
+  },
   "author": "Avantte <contato@grupoavantte.com.br>",
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "express": "^4.22.3"
+    "express": "^4.22.3",
+    "qrcode": "^1.5.4"
   }
 }

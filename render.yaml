@@ -20,6 +20,24 @@ services:
         sync: false
       - key: WA_APP_SECRET
         sync: false
+      - key: ASAAS_API_KEY
+        sync: false
+      - key: ASAAS_WEBHOOK_TOKEN
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: vendas@grupoavantte.com.br
+      - key: PLATAFORMA_EMAIL
+        value: contato@grupoavantte.com.br
+      - key: META_APP_ID
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+      - key: META_ES_CONFIG_ID
+        sync: false
+      - key: TRANSCRICAO_API_KEY
+        sync: false
     disk:
       name: ava-data
       mountPath: /var/data
