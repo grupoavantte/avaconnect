@@ -410,6 +410,11 @@ export function canaisRouter(canSee) {
 }
 
 /** Token do chat da própria Avantte (para o balão no site do AVA). */
+/** Token dos formulários de contratação do site da AVA Connect (vão para o CRM da Avantte). */
+export function tokenFormAvantte() {
+  const avt = db.prepare("SELECT * FROM tenants WHERE nome LIKE 'Avantte%' COLLATE NOCASE ORDER BY id LIMIT 1").get();
+  return avt ? tokenCanal(avt) : null;
+}
 export function tokenChatAvantte() {
   const avt = db.prepare("SELECT * FROM tenants WHERE nome LIKE 'Avantte%' COLLATE NOCASE ORDER BY id LIMIT 1").get();
   return avt && avt.webchat_ativo ? tokenCanal(avt) : null;
