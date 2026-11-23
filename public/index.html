@@ -1373,8 +1373,6 @@ async function cfgCanais() {
     <div class="card pad"><b style="font-size:15px">✉️ E-mail</b>
       <p class="muted" style="margin:4px 0 0">A IA lê os e-mails que chegam no seu endereço de contato e responde por e-mail. Para ligar, o seu provedor de e-mail precisa encaminhar cada mensagem recebida para o endereço abaixo (webhook). Funciona com Cloudflare Email Routing, Mailgun, Postmark e Resend. A equipe Avantte configura com você na implantação.</p>
       <label style="margin-top:12px">Endereço para encaminhar os e-mails</label>${bloco('cp_mail', c.email_webhook)}</div>
-    <div class="card pad"><b style="font-size:15px">📸 Instagram e Messenger · 📞 AVA Voz</b>
-      <p class="muted" style="margin:4px 0 0">Em breve: Direct do Instagram, Messenger, comentário que vira mensagem e atendimento por voz. Fale com a Avantte para entrar na lista de espera.</p></div>
   </div>
   ${edit ? '<div class="row" style="margin:12px 0"><button class="btn primary" id="cn_save">Salvar</button></div>' : ''}`;
   document.querySelectorAll('[data-copia]').forEach((b) => (b.onclick = () => { navigator.clipboard?.writeText($('#' + b.dataset.copia).textContent); toast('Copiado'); }));
