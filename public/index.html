@@ -389,7 +389,7 @@ async function openConv(id, silent) {
     <div class="pad row" style="border-bottom:1px solid var(--line);font-size:13px;gap:8px">
       ${c.lead ? `<div style="margin-right:auto"><b>Lead:</b> ${esc(c.lead.interesse || '')} · <span class="pill">${c.lead.etapa}</span></div><button class="btn small" id="openLead">Ficha no CRM</button>` : '<div style="margin-right:auto"></div>'}
       <span class="muted">Carteira:</span><select id="cv_resp" style="width:auto;padding:4px 8px"><option value="">Ninguém</option>${users.map((u) => `<option value="${u.id}" ${u.id === c.contato.responsavel_id ? 'selected' : ''}>${esc(u.nome)}</option>`).join('')}</select></div>
-    <div class="msgs" id="msgs">${c.mensagens.map((m) => `<div class="msg ${m.autor}"><div class="who">${{cliente:'Cliente',ia:'AVA',humano:'Atendente',sistema:'Sistema'}[m.autor]} · ${when(m.criado_em)}</div>${esc(m.conteudo)}</div>`).join('')}</div>
+    <div class="msgs" id="msgs">${c.mensagens.map((m) => `<div class="msg ${m.autor}"><div class="who">${{cliente:'Cliente',ia:'AVA',humano:'Atendente',sistema:'Sistema'}[m.autor]} · ${when(m.criado_em)}</div>${msgHtml(m.conteudo)}</div>`).join('')}</div>
     <div class="composer"><textarea id="reply" placeholder="Responder como atendente (a IA pausa nesta conversa)"></textarea>
       <div style="display:grid;gap:6px"><button class="btn primary" id="send">Enviar</button><button class="btn small" id="sugerir" title="A IA escreve uma resposta para você revisar">✨ Sugerir</button></div></div>`;
   $('#reply').value = draft;
@@ -511,6 +511,19 @@ async function leadForm() {
 }
 
 const ICO = { nota:'📝', tarefa:'☑️', ligacao:'📞', whatsapp:'💬', reuniao:'🤝', sistema:'⚙️' };
+// Mensagem com link: arquivo da biblioteca vira miniatura ou link "abrir"; demais links ficam clicáveis.
+function msgHtml(t) {
+  return esc(t).replace(/(https?:\/\/[^\s<]+)/g, (u) => /\/a\/f[0-9a-f]+\/[^\s]+\.(jpg|png|webp)$/i.test(u)
+    ? `<a href="${u}" target="_blank" rel="noopener"><img src="${u}" alt="" style="max-width:220px;border-radius:8px;display:block;margin-top:4px"></a>`
+    : `<a href="${u}" target="_blank" rel="noopener">${/\/a\/f[0-9a-f]+\//.test(u) ? 'abrir arquivo' : u}</a>`);
+}
+function fichaHtml(c) {
+  let f = {}; try { f = JSON.parse(c.ficha || '{}'); } catch {}
+  const L = [['Tipo', f.tipo_pessoa === 'PJ' ? 'Empresa' : f.tipo_pessoa === 'PF' ? 'Pessoa física' : ''], ['CNPJ', f.cnpj], ['Razão social', f.razao_social], ['Nome fantasia', f.nome_fantasia], ['IE', f.inscricao_estadual],
+    ['CPF', f.cpf], ['Nascimento', f.data_nascimento], ['E-mail', f.email], ['Endereço', [f.endereco && `${f.endereco}${f.numero ? ', ' + f.numero : ''}${f.complemento ? ' ' + f.complemento : ''}`, f.bairro, f.cidade && `${f.cidade}/${f.uf || ''}`, f.cep && 'CEP ' + f.cep].filter(Boolean).join(' — ')]].filter((x) => x[1]);
+  if (!L.length) return '';
+  return `<div class="card pad" style="margin-top:12px;background:var(--bg,#F5F7FB)"><b>🪪 Ficha do cliente</b><table style="margin-top:6px"><tbody>${L.map(([k, v]) => `<tr><td class="muted" style="width:120px">${k}</td><td>${esc(v)}</td></tr>`).join('')}</tbody></table></div>`;
+}
 async function leadModal(id) {
   const [l] = await Promise.all([api(`/leads/${id}`), carregarUsers()]);
   document.querySelectorAll('.modal-bg').forEach((x) => x.remove());
@@ -519,6 +532,7 @@ async function leadModal(id) {
       <div class="muted" style="font-size:13px">${esc(l.contato.telefone)} · origem ${ORIGEM[l.origem] || l.origem} · desde ${when(l.criado_em)}</div></div>
       <button class="btn small" id="lclose">Fechar</button></div>
     ${l.conversas.length ? `<div class="row" style="margin-top:10px">${l.conversas.slice(0, 3).map((c) => `<button class="btn small" data-conv="${c.id}">💬 Conversa de ${when(c.iniciada_em)}</button>`).join('')}</div>` : ''}
+    ${fichaHtml(l.contato)}
     ${fieldsHtml({ ...l, nome: l.nome || l.contato.nome })}
     ${l.etapa === 'perdido' ? `<label>Motivo da perda</label><input id="l_motivo_perda" value="${esc(l.motivo_perda || '')}">` : ''}
     <div class="row" style="margin-top:12px"><button class="btn primary" id="lsave">Salvar</button><button class="btn danger small" id="ldel" style="margin-left:auto">Excluir lead</button></div>
@@ -1229,11 +1243,11 @@ async function inicio() {
 // ---------- Configurações ----------
 let CTAB = 'empresa';
 async function empresa() {
-  const abas = [['empresa', 'Empresa e IA', ME.pode.configurar], ['agentes', 'Agentes', true], ['usuarios', 'Usuários', true], ['atendimento', 'Atendimento', true], ['modelos', 'Modelos Meta', true], ['canais', 'Canais', true], ['conexoes', 'Conexões', true]].filter((a) => a[2]);
+  const abas = [['empresa', 'Empresa e IA', ME.pode.configurar], ['agentes', 'Agentes', true], ['usuarios', 'Usuários', true], ['atendimento', 'Atendimento', true], ['modelos', 'Modelos Meta', true], ['canais', 'Canais', true], ['arquivos', 'Arquivos', true], ['ficha', 'Ficha do cliente', true], ['conexoes', 'Conexões', true]].filter((a) => a[2]);
   if (!abas.some((a) => a[0] === CTAB)) CTAB = abas[0][0];
   $('#view').innerHTML = `<div class="row" style="margin-bottom:12px">${abas.map(([k, n]) => `<button class="btn small ${CTAB === k ? 'primary' : ''}" data-ct="${k}">${n}</button>`).join('')}</div><div id="cbody"></div>`;
   document.querySelectorAll('[data-ct]').forEach((b) => (b.onclick = () => { CTAB = b.dataset.ct; empresa(); }));
-  await ({ empresa: cfgEmpresa, agentes: cfgAgentes, usuarios: cfgUsuarios, atendimento: cfgAtendimento, modelos: cfgModelos, canais: cfgCanais, conexoes: cfgConexoes })[CTAB]();
+  await ({ empresa: cfgEmpresa, agentes: cfgAgentes, usuarios: cfgUsuarios, atendimento: cfgAtendimento, modelos: cfgModelos, canais: cfgCanais, arquivos: cfgArquivos, ficha: cfgFicha, conexoes: cfgConexoes })[CTAB]();
 }
 
 const HAB_NOMES = { transferir: 'Passar para humano', agenda: 'Agenda', vendas: 'Vendas (proposta, cobrança, follow-up)', diagnostico: 'Diagnóstico Empresarial', loja: 'Loja (AvaShop)' };
@@ -1371,6 +1385,70 @@ async function cfgCanais() {
         webchat_saudacao: $('#cn_sau').value.trim(), webchat_lado: $('#cn_lado').value, webchat_margem: Number($('#cn_mg').value), form_whatsapp: $('#cn_fwa').checked, form_aviso_email: $('#cn_av').value.trim() } });
       toast('Canais salvos'); cfgCanais();
     } catch (e) { toast(e.message); }
+  };
+}
+
+// ---------- Biblioteca de arquivos ----------
+const TAM = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB');
+async function cfgArquivos() {
+  const d = await api(`/tenants/${TENANT.id}/arquivos`); const edit = ME.pode.configurar;
+  const ic = { imagem: '📷', video: '🎬', documento: '📄' };
+  $('#cbody').innerHTML = `<p class="muted" style="margin:0 0 12px">Suba fotos, catálogos, tabelas de preço, contratos e vídeos. Em cada um, escreva <b>quando</b> a AVA deve enviar (ex.: "quando perguntarem preço" ou "depois que o cliente disser a cidade"). Ela envia sozinha no momento certo, no WhatsApp, no chat do site ou no e-mail.</p>
+  ${edit ? `<div class="card pad" style="margin-bottom:14px"><b style="font-size:15px">Adicionar arquivo</b>
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <div><label for="ar_file">Arquivo (foto até 5 MB, PDF/Word/Excel/PowerPoint até 15 MB, vídeo MP4 até 16 MB)</label><input id="ar_file" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,application/pdf,.docx,.xlsx,.pptx"></div>
+      <div><label for="ar_nome">Nome que o cliente vê</label><input id="ar_nome" placeholder="Ex.: Catálogo 2026"></div></div>
+    <label for="ar_quando">Quando a AVA deve enviar</label><input id="ar_quando" placeholder="Ex.: quando o cliente perguntar modelos ou preços">
+    <label for="ar_leg">Texto junto do arquivo (opcional)</label><input id="ar_leg" placeholder="Ex.: Segue nosso catálogo com todos os modelos">
+    <div class="row" style="margin-top:10px"><button class="btn primary" id="ar_up">Enviar arquivo</button><span class="muted" id="ar_st"></span></div></div>` : ''}
+  <div class="card pad"><b style="font-size:15px">Biblioteca (${d.arquivos.length} de ${d.max})</b>
+  ${d.arquivos.length ? `<table style="margin-top:8px"><tbody>${d.arquivos.map((a) => `<tr>
+    <td style="width:56px">${a.tipo === 'imagem' ? `<img src="${esc(a.url)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:6px">` : `<span style="font-size:26px">${ic[a.tipo]}</span>`}</td>
+    <td><b>${esc(a.nome)}</b> ${a.ativo ? '' : '<span class="pill pausado">desligado</span>'}<div class="muted" style="font-size:13px">Quando enviar: ${esc(a.quando || '— (só quando o cliente pedir)')}</div>
+      <div class="muted" style="font-size:12px">${TAM(a.tamanho)} · enviado ${a.envios}x · <a href="${esc(a.url)}" target="_blank" rel="noopener">abrir</a></div></td>
+    ${edit ? `<td style="white-space:nowrap"><button class="btn small" data-ar-ed="${a.id}">Editar</button> <button class="btn small" data-ar-on="${a.id}" data-v="${a.ativo ? 0 : 1}">${a.ativo ? 'Desligar' : 'Ligar'}</button> <button class="btn small danger" data-ar-del="${a.id}">Apagar</button></td>` : ''}</tr>`).join('')}</tbody></table>`
+    : '<p class="muted">Nenhum arquivo ainda.</p>'}</div>`;
+  if (!edit) return;
+  $('#ar_file').onchange = (e) => { const f = e.target.files[0]; if (f && !$('#ar_nome').value) $('#ar_nome').value = f.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '); };
+  $('#ar_up').onclick = async () => {
+    const f = $('#ar_file').files[0]; if (!f) return toast('Escolha um arquivo');
+    const ext = f.name.split('.').pop().toLowerCase();
+    const mime = f.type || { docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', pdf: 'application/pdf' }[ext] || '';
+    $('#ar_up').disabled = true; $('#ar_st').textContent = 'Enviando...';
+    try {
+      const r = await fetch(`/api/tenants/${TENANT.id}/arquivos`, { method: 'POST', body: f, headers: { 'content-type': mime || 'application/octet-stream', authorization: 'Bearer ' + TOKEN,
+        'x-nome': encodeURIComponent($('#ar_nome').value.trim() || f.name), 'x-quando': encodeURIComponent($('#ar_quando').value.trim()), 'x-legenda': encodeURIComponent($('#ar_leg').value.trim()) } });
+      const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.erro || 'Não foi possível enviar');
+      toast('Arquivo adicionado'); cfgArquivos();
+    } catch (e) { toast(e.message); $('#ar_up').disabled = false; $('#ar_st').textContent = ''; }
+  };
+  document.querySelectorAll('[data-ar-del]').forEach((b) => (b.onclick = async () => { if (!confirm('Apagar este arquivo? A AVA deixa de enviar.')) return; await api(`/arquivos/${b.dataset.arDel}`, { method: 'DELETE' }); toast('Apagado'); cfgArquivos(); }));
+  document.querySelectorAll('[data-ar-on]').forEach((b) => (b.onclick = async () => { await api(`/arquivos/${b.dataset.arOn}`, { method: 'PUT', body: { ativo: b.dataset.v === '1' } }); cfgArquivos(); }));
+  document.querySelectorAll('[data-ar-ed]').forEach((b) => (b.onclick = () => {
+    const a = d.arquivos.find((x) => x.id === +b.dataset.arEd);
+    const m = openModal(`<h2>Editar arquivo</h2><label for="ae_n">Nome</label><input id="ae_n" value="${esc(a.nome)}">
+      <label for="ae_q">Quando a AVA deve enviar</label><input id="ae_q" value="${esc(a.quando || '')}">
+      <label for="ae_l">Texto junto do arquivo</label><input id="ae_l" value="${esc(a.legenda || '')}">
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="ae_s">Salvar</button><button class="btn" id="ae_c">Cancelar</button></div>`);
+    $('#ae_c', m).onclick = () => m.remove();
+    $('#ae_s', m).onclick = async () => { await api(`/arquivos/${a.id}`, { method: 'PUT', body: { nome: $('#ae_n', m).value, quando: $('#ae_q', m).value, legenda: $('#ae_l', m).value } }); m.remove(); toast('Salvo'); cfgArquivos(); };
+  }));
+}
+
+// ---------- Ficha do cliente (PF/PJ) ----------
+async function cfgFicha() {
+  const d = await api(`/tenants/${TENANT.id}/ficha-config`); const edit = ME.pode.configurar;
+  $('#cbody').innerHTML = `<div class="card pad"><b style="font-size:15px">Dados que a AVA coleta do cliente</b>
+    <p class="muted" style="margin:4px 0 10px">Para proposta, nota fiscal e entrega. A AVA pergunta de forma natural, no máximo dois dados por mensagem, e não deixa sair proposta, cobrança ou pedido sem o que você marcar aqui. Se o cliente for empresa, basta o CNPJ: a razão social, a situação na Receita e o endereço vêm sozinhos, e ela só confirma. Com o CEP, completa o endereço.</p>
+    ${Object.entries(d.grupos).map(([k, g]) => `<label style="display:flex;gap:10px;align-items:flex-start;margin:8px 0;color:var(--ink)"><input type="checkbox" data-fc="${k}" style="width:auto;margin-top:3px" ${d.campos.includes(k) ? 'checked' : ''} ${edit ? '' : 'disabled'}>
+      <span><b>${esc(g.nome)}</b><br><span class="muted" style="font-size:13px">${esc(g.ajuda)}</span></span></label>`).join('')}
+    <label for="fc_m" style="margin-top:12px">Quando pedir</label><select id="fc_m" ${edit ? '' : 'disabled'}>${Object.entries(d.momentos).map(([k, n]) => `<option value="${k}" ${d.momento === k ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>
+    <small class="muted">Pedir só na hora da compra converte mais: ninguém gosta de passar CPF antes de saber o preço.</small>
+    ${edit ? '<div class="row" style="margin-top:12px"><button class="btn primary" id="fc_s">Salvar</button></div>' : ''}</div>`;
+  if (!edit) return;
+  $('#fc_s').onclick = async () => {
+    try { await api(`/tenants/${TENANT.id}/ficha-config`, { method: 'PUT', body: { campos: [...document.querySelectorAll('[data-fc]:checked')].map((x) => x.dataset.fc), momento: $('#fc_m').value } }); toast('Ficha salva'); }
+    catch (e) { toast(e.message); }
   };
 }
 
