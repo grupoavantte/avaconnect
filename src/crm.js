@@ -64,7 +64,8 @@ export function crmRouter(canSee) {
     const contato = db.prepare('SELECT * FROM contacts WHERE id = ?').get(l.contact_id);
     const atividades = db.prepare('SELECT * FROM activities WHERE lead_id = ? ORDER BY concluida, COALESCE(vence_em, criado_em) DESC, id DESC').all(l.id);
     const conversas = db.prepare('SELECT id, status, canal, iniciada_em, ultima_mensagem_em FROM conversations WHERE contact_id = ? ORDER BY id DESC').all(l.contact_id);
-    res.json({ ...l, contato, atividades, conversas });
+    const link = l.link_id ? db.prepare('SELECT nome FROM links_campanha WHERE id = ?').get(l.link_id)?.nome || null : null;
+    res.json({ ...l, contato, atividades, conversas, link });
   });
 
   r.put('/leads/:id', (req, res) => {

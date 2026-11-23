@@ -23,6 +23,7 @@ import { rotasSeo } from './seo.js';
 import { rotasCanais, canaisRouter } from './canais.js';
 import { rotasArquivos, arquivosRouter } from './arquivos.js';
 import { fichaRouter } from './ficha.js';
+import { linksRouter } from './links.js';
 import { rotasCadastro, eventoAssinatura, situacaoConta } from './cadastro.js';
 
 Object.assign(HANDLERS, VENDAS_HANDLERS);
@@ -363,6 +364,7 @@ api.use(operacaoRouter(canSee));
 api.use(canaisRouter(canSee));
 api.use(arquivosRouter(canSee));
 api.use(fichaRouter(canSee));
+api.use(linksRouter(canSee));
 api.use(modelosRouter(canSee));
 api.use(recebimentoRouter(canSee));
 api.use(lojaRouter(canSee));

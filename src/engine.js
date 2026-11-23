@@ -1,5 +1,6 @@
 import { possivelComprovante } from './gateways.js';
 import { executarFerramentaArquivos, textoArquivo, urlArquivo } from './arquivos.js';
+import { marcarOrigem, contextoLink } from './links.js';
 import { executarFerramentaFicha, contextoFicha, travaFicha } from './ficha.js';
 import { contextoCanal, contarConversa, vincularCodigoSite } from './canais.js';
 import { sendEmail } from './email.js';
@@ -165,6 +166,7 @@ export async function handleIncoming(tenantBase, { telefone, nome, texto, waId =
     return { conversation_id: pre.conversation_id ?? null, respostas: [pre.resposta], status: 'encerrada', pesquisa: !!pre.conversation_id };
   }
   const { conv } = openConversation(tenant, contact, canal, { agentId: tenant._agent_id ?? null, numeroId: tenant._numero_id ?? null });
+  if (canal === 'whatsapp' || canal === 'simulador') marcarOrigem(tenant, contact, conv, texto); // link de campanha (frase pronta por canal)
   // Conversa em andamento continua com o agente que começou (salvo se o simulador pediu outro).
   if (!agentId && conv.agent_id && conv.agent_id !== tenant._agent_id && getAgente(conv.agent_id)?.ativo) {
     tenant = efetivo(tenantBase, { numero, agent: getAgente(conv.agent_id) });
@@ -221,7 +223,7 @@ export async function handleIncoming(tenantBase, { telefone, nome, texto, waId =
   for (const md of midiasDaConversa(conv.id)) { const h = historico.find((x) => x.id === md.message_id); if (h) (h.midia ||= []).push(md); }
   let resposta;
   try {
-    const contexto = [contextoCanal(canal, contact), contextoFicha(tenant, contact.id), contextoClienteIA(contact.id), tenant.vendas_ativo ? contextoVendas(contact.id) : ''].filter(Boolean).join(' ');
+    const contexto = [contextoCanal(canal, contact), contextoLink(conv), contextoFicha(tenant, contact.id), contextoClienteIA(contact.id), tenant.vendas_ativo ? contextoVendas(contact.id) : ''].filter(Boolean).join(' ');
     resposta = await generateReply(tenant, historico, makeToolExecutor(tenant, contact, conv, enviar, enviarImagem, enviarArquivo), contexto);
     // Passagem para outro agente: ele responde em seguida, na mesma mensagem do cliente.
     if (conv._passagem) {
