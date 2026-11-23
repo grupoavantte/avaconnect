@@ -261,7 +261,7 @@ async function api(path, opts = {}) {
   const res = await fetch('/api' + path, { ...opts, headers: { 'content-type': 'application/json', authorization: 'Bearer ' + TOKEN }, body: opts.body ? JSON.stringify(opts.body) : undefined });
   if (res.status === 401) { logout(); throw new Error('Sessão expirada'); }
   const data = await res.json().catch(() => ({}));
-  if (res.status === 402 && data.bloqueado) telaBloqueio();
+  if (res.status === 402 && (data.bloqueado || data.pendente)) telaBloqueio();
   if (!res.ok) throw new Error(data.erro || 'Erro ' + res.status);
   return data;
 }
@@ -1001,6 +1001,21 @@ async function telaBloqueio() {
   const d = document.createElement('div');
   d.setAttribute('role', 'alertdialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-labelledby', 'bloqTit');
   d.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(6,17,42,.92);display:flex;align-items:center;justify-content:center;padding:20px';
+  if (sx.status === 'pendente') {
+    const pp = sx.pagamento_pendente || {};
+    d.innerHTML = `<div class="card pad" style="max-width:480px;text-align:center"><div style="font-size:34px">💳</div>
+      <h2 id="bloqTit" style="margin:8px 0">Falta só o pagamento</h2>
+      <p class="muted">Sua conta foi criada. O acesso à plataforma libera assim que o pagamento${pp.valor ? ` de <b>${brl2(pp.valor)}</b>` : ''} (implantação + 1ª parcela) for confirmado. Pix e cartão liberam na hora; boleto, em até 2 dias úteis.</p>
+      ${pp.url ? `<p style="margin:18px 0"><a class="btn primary" href="${esc(pp.url)}">Ir para o pagamento</a></p>` : '<p>Estamos gerando o seu link de pagamento. A Avantte vai enviar por e-mail e WhatsApp em instantes.</p>'}
+      <p class="muted" id="bloqStatus" style="font-size:13px">Esperando a confirmação do pagamento...</p>
+      <p><button class="btn" onclick="logout()">Sair</button></p></div>`;
+    document.body.appendChild(d);
+    const iv = setInterval(async () => {
+      const s2 = await api(`/tenants/${TENANT.id}/situacao`).catch(() => null);
+      if (s2 && s2.status === 'ativo') { clearInterval(iv); $('#bloqStatus').textContent = 'Pagamento confirmado! Abrindo a plataforma...'; setTimeout(() => location.reload(), 900); }
+    }, 6000);
+    return;
+  }
   d.innerHTML = `<div class="card pad" style="max-width:460px;text-align:center"><div style="font-size:34px">🔒</div>
     <h2 id="bloqTit" style="margin:8px 0">Sistema bloqueado por falta de pagamento</h2>
     <p class="muted">Não identificamos o pagamento da parcela do AVA Connect. A assistente parou de atender e o painel fica travado. Assim que o pagamento for identificado, tudo volta a funcionar sozinho.</p>
@@ -1014,8 +1029,9 @@ async function bannerSituacao() {
   const sx = await api(`/tenants/${TENANT.id}/situacao`).catch(() => null); if (!sx) return '';
   const caixa = (cor, titulo, txt, btn) => `<div class="card pad" style="margin-bottom:14px;border-color:${cor};background:color-mix(in srgb, ${cor} 8%, var(--panel))"><div class="row">
     <div style="margin-right:auto"><b style="font-size:15px">${titulo}</b><div class="muted">${txt}</div></div>${btn || ''}</div></div>`;
+  if (sx.status === 'pendente' && sx.origem === 'site') { telaBloqueio(); return ''; }
   if (sx.status === 'pendente') return caixa('#e8a317', 'Falta só o pagamento para ativar sua conta',
-    `Você já pode configurar tudo. A assistente começa a atender no WhatsApp quando o pagamento de ${sx.pagamento_pendente?.valor ? brl2(sx.pagamento_pendente.valor) : 'implantação + 1ª parcela'} for confirmado.`,
+    `A assistente começa a atender no WhatsApp quando o pagamento de ${sx.pagamento_pendente?.valor ? brl2(sx.pagamento_pendente.valor) : 'implantação + 1ª parcela'} for confirmado.`,
     sx.pagamento_pendente?.url ? `<a class="btn primary" href="${esc(sx.pagamento_pendente.url)}" target="_blank" rel="noopener">Pagar e ativar</a>` : '<span class="muted">A Avantte vai enviar o link de pagamento.</span>');
   const pagar = sx.fatura_aberta_url ? `<a class="btn primary" href="${esc(sx.fatura_aberta_url)}" target="_blank" rel="noopener">Pagar agora</a>` : '';
   if (sx.cobranca_status === 'suspensa') { telaBloqueio(); return caixa('#d64545', 'Sistema bloqueado por falta de pagamento', 'Assim que o pagamento for identificado, tudo volta a funcionar sozinho.', pagar); }
