@@ -20,8 +20,8 @@ function faqDoSite(html) {
 const PRODUTOS = [
   { id: 'manager', nome: 'AVA Manager', sub: 'Sistema de gestão empresarial (ERP) com inteligência artificial, dividido em departamentos',
     desc: 'Sistema de gestão com IA por departamentos (financeiro, comercial, e-commerce, marketing, compras, estoque, produção, RH e jurídico), com um Consultor IA que analisa a empresa e o mercado e sugere ações. A empresa contrata só os departamentos que usa.' },
-  { id: 'ponto', nome: 'AVA Ponto', sub: 'Controle de ponto eletrônico com inteligência artificial',
-    desc: 'Ponto eletrônico pelo celular ou computador, com espelho do mês, horas extras, banco de horas e alertas para o gestor no WhatsApp. Em adequação à Portaria 671 (REP-P).' },
+  { id: 'ponto', nome: 'AVA Ponto', sub: 'Ponto eletrônico com reconhecimento facial e inteligência artificial',
+    desc: 'Ponto eletrônico por reconhecimento facial num celular fixado na parede da empresa (totem AVA Ponto), sem digitar nada; espelho do mês, horas extras, banco de horas e alertas para o gestor no WhatsApp. Em adequação à Portaria 671 (REP-P).' },
 ];
 function jsonLdProduto(base, p, faq) {
   const graph = [{ '@type': 'SoftwareApplication', '@id': `${base}/${p.id}#app`, name: p.nome, applicationCategory: 'BusinessApplication', applicationSubCategory: p.sub,
