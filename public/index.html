@@ -529,7 +529,7 @@ async function leadModal(id) {
   document.querySelectorAll('.modal-bg').forEach((x) => x.remove());
   const m = openModal(`
     <div class="row"><div style="margin-right:auto"><h2>${esc(l.nome || l.contato.nome || l.contato.telefone)}</h2>
-      <div class="muted" style="font-size:13px">${esc(l.contato.telefone)} · origem ${ORIGEM[l.origem] || l.origem} · desde ${when(l.criado_em)}</div></div>
+      <div class="muted" style="font-size:13px">${esc(l.contato.telefone)} · origem ${ORIGEM[l.origem] || l.origem}${l.link ? ` · link ${esc(l.link)}` : ''} · desde ${when(l.criado_em)}</div></div>
       <button class="btn small" id="lclose">Fechar</button></div>
     ${l.conversas.length ? `<div class="row" style="margin-top:10px">${l.conversas.slice(0, 3).map((c) => `<button class="btn small" data-conv="${c.id}">💬 Conversa de ${when(c.iniciada_em)}</button>`).join('')}</div>` : ''}
     ${fichaHtml(l.contato)}
@@ -1243,11 +1243,11 @@ async function inicio() {
 // ---------- Configurações ----------
 let CTAB = 'empresa';
 async function empresa() {
-  const abas = [['empresa', 'Empresa e IA', ME.pode.configurar], ['agentes', 'Agentes', true], ['usuarios', 'Usuários', true], ['atendimento', 'Atendimento', true], ['modelos', 'Modelos Meta', true], ['canais', 'Canais', true], ['arquivos', 'Arquivos', true], ['ficha', 'Ficha do cliente', true], ['conexoes', 'Conexões', true]].filter((a) => a[2]);
+  const abas = [['empresa', 'Empresa e IA', ME.pode.configurar], ['agentes', 'Agentes', true], ['usuarios', 'Usuários', true], ['atendimento', 'Atendimento', true], ['modelos', 'Modelos Meta', true], ['canais', 'Canais', true], ['arquivos', 'Arquivos', true], ['ficha', 'Ficha do cliente', true], ['links', 'Links de campanha', true], ['conexoes', 'Conexões', true]].filter((a) => a[2]);
   if (!abas.some((a) => a[0] === CTAB)) CTAB = abas[0][0];
   $('#view').innerHTML = `<div class="row" style="margin-bottom:12px">${abas.map(([k, n]) => `<button class="btn small ${CTAB === k ? 'primary' : ''}" data-ct="${k}">${n}</button>`).join('')}</div><div id="cbody"></div>`;
   document.querySelectorAll('[data-ct]').forEach((b) => (b.onclick = () => { CTAB = b.dataset.ct; empresa(); }));
-  await ({ empresa: cfgEmpresa, agentes: cfgAgentes, usuarios: cfgUsuarios, atendimento: cfgAtendimento, modelos: cfgModelos, canais: cfgCanais, arquivos: cfgArquivos, ficha: cfgFicha, conexoes: cfgConexoes })[CTAB]();
+  await ({ empresa: cfgEmpresa, agentes: cfgAgentes, usuarios: cfgUsuarios, atendimento: cfgAtendimento, modelos: cfgModelos, canais: cfgCanais, arquivos: cfgArquivos, ficha: cfgFicha, links: cfgLinks, conexoes: cfgConexoes })[CTAB]();
 }
 
 const HAB_NOMES = { transferir: 'Passar para humano', agenda: 'Agenda', vendas: 'Vendas (proposta, cobrança, follow-up)', diagnostico: 'Diagnóstico Empresarial', loja: 'Loja (AvaShop)' };
@@ -1450,6 +1450,54 @@ async function cfgFicha() {
     try { await api(`/tenants/${TENANT.id}/ficha-config`, { method: 'PUT', body: { campos: [...document.querySelectorAll('[data-fc]:checked')].map((x) => x.dataset.fc), momento: $('#fc_m').value } }); toast('Ficha salva'); }
     catch (e) { toast(e.message); }
   };
+}
+
+// ---------- Links de campanha (um número, uma frase por canal) ----------
+async function cfgLinks(dias = 90) {
+  const d = await api(`/tenants/${TENANT.id}/links?dias=${dias}`); const edit = ME.pode.configurar;
+  const usadas = new Set(d.links.map((l) => l.nome.toLowerCase()));
+  const sug = d.sugestoes.filter(([n]) => !usadas.has(n.toLowerCase()));
+  const tot = d.links.reduce((a, l) => ({ c: a.c + l.contatos, n: a.n + l.negocios, v: a.v + l.vendas, r: a.r + l.recebido }), { c: 0, n: 0, v: 0, r: 0 });
+  $('#cbody').innerHTML = `<p class="muted" style="margin:0 0 12px">Um número de WhatsApp só, com uma frase pronta para cada canal. A pessoa abre o link, a mensagem já vem escrita e ela só envia. A AVA reconhece a frase, marca de onde o cliente veio e o relatório mostra contatos e vendas por canal. Use no Instagram (link da bio), nos anúncios, no Google, em panfletos (QR Code) e nas indicações.</p>
+  ${d.numero ? '' : '<div class="card pad" style="margin-bottom:12px;border-color:#e8a317"><b>Conecte um número de WhatsApp</b><div class="muted">Os links aparecem assim que houver um número em Conexões.</div></div>'}
+  ${edit ? `<div class="card pad" style="margin-bottom:14px"><b style="font-size:15px">Novo link</b>
+    <div class="grid" style="grid-template-columns:1fr 2fr;gap:10px;margin-top:8px">
+      <div><label for="lk_n">Canal</label><input id="lk_n" placeholder="Ex.: Instagram"></div>
+      <div><label for="lk_f">Frase que já vem escrita</label><input id="lk_f" placeholder="Ex.: Oi! Vim pelo Instagram e quero saber mais."></div></div>
+    <div class="row" style="margin-top:10px"><button class="btn primary" id="lk_add">Criar link</button>
+      ${sug.length ? `<span class="muted" style="font-size:13px">Sugestões:</span> ${sug.map(([n, f]) => `<button class="btn small" data-sug="${esc(n)}" data-f="${esc(f)}">${esc(n)}</button>`).join(' ')}` : ''}</div></div>` : ''}
+  <div class="card pad"><div class="row"><b style="font-size:15px;margin-right:auto">Resultados por canal</b>
+    <select id="lk_d" style="width:auto">${[[30, 'Últimos 30 dias'], [90, 'Últimos 90 dias'], [365, 'Últimos 12 meses']].map(([v, n]) => `<option value="${v}" ${+dias === v ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+  ${d.links.length ? `<table style="margin-top:8px"><thead><tr><th>Canal</th><th>Contatos</th><th>Negócios</th><th>Vendas</th><th>Recebido</th><th></th></tr></thead><tbody>
+    ${d.links.map((l) => `<tr><td><b>${esc(l.nome)}</b> ${l.ativo ? '' : '<span class="pill pausado">desligado</span>'}<div class="muted" style="font-size:12px">"${esc(l.frase)}"</div></td>
+      <td>${l.contatos}</td><td>${l.negocios}</td><td>${l.vendas}</td><td>${brl2(l.recebido)}</td>
+      <td style="white-space:nowrap">${l.url ? `<button class="btn small" data-lk-cp="${l.id}">Copiar link</button> <button class="btn small" data-lk-qr="${l.id}">QR Code</button>` : ''}
+        ${edit ? ` <button class="btn small" data-lk-ed="${l.id}">Editar</button> <button class="btn small danger" data-lk-del="${l.id}">Apagar</button>` : ''}</td></tr>`).join('')}
+    <tr><td><b>Total</b></td><td><b>${tot.c}</b></td><td><b>${tot.n}</b></td><td><b>${tot.v}</b></td><td><b>${brl2(tot.r)}</b></td><td></td></tr></tbody></table>
+    <p class="muted" style="font-size:12px;margin:8px 0 0">O negócio fica com o primeiro canal que trouxe o cliente. "Recebido" soma as cobranças pagas desses clientes.</p>`
+    : '<p class="muted">Nenhum link ainda. Comece pelas sugestões acima.</p>'}</div>`;
+  $('#lk_d').onchange = (e) => cfgLinks(e.target.value);
+  const L = (id) => d.links.find((l) => l.id === +id);
+  document.querySelectorAll('[data-lk-cp]').forEach((b) => (b.onclick = () => { navigator.clipboard?.writeText(L(b.dataset.lkCp).url); toast('Link copiado'); }));
+  document.querySelectorAll('[data-lk-qr]').forEach((b) => (b.onclick = () => { const l = L(b.dataset.lkQr);
+    const m = openModal(`<h2>QR Code · ${esc(l.nome)}</h2><div style="text-align:center;margin:12px 0" id="qrbox">${l.qr}</div>
+      <p class="muted" style="font-size:13px;word-break:break-all">${esc(l.url)}</p>
+      <div class="row"><button class="btn primary" id="qr_dl">Baixar QR Code</button><button class="btn" id="qr_c">Fechar</button></div>`);
+    $('#qr_c', m).onclick = () => m.remove();
+    $('#qr_dl', m).onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([l.qr], { type: 'image/svg+xml' })); a.download = `qrcode-${l.nome.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.svg`; a.click(); };
+  }));
+  if (!edit) return;
+  document.querySelectorAll('[data-sug]').forEach((b) => (b.onclick = () => { $('#lk_n').value = b.dataset.sug; $('#lk_f').value = b.dataset.f; $('#lk_f').focus(); }));
+  $('#lk_add').onclick = async () => { try { await api(`/tenants/${TENANT.id}/links`, { method: 'POST', body: { nome: $('#lk_n').value, frase: $('#lk_f').value } }); toast('Link criado'); cfgLinks(dias); } catch (e) { toast(e.message); } };
+  document.querySelectorAll('[data-lk-del]').forEach((b) => (b.onclick = async () => { if (!confirm('Apagar este link? Quem já tem o link continua falando com a AVA, mas a origem deixa de ser marcada.')) return; await api(`/links/${b.dataset.lkDel}`, { method: 'DELETE' }); cfgLinks(dias); }));
+  document.querySelectorAll('[data-lk-ed]').forEach((b) => (b.onclick = () => { const l = L(b.dataset.lkEd);
+    const m = openModal(`<h2>Editar link</h2><label for="le_n">Canal</label><input id="le_n" value="${esc(l.nome)}"><label for="le_f">Frase</label><input id="le_f" value="${esc(l.frase)}">
+      <p class="muted" style="font-size:13px">Mudar a frase muda o link: links e QR Codes já divulgados com a frase antiga deixam de marcar a origem.</p>
+      <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="le_a" style="width:auto" ${l.ativo ? 'checked' : ''}> Ligado</label>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="le_s">Salvar</button><button class="btn" id="le_c">Cancelar</button></div>`);
+    $('#le_c', m).onclick = () => m.remove();
+    $('#le_s', m).onclick = async () => { try { await api(`/links/${l.id}`, { method: 'PUT', body: { nome: $('#le_n', m).value, frase: $('#le_f', m).value, ativo: $('#le_a', m).checked } }); m.remove(); toast('Salvo'); cfgLinks(dias); } catch (e) { toast(e.message); } };
+  }));
 }
 
 async function cfgModelos(dados) {
