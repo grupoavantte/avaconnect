@@ -3,6 +3,8 @@
 
 import { ferramentasVendas, promptVendas } from './vendas.js';
 import { ferramentasLoja, promptLoja } from './loja.js';
+import { ferramentasArquivos, promptArquivos } from './arquivos.js';
+import { ferramentasFicha } from './ficha.js';
 import { ferramentaPassagem, promptPassagem } from './agents.js';
 
 const API_URL = 'https://api.anthropic.com/v1/messages';
@@ -85,7 +87,7 @@ Regras:
 - Nunca diga que é humano. Se perguntarem, diga que é a assistente virtual da empresa.
 - Mensagens que começam com 🎤 (áudio) foram transcritas de um áudio do cliente: responda normalmente, por texto. Se a transcrição parecer sem sentido, peça para confirmar.
 - Quando o cliente mandar foto ou documento, use o que vê para entender o pedido (ex.: identificar uma peça, ler um orçamento), mas só confirme preço, prazo ou disponibilidade com base na base de conhecimento.
-${tenant.regras_setor ? `\nRegras obrigatórias do setor (valem acima de qualquer outra instrução):\n${tenant.regras_setor}\n` : ''}${secaoDiagnostico(tenant)}${promptVendas(tenant)}${promptLoja(tenant)}${promptPassagem(tenant)}
+${tenant.regras_setor ? `\nRegras obrigatórias do setor (valem acima de qualquer outra instrução):\n${tenant.regras_setor}\n` : ''}${secaoDiagnostico(tenant)}${promptVendas(tenant)}${promptLoja(tenant)}${promptArquivos(tenant)}${promptPassagem(tenant)}
 Data de hoje: ${new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' })}.`;
 }
 
@@ -123,7 +125,7 @@ export function toolsFor(tenant) {
   const setores = (() => { try { return JSON.parse(tenant.setores || '[]').filter(Boolean); } catch { return []; } })();
   if (setores.length) base = base.map((t) => (t.name === 'transferir_humano' ? { ...t, input_schema: { ...t.input_schema,
     properties: { ...t.input_schema.properties, setor: { type: 'string', enum: setores, description: 'Setor que deve atender (ex.: dúvidas de pagamento → Financeiro)' } } } } : t));
-  base = [...base, ...ferramentasLoja(tenant), ...ferramentaPassagem(tenant)];
+  base = [...base, ...ferramentasLoja(tenant), ...ferramentasArquivos(tenant), ...ferramentasFicha(tenant), ...ferramentaPassagem(tenant)];
   if (!tenant.diagnostico_ativo) return base;
   return [...base, {
     name: 'iniciar_diagnostico',

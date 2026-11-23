@@ -30,15 +30,19 @@ export async function sendText(tenant, to, body) {
 }
 
 // Foto por link público (a Meta baixa a imagem do nosso servidor).
-export async function sendImage(tenant, to, link, caption = '') {
+export const sendImage = (tenant, to, link, caption = '') => sendMedia(tenant, to, 'image', link, caption);
+
+// Foto, vídeo ou documento por link público. tipo: image | video | document.
+export async function sendMedia(tenant, to, tipo, link, caption = '', filename = '') {
   if (!ehTelefone(to)) return { ignorado: 'sem WhatsApp' };
   const token = tenant.wa_token || process.env.WA_DEFAULT_TOKEN;
-  if (!tenant.wa_phone_number_id || !token) { console.log(`[whatsapp:simulado] ${tenant.nome} -> ${to}: [foto] ${link} ${caption}`); return { simulado: true }; }
+  if (!tenant.wa_phone_number_id || !token) { console.log(`[whatsapp:simulado] ${tenant.nome} -> ${to}: [${tipo}] ${link} ${caption}`); return { simulado: true }; }
+  const midia = { link, ...(caption ? { caption: caption.slice(0, 1000) } : {}), ...(tipo === 'document' && filename ? { filename } : {}) };
   try {
     const res = await fetch(`${GRAPH}/${tenant.wa_phone_number_id}/messages`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
-      body: JSON.stringify({ messaging_product: 'whatsapp', to, type: 'image', image: { link, caption: caption.slice(0, 1000) } }) });
+      body: JSON.stringify({ messaging_product: 'whatsapp', to, type: tipo, [tipo]: midia }) });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) { console.error('[whatsapp] erro na foto', res.status, JSON.stringify(data)); return { erro: data }; }
+    if (!res.ok) { console.error(`[whatsapp] erro no envio de ${tipo}`, res.status, JSON.stringify(data)); return { erro: data }; }
     return data;
   } catch (e) { console.error('[whatsapp] sem conexão com a Meta', e.message); return { erro: e.message }; }
 }

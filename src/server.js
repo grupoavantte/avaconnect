@@ -21,6 +21,8 @@ import { metaRouter } from './meta.js';
 import { garantirAvantte } from './seed.js';
 import { rotasSeo } from './seo.js';
 import { rotasCanais, canaisRouter } from './canais.js';
+import { rotasArquivos, arquivosRouter } from './arquivos.js';
+import { fichaRouter } from './ficha.js';
 import { rotasCadastro, eventoAssinatura, situacaoConta } from './cadastro.js';
 
 Object.assign(HANDLERS, VENDAS_HANDLERS);
@@ -42,6 +44,7 @@ app.get('/brand/:file', (req, res, next) => {
 // Site público na raiz; login em /entrar; painel em /app.
 rotasSeo(app);       // / (site com dados estruturados), /robots.txt, /sitemap.xml, /llms.txt
 rotasCanais(app);    // /w/TOKEN.js (chat no site), /f/TOKEN (formulários), /inbound/email/TOKEN
+rotasArquivos(app);  // /a/TOKEN/nome — arquivos da biblioteca (fotos, PDFs, vídeos) enviados pela IA
 app.get(['/entrar', '/app', '/app/*'], (_req, res) => res.sendFile(path.resolve('public/index.html')));
 app.get('/cadastro', (_req, res) => res.sendFile(path.resolve('public/cadastro.html')));
 app.get('/termos', (_req, res) => res.sendFile(path.resolve('public/termos.html')));
@@ -358,6 +361,8 @@ api.use(usuariosRouter(canSee));
 api.use(agentesRouter(canSee));
 api.use(operacaoRouter(canSee));
 api.use(canaisRouter(canSee));
+api.use(arquivosRouter(canSee));
+api.use(fichaRouter(canSee));
 api.use(modelosRouter(canSee));
 api.use(recebimentoRouter(canSee));
 api.use(lojaRouter(canSee));

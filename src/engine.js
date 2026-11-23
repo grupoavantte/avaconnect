@@ -1,4 +1,6 @@
 import { possivelComprovante } from './gateways.js';
+import { executarFerramentaArquivos, textoArquivo, urlArquivo } from './arquivos.js';
+import { executarFerramentaFicha, contextoFicha, travaFicha } from './ficha.js';
 import { contextoCanal, contarConversa, vincularCodigoSite } from './canais.js';
 import { sendEmail } from './email.js';
 import { distribuir, entrarNaCarteira, antesDeAtender } from './operacao.js';
@@ -11,7 +13,7 @@ import { getDiagnosticoAtivo, iniciarDiagnostico, responderDiagnostico, formatar
 import { concluirDiagnostico } from './funil.js';
 import { executarFerramentaVendas, contextoVendas, agendarReengajamento, agendarEm, aprovarProposta } from './vendas.js';
 import { executarFerramentaLoja } from './loja.js';
-import { sendImage } from './whatsapp.js';
+import { sendImage, sendMedia } from './whatsapp.js';
 import { efetivo, efetivoDoContato, getAgente, numeroPorPhoneId } from './agents.js';
 import { telefonesAprovadores } from './auth.js';
 import { prepararEntrada, salvarMidia, midiasDaConversa } from './midia.js';
@@ -43,8 +45,14 @@ export function addMessage(conversationId, autor, conteudo, waId = null) {
   return Number(r.lastInsertRowid);
 }
 
-function makeToolExecutor(tenant, contact, conv, enviar, enviarImagem) {
+function makeToolExecutor(tenant, contact, conv, enviar, enviarImagem, enviarArquivo) {
   return async (nome, input) => {
+    const trava = travaFicha(tenant, contact.id, nome);
+    if (trava) return trava;
+    const arq = await executarFerramentaArquivos({ tenant, contact, conv, enviarArquivo }, nome, input);
+    if (arq !== null) return arq;
+    const fic = await executarFerramentaFicha({ tenant, contact, conv }, nome, input);
+    if (fic !== null) return fic;
     const venda = await executarFerramentaVendas({ tenant, contact, conv, enviar }, nome, input);
     if (venda !== null) return venda;
     const loja = await executarFerramentaLoja({ tenant, contact, conv, enviar, enviarImagem }, nome, input);
@@ -178,6 +186,12 @@ export async function handleIncoming(tenantBase, { telefone, nome, texto, waId =
     saida.push(`📷 ${legenda || 'Foto'} ${url}`.trim());
     if (canal === 'whatsapp') await sendImage(tenant, telefone, url, legenda);
   };
+  const enviarArquivo = async (a, legenda = '') => {
+    const t = textoArquivo(a, legenda);
+    addMessage(conv.id, 'ia', t);
+    saida.push(t);
+    if (canal === 'whatsapp') await sendMedia(tenant, telefone, { imagem: 'image', video: 'video', documento: 'document' }[a.tipo], urlArquivo(a), legenda || (a.tipo === 'documento' ? '' : a.nome), a.nome);
+  };
 
   if (tenant.status !== 'ativo' && canal !== 'simulador') return { conversation_id: conv.id, respostas: [], status: conv.status };
 
@@ -207,15 +221,15 @@ export async function handleIncoming(tenantBase, { telefone, nome, texto, waId =
   for (const md of midiasDaConversa(conv.id)) { const h = historico.find((x) => x.id === md.message_id); if (h) (h.midia ||= []).push(md); }
   let resposta;
   try {
-    const contexto = [contextoCanal(canal, contact), contextoClienteIA(contact.id), tenant.vendas_ativo ? contextoVendas(contact.id) : ''].filter(Boolean).join(' ');
-    resposta = await generateReply(tenant, historico, makeToolExecutor(tenant, contact, conv, enviar, enviarImagem), contexto);
+    const contexto = [contextoCanal(canal, contact), contextoFicha(tenant, contact.id), contextoClienteIA(contact.id), tenant.vendas_ativo ? contextoVendas(contact.id) : ''].filter(Boolean).join(' ');
+    resposta = await generateReply(tenant, historico, makeToolExecutor(tenant, contact, conv, enviar, enviarImagem, enviarArquivo), contexto);
     // Passagem para outro agente: ele responde em seguida, na mesma mensagem do cliente.
     if (conv._passagem) {
       if (resposta.texto) await enviar(resposta.texto);
       const { agente, motivo } = conv._passagem; delete conv._passagem;
       tenant = efetivo(tenantBase, { numero, agent: agente });
       const hist2 = db.prepare('SELECT id, autor, conteudo FROM messages WHERE conversation_id = ? ORDER BY id').all(conv.id);
-      const r2 = await generateReply(tenant, hist2, makeToolExecutor(tenant, contact, conv, enviar, enviarImagem),
+      const r2 = await generateReply(tenant, hist2, makeToolExecutor(tenant, contact, conv, enviar, enviarImagem, enviarArquivo),
         `${contexto} Você acabou de receber esta conversa de outro agente. Motivo: ${motivo}. Continue sem repetir saudação longa.`.trim());
       resposta = { texto: r2.texto, ferramentas: [...(resposta.ferramentas || []), ...(r2.ferramentas || [])] };
     }
