@@ -104,7 +104,15 @@ function falhou(chave) {
 // ---------- Bloqueio por inadimplência ----------
 // Com a empresa bloqueada, o painel só consegue ler quem é o usuário, os dados básicos e a situação da conta (para pagar).
 const BLOQUEIO = { erro: 'Sistema bloqueado por falta de pagamento. Pague a parcela em aberto para liberar.', bloqueado: true };
-const liberadoNoBloqueio = (req) => req.method === 'GET' && /^\/(me|tenants(\/\d+(\/situacao)?)?)\/?$/.test(req.path);
+const PENDENTE = { erro: 'Falta o pagamento para liberar o acesso. Conclua o checkout e a plataforma abre sozinha.', pendente: true };
+// Conta criada pelo site (status pendente) só acessa a plataforma depois do pagamento no checkout.
+const travaConta = (t, req, res) => {
+  if (liberadoNoBloqueio(req)) return false;
+  if (t.status === 'pendente' && t.origem === 'site') { res.status(402).json(PENDENTE); return true; }
+  if (t.cobranca_status === 'suspensa') { res.status(402).json(BLOQUEIO); return true; }
+  return false;
+};
+function liberadoNoBloqueio(req) { return req.method === 'GET' && /^\/(me|tenants(\/\d+(\/situacao)?)?)\/?$/.test(req.path); }
 
 // ---------- Middleware ----------
 export function autenticar(ADMIN_TOKEN) {
@@ -121,20 +129,20 @@ export function autenticar(ADMIN_TOKEN) {
       if (u) {
         req.user = { admin: u.papel === 'plataforma', papel: u.papel, userId: u.id, nome: u.nome, email: u.email, tenantId: u.tenant_id ?? undefined };
         if (u.tenant_id) {
-          const t = db.prepare('SELECT nome, status, cobranca_status FROM tenants WHERE id = ?').get(u.tenant_id);
+          const t = db.prepare('SELECT nome, status, origem, cobranca_status FROM tenants WHERE id = ?').get(u.tenant_id);
           if (!t || t.status === 'cancelado') return res.status(403).json({ erro: 'Empresa sem acesso. Fale com a Avantte.' });
           req.user.empresa = t.nome;
-          if (t.cobranca_status === 'suspensa' && !liberadoNoBloqueio(req)) return res.status(402).json(BLOQUEIO);
+          if (travaConta(t, req, res)) return;
         }
         return next();
       }
       return res.status(401).json({ erro: 'Sessão expirada' });
     }
     // Token de painel da empresa (acesso legado/integrações): age como dono.
-    const t = db.prepare('SELECT id, nome, cobranca_status FROM tenants WHERE painel_token = ?').get(token);
+    const t = db.prepare('SELECT id, nome, status, origem, cobranca_status FROM tenants WHERE painel_token = ?').get(token);
     if (t) {
       req.user = { admin: false, papel: 'dono', tenantId: t.id, nome: t.nome, empresa: t.nome };
-      if (t.cobranca_status === 'suspensa' && !liberadoNoBloqueio(req)) return res.status(402).json(BLOQUEIO);
+      if (travaConta(t, req, res)) return;
       return next();
     }
     res.status(401).json({ erro: 'Token inválido' });

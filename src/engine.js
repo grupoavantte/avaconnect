@@ -78,7 +78,7 @@ function makeToolExecutor(tenant, contact, conv, enviar, enviarImagem) {
         .run(tenant.id, contact.id, conv.id, input.nome || null, input.empresa || null, input.email || null,
           input.interesse || null, etapa, input.resumo || null, input.valor_estimado ?? null,
           conv.canal === 'simulador' ? 'simulador' : 'whatsapp');
-      if (input.nome) db.prepare('UPDATE contacts SET nome = ? WHERE id = ?').run(input.nome, contact.id);
+      if (input.nome) db.prepare('UPDATE contacts SET nome = ?, nome_confirmado = 1 WHERE id = ?').run(input.nome, contact.id);
       const lead = db.prepare('SELECT id FROM leads WHERE tenant_id = ? AND contact_id = ?').get(tenant.id, contact.id);
       if (!antes) logActivity(tenant.id, lead.id, `Lead criado pela IA: ${input.interesse || ''}`, { autor: 'ia' });
       else if (antes.etapa !== etapa) logActivity(tenant.id, lead.id, `IA moveu de ${antes.etapa} para ${etapa}`, { autor: 'ia' });

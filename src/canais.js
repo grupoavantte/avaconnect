@@ -23,7 +23,7 @@ addCols('tenants', [
   ['form_whatsapp', 'INTEGER NOT NULL DEFAULT 1'],  // responder pelo WhatsApp quem deixou o número no formulário (com consentimento)
   ['form_aviso_email', 'TEXT'],                     // e-mail da equipe para receber cada formulário
 ]);
-addCols('contacts', [['email', 'TEXT'], ['whatsapp_informado', 'TEXT'], ['vinculo_site_conv', 'INTEGER']]);
+addCols('contacts', [['email', 'TEXT'], ['whatsapp_informado', 'TEXT'], ['vinculo_site_conv', 'INTEGER'], ['nome_confirmado', 'INTEGER NOT NULL DEFAULT 0']]);
 addCols('usage', [['conversas_canais', 'INTEGER NOT NULL DEFAULT 0']]);
 
 export const CANAIS_EXTRAS = ['site', 'formulario', 'email'];
@@ -62,6 +62,11 @@ export function contextoCanal(canal, contact) {
   if (canal === 'site') partes.push('Canal: chat no site da empresa (a pessoa NÃO está no WhatsApp). Responda curto. Quando houver interesse real (orçamento, proposta, compra, agendamento), peça o nome e o WhatsApp para enviar a proposta e continuar o atendimento; não envie cobrança por aqui antes disso.');
   if (canal === 'email') partes.push('Canal: e-mail. Responda como um e-mail curto e cordial, em parágrafos, sem emojis e sem markdown. Se fizer sentido, ofereça continuar pelo WhatsApp.');
   if (contact?.id) {
+    const c = db.prepare('SELECT nome, nome_confirmado FROM contacts WHERE id = ?').get(contact.id);
+    if (c?.nome_confirmado && c.nome) partes.push(`Nome do cliente (confirmado): ${c.nome}. Chame pelo primeiro nome e não pergunte de novo.`);
+    else partes.push(`Ainda NÃO sabemos o nome do cliente${c?.nome ? ` (o perfil mostra "${c.nome}", mas pode não ser o nome real; não use)` : ''}. Antes de qualquer outra coisa, pergunte como ele se chama; assim que ele disser, chame registrar_lead com o nome.`);
+  }
+  if (contact?.id) {
     const f = db.prepare(`SELECT a.descricao FROM activities a JOIN leads l ON l.id = a.lead_id WHERE l.contact_id = ? AND a.descricao LIKE '📝 Formulário do site:%'
       AND a.criado_em > datetime('now', '-15 days') ORDER BY a.id DESC LIMIT 1`).get(contact.id);
     if (f) partes.push(`Esta pessoa preencheu o formulário do site da empresa. Dados enviados: ${f.descricao.replace(/^📝 Formulário do site:\n/, '').replace(/\n/g, '; ').slice(0, 900)}. Use isso para atender sem pedir de novo o que ela já informou.`);
@@ -87,7 +92,7 @@ export function vincularCodigoSite(tenant, contact, texto) {
   db.prepare('UPDATE contacts SET vinculo_site_conv = ? WHERE id = ?').run(conv.id, contact.id);
   contact.vinculo_site_conv = conv.id;
   const visitante = db.prepare('SELECT * FROM contacts WHERE id = ?').get(conv.contact_id);
-  if (visitante?.nome && !contact.nome) { db.prepare('UPDATE contacts SET nome = ? WHERE id = ?').run(visitante.nome, contact.id); contact.nome = visitante.nome; }
+  if (visitante?.nome && !contact.nome_confirmado) { db.prepare('UPDATE contacts SET nome = ?, nome_confirmado = 1 WHERE id = ?').run(visitante.nome, contact.id); contact.nome = visitante.nome; }
   // O negócio criado pelo site passa para o contato do WhatsApp (sem duplicar).
   const leadSite = db.prepare('SELECT * FROM leads WHERE tenant_id = ? AND contact_id = ?').get(tenant.id, conv.contact_id);
   const leadWa = db.prepare('SELECT 1 FROM leads WHERE tenant_id = ? AND contact_id = ?').get(tenant.id, contact.id);
@@ -138,6 +143,7 @@ export async function receberFormulario(tenant, body, { pagina = null } = {}) {
   const chave = fone || `email_${email}`;
   db.prepare(`INSERT INTO contacts (tenant_id, telefone, nome) VALUES (?, ?, ?) ON CONFLICT(tenant_id, telefone) DO UPDATE SET nome = COALESCE(contacts.nome, excluded.nome)`)
     .run(tenant.id, chave, dados.nome || null);
+  if (dados.nome) db.prepare('UPDATE contacts SET nome = ?, nome_confirmado = 1 WHERE tenant_id = ? AND telefone = ?').run(dados.nome, tenant.id, chave);
   const contact = db.prepare('SELECT * FROM contacts WHERE tenant_id = ? AND telefone = ?').get(tenant.id, chave);
   if (email) db.prepare('UPDATE contacts SET email = COALESCE(email, ?) WHERE id = ?').run(email, contact.id);
 

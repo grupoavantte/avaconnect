@@ -873,9 +873,9 @@ export function rotasPublicas(app) {
   app.get('/obrigado/:token', (req, res) => {
     const c = getCobranca(req.params.token);
     if (!c) return res.status(404).send('Não encontrado.');
-    if (c.signup_tenant_id) return res.send(pagina('Bem-vindo ao AVA Connect', `<div class="wrap"><div class="card" style="margin-top:40px;text-align:center">
+    if (c.signup_tenant_id) return res.send(pagina('Bem-vindo ao AVA Connect', `${c.status === 'pago' ? '<meta http-equiv="refresh" content="3;url=/app">' : '<meta http-equiv="refresh" content="8">'}<div class="wrap"><div class="card" style="margin-top:40px;text-align:center">
       <h2>${c.status === 'pago' ? 'Conta ativada! 🎉' : 'Recebemos seu pedido!'}</h2>
-      <p>${c.status === 'pago' ? 'Seu AVA Connect está ativo. Entre no painel para terminar a configuração da sua assistente.' : 'Assim que o pagamento for confirmado, sua conta é ativada automaticamente. Pix confirma na hora; boleto, em até 2 dias úteis.'}</p>
+      <p>${c.status === 'pago' ? 'Seu AVA Connect está ativo. Abrindo o painel para você configurar a sua assistente...' : 'Assim que o pagamento for confirmado, sua conta é ativada e o painel abre sozinho. Pix e cartão confirmam na hora; boleto, em até 2 dias úteis. Pode deixar esta página aberta.'}</p>
       <p><a class="btn" href="/app">Entrar no painel</a></p></div></div>`));
     res.send(paginaObrigado(db.prepare('SELECT * FROM tenants WHERE id = ?').get(c.tenant_id)));
   });
