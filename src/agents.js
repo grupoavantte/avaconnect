@@ -321,11 +321,16 @@ export function agentesRouter(canSee) {
     const x = db.prepare('INSERT INTO whatsapp_numbers (tenant_id, nome, telefone, phone_number_id, waba_id, token, agent_id, principal) VALUES (?,?,?,?,?,?,?,?)')
       .run(t.id, b.nome || 'Principal', b.telefone || null, b.phone_number_id.trim(), b.waba_id || null, b.token.trim(), b.agent_id || null, primeiro ? 1 : 0);
     const n = db.prepare('SELECT * FROM whatsapp_numbers WHERE id = ?').get(x.lastInsertRowid);
+    // Liga o número de verdade na Meta: webhooks da conta + registro do número na API (senão ele fica "Offline").
+    let ativacao = null;
+    if (process.env.WA_SKIP_REGISTER !== '1') {
+      try { const { ativarNumeroManual } = await import('./meta.js'); ativacao = await ativarNumeroManual(n); } catch (e) { ativacao = { registro: e.message }; }
+    }
     const teste = await testarWhatsApp(n);
     db.prepare("UPDATE whatsapp_numbers SET status_teste = ?, testado_em = datetime('now'), telefone = COALESCE(telefone, ?) WHERE id = ?")
       .run(teste.ok ? 'ok' : 'erro: ' + teste.msg, teste.telefone?.replace(/\D/g, '') || null, n.id);
     sincronizarPrincipal(t.id);
-    res.status(201).json({ ...pubNumero(db.prepare('SELECT * FROM whatsapp_numbers WHERE id = ?').get(n.id)), teste });
+    res.status(201).json({ ...pubNumero(db.prepare('SELECT * FROM whatsapp_numbers WHERE id = ?').get(n.id)), teste, ativacao });
   });
   r.put('/numbers/:id', (req, res) => {
     const n = db.prepare('SELECT * FROM whatsapp_numbers WHERE id = ?').get(req.params.id); if (!n) return res.sendStatus(404);

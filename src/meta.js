@@ -29,6 +29,20 @@ async function graph(path, { method = 'GET', token, body, query } = {}) {
   return data;
 }
 
+/** Conexão manual (Phone Number ID + token do usuário do sistema): inscreve o app nos webhooks da conta e registra o número na API. */
+export async function ativarNumeroManual(n) {
+  const out = { webhook: null, registro: null };
+  if (n.waba_id) {
+    try { await graph(`/${n.waba_id}/subscribed_apps`, { method: 'POST', token: n.token }); out.webhook = 'ok'; }
+    catch (e) { out.webhook = e.message; }
+  }
+  const pin = n.pin || String(crypto.randomInt(100000, 999999));
+  try { await graph(`/${n.phone_number_id}/register`, { method: 'POST', token: n.token, body: { messaging_product: 'whatsapp', pin } }); out.registro = 'ok'; }
+  catch (e) { out.registro = /already registered|já registrado|já está registrado/i.test(e.message) ? 'ok' : e.message; }
+  if (out.registro === 'ok') db.prepare('UPDATE whatsapp_numbers SET pin = COALESCE(pin, ?) WHERE id = ?').run(pin, n.id);
+  return out;
+}
+
 /** Conclui a conexão a partir do que o Cadastro incorporado devolveu. */
 export async function conectarPelaMeta(tenant, { code, phone_number_id, waba_id, coexistencia = false, agent_id = null, nome = 'Principal' }) {
   const cfg = metaConfig();
