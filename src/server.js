@@ -174,6 +174,7 @@ api.use(auth);
 
 api.get('/me', (req, res) => res.json({ ...req.user, ia: AI_MODE, papel_nome: PAPEIS[req.user.papel],
   pode: Object.fromEntries(['ver', 'atender', 'configurar', 'vender', 'aprovar', 'usuarios', 'conexoes'].map((a) => [a, pode(req.user, a)])) }));
+api.get('/diag/whatsapp', adminOnly, async (_req, res) => { const { errosRecentes } = await import('./whatsapp.js'); res.json(errosRecentes); });
 api.get('/plans', (_req, res) => res.json(Object.values(PLANS)));
 
 api.get('/overview', (req, res) => {
