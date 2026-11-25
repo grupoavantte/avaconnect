@@ -1010,7 +1010,7 @@ function ligarBlocoMeta(id, aoConectar, agentId = null) {
 // ---------- Bloqueio por inadimplência: trava o painel inteiro até o pagamento ----------
 let BLOQ_ABERTO = false;
 async function telaBloqueio() {
-  if (BLOQ_ABERTO || !TENANT) return; BLOQ_ABERTO = true;
+  if (BLOQ_ABERTO || !TENANT || (ME && ME.admin)) return; BLOQ_ABERTO = true;
   const sx = await api(`/tenants/${TENANT.id}/situacao`).catch(() => ({}));
   const d = document.createElement('div');
   d.setAttribute('role', 'alertdialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-labelledby', 'bloqTit');
@@ -1043,7 +1043,9 @@ async function bannerSituacao() {
   const sx = await api(`/tenants/${TENANT.id}/situacao`).catch(() => null); if (!sx) return '';
   const caixa = (cor, titulo, txt, btn) => `<div class="card pad" style="margin-bottom:14px;border-color:${cor};background:color-mix(in srgb, ${cor} 8%, var(--panel))"><div class="row">
     <div style="margin-right:auto"><b style="font-size:15px">${titulo}</b><div class="muted">${txt}</div></div>${btn || ''}</div></div>`;
-  if (sx.status === 'pendente' && sx.origem === 'site') { telaBloqueio(); return ''; }
+  // O cliente fica travado até pagar; a plataforma (administrador) vê só um aviso e continua navegando.
+  if (sx.status === 'pendente' && sx.origem === 'site' && !ME.admin) { telaBloqueio(); return ''; }
+  if (sx.status === 'pendente' && ME.admin) return caixa('#e8a317', 'Cliente ainda não pagou', 'Conta criada pelo site, aguardando o pagamento da implantação e da 1ª parcela. O cliente vê a tela de pagamento até o pagamento ser confirmado.');
   if (sx.status === 'pendente') return caixa('#e8a317', 'Falta só o pagamento para ativar sua conta',
     `A assistente começa a atender no WhatsApp quando o pagamento de ${sx.pagamento_pendente?.valor ? brl2(sx.pagamento_pendente.valor) : 'implantação + 1ª parcela'} for confirmado.`,
     sx.pagamento_pendente?.url ? `<a class="btn primary" href="${esc(sx.pagamento_pendente.url)}" target="_blank" rel="noopener">Pagar e ativar</a>` : '<span class="muted">A Avantte vai enviar o link de pagamento.</span>');
