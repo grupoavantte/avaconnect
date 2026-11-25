@@ -7,7 +7,7 @@ import crypto from 'node:crypto';
 import { db, newToken, getUsage, currentMonth, publicTenant } from './db.js';
 import { PLANS, getPlan , MESES_PAGOS_ANUAL, cicloValido, GARANTIA_DIAS } from './plans.js';
 import { handleIncoming, humanReply } from './engine.js';
-import { parseWebhook, validSignature } from './whatsapp.js';
+import { parseWebhook, validSignature, anotarStatusComErro } from './whatsapp.js';
 import { AI_MODE } from './ai.js';
 import { PAY_MODE, lerWebhookAsaas, SIMULADO_LIBERADO } from './payments.js';
 import { confirmarPagamento, iniciarAgendador, rodarJobs, HANDLERS } from './funil.js';
@@ -153,6 +153,7 @@ app.get('/webhooks/whatsapp', (req, res) => {
 app.post('/webhooks/whatsapp', (req, res) => {
   if (!validSignature(req.rawBody || Buffer.from(''), req.get('x-hub-signature-256'))) return res.sendStatus(401);
   res.sendStatus(200); // responde rápido; processa em seguida
+  try { anotarStatusComErro(req.body); } catch {}
   for (const m of parseWebhook(req.body)) {
     const num = numeroPorPhoneId(m.phoneNumberId);
     const tenant = num ? db.prepare('SELECT * FROM tenants WHERE id = ?').get(num.tenant_id)

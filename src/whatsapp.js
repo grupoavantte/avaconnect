@@ -91,6 +91,21 @@ export function validSignature(rawBody, header) {
   return got.length === expected.length && crypto.timingSafeEqual(Buffer.from(got), Buffer.from(expected));
 }
 
+// Registra entregas que falharam depois de aceitas pela Meta (vêm no webhook como "statuses").
+export function anotarStatusComErro(body) {
+  for (const entry of body?.entry || []) for (const change of entry.changes || []) {
+    const v = change.value || {};
+    for (const st of v.statuses || []) {
+      if (st.status !== 'failed' && !st.errors?.length) continue;
+      const e = st.errors?.[0] || {};
+      errosRecentes.unshift({ quando: new Date().toISOString(), phone_number_id: v.metadata?.phone_number_id, to: st.recipient_id,
+        status: 'entrega:' + st.status, codigo: e.code ?? null, mensagem: [e.title, e.message, e.error_data?.details].filter(Boolean).join(' | ') });
+      errosRecentes.length = Math.min(errosRecentes.length, 30);
+      console.error('[whatsapp] entrega falhou', st.recipient_id, JSON.stringify(st.errors || []));
+    }
+  }
+}
+
 // Extrai mensagens recebidas do payload do webhook.
 export function parseWebhook(body) {
   const out = [];
