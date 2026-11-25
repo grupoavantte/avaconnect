@@ -114,6 +114,7 @@ export function rotasSeo(app) {
   servir('/', 'divisao.html', (b) => jsonLdDivisao(b));
   servir('/talk', 'site.html', (b, faq) => jsonLd(b, faq));
   for (const p of PRODUTOS) servir(`/${p.id}`, `${p.id}.html`, (b, faq) => jsonLdProduto(b, p, faq));
+  app.get('/exclusao-de-dados', (_req, res) => res.sendFile(path.resolve('public/exclusao-de-dados.html')));
   // Nomes alternativos levam à página certa.
   for (const [de, para] of [['/ava-talk', '/talk'], ['/ava-manager', '/manager'], ['/ava-ponto', '/ponto'], ['/gestao', '/manager']]) app.get(de, (_req, res) => res.redirect(301, para));
 
