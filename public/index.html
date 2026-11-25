@@ -1641,8 +1641,8 @@ async function cfgConexoes() {
       || '<tr><td colspan="5" class="muted">Nenhum número conectado.</td></tr>'}</tbody></table>
     ${edit ? `<details style="margin-top:10px" ${meta.ativo ? '' : 'open'}><summary class="muted" style="cursor:pointer">${meta.ativo ? 'Conectar manualmente (avançado)' : 'Conectar com os dados da Meta'}</summary>
       <p class="muted" style="margin:6px 0 0;font-size:12px">Webhook do app na Meta: <code>${esc(cx.whatsapp.webhook)}</code> (campo <b>messages</b>; token de verificação fornecido pela Avantte).</p>
-      <div class="grid" style="grid-template-columns:1fr 1.2fr 2fr 1fr auto;align-items:end;margin-top:6px">
-      <div><label>Nome</label><input id="nn_nome" placeholder="Comercial"></div><div><label>Phone Number ID</label><input id="nn_pid"></div>
+      <div class="grid" style="grid-template-columns:1fr 1.2fr 1.2fr 2fr 1fr auto;align-items:end;margin-top:6px">
+      <div><label>Nome</label><input id="nn_nome" placeholder="Comercial"></div><div><label>Phone Number ID</label><input id="nn_pid"></div><div><label>ID da conta do WhatsApp (WABA)</label><input id="nn_waba"></div>
       <div><label>Token permanente (usuário do sistema)</label><input id="nn_tok" type="password" autocomplete="off"></div>
       <div><label>Agente</label><select id="nn_ag"><option value="">Padrão</option>${ags.map((a) => `<option value="${a.id}">${esc(a.nome)}</option>`).join('')}</select></div>
       <button class="btn primary" id="nn_add">Conectar</button></div></details>` : ''}
@@ -1674,8 +1674,9 @@ async function cfgConexoes() {
   ligarBlocoMeta('cm', () => cfgConexoes());
   if (rc) ligarRecebimento($('#cx_receb'), rc, edit, () => cfgConexoes());
   if ($('#nn_add')) $('#nn_add').onclick = async () => {
-    try { const r = await api(`/tenants/${TENANT.id}/numbers`, { method:'POST', body:{ nome: $('#nn_nome').value.trim() || 'Principal', phone_number_id: $('#nn_pid').value.trim(), token: $('#nn_tok').value.trim(), agent_id: $('#nn_ag').value || null } });
-      toast(r.teste.ok ? 'WhatsApp conectado: ' + r.teste.msg : 'Salvo, mas o teste falhou: ' + r.teste.msg); cfgConexoes(); } catch (e) { toast(e.message); } };
+    try { const r = await api(`/tenants/${TENANT.id}/numbers`, { method:'POST', body:{ nome: $('#nn_nome').value.trim() || 'Principal', phone_number_id: $('#nn_pid').value.trim(), waba_id: $('#nn_waba').value.trim() || undefined, token: $('#nn_tok').value.trim(), agent_id: $('#nn_ag').value || null } });
+      const reg = r.ativacao?.registro;
+      toast(reg && reg !== 'ok' ? 'Salvo, mas a Meta não ativou o número: ' + reg : r.teste.ok ? 'WhatsApp conectado e ativo: ' + r.teste.msg : 'Salvo, mas o teste falhou: ' + r.teste.msg); cfgConexoes(); } catch (e) { toast(e.message); } };
   document.querySelectorAll('[data-nag]').forEach((s) => (s.onchange = async () => { await api(`/numbers/${s.dataset.nag}`, { method:'PUT', body:{ agent_id: s.value || null } }); toast('Agente do número atualizado'); }));
   document.querySelectorAll('[data-tst]').forEach((b) => (b.onclick = async () => { const r = await api(`/numbers/${b.dataset.tst}/testar`, { method:'POST' }); toast(r.ok ? 'Conectado: ' + r.msg : 'Falhou: ' + r.msg); cfgConexoes(); }));
   document.querySelectorAll('[data-prin]').forEach((b) => (b.onclick = async () => { await api(`/numbers/${b.dataset.prin}`, { method:'PUT', body:{ principal: 1 } }); cfgConexoes(); }));
