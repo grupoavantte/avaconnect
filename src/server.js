@@ -175,6 +175,31 @@ api.use(auth);
 
 api.get('/me', (req, res) => res.json({ ...req.user, ia: AI_MODE, papel_nome: PAPEIS[req.user.papel],
   pode: Object.fromEntries(['ver', 'atender', 'configurar', 'vender', 'aprovar', 'usuarios', 'conexoes'].map((a) => [a, pode(req.user, a)])) }));
+api.post('/admin/cobranca-teste', adminOnly, async (req, res) => {
+  // Cobrança avulsa para testar o recebimento ponta a ponta (gateway → webhook → baixa automática).
+  const { criarCobranca } = await import('./payments.js');
+  const tenantId = Number(req.body?.tenant_id || process.env.ASAAS_TENANT_ID || 1);
+  const tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(tenantId);
+  const contact = db.prepare('SELECT * FROM contacts WHERE id = ? AND tenant_id = ?').get(Number(req.body?.contact_id), tenantId);
+  const valor = Math.round(Number(req.body?.valor) * 100) / 100;
+  if (!tenant || !contact) return res.status(400).json({ erro: 'Empresa ou contato não encontrado' });
+  if (!(valor >= 5 && valor <= 50)) return res.status(400).json({ erro: 'Valor de teste entre R$ 5 e R$ 50' });
+  const forma = ['pix', 'boleto', 'cartao'].includes(req.body?.forma) ? req.body.forma : 'pix';
+  const token = 'cob_teste_' + crypto.randomBytes(8).toString('hex');
+  const descricao = String(req.body?.descricao || 'Teste de recebimento AVA Talk').slice(0, 120);
+  try {
+    const { ref, url, ...extra } = await criarCobranca(tenant, { token, valor, descricao, forma, parcelas: 1, vencimentoDias: 1,
+      cliente: { nome: contact.nome, telefone: contact.telefone } });
+    db.prepare(`INSERT INTO charges (tenant_id, contact_id, proposal_id, token, descricao, valor, forma, parcelas, pagamento_ref, pagamento_url)
+      VALUES (?,?,NULL,?,?,?,?,1,?,?)`).run(tenant.id, contact.id, token, descricao, valor, forma, ref, url);
+    db.prepare('UPDATE charges SET gateway = ?, pix_copia_cola = ? WHERE token = ?').run(extra.gateway || null, extra.pix || null, token);
+    res.status(201).json({ token, url, gateway: extra.gateway || null });
+  } catch (e) { res.status(502).json({ erro: e.message }); }
+});
+api.get('/admin/cobranca-teste/:token', adminOnly, (req, res) => {
+  const c = db.prepare('SELECT token, valor, status, pago_em, gateway, pagamento_ref FROM charges WHERE token = ?').get(req.params.token);
+  c ? res.json(c) : res.sendStatus(404);
+});
 api.get('/diag/whatsapp', adminOnly, async (_req, res) => { const { errosRecentes } = await import('./whatsapp.js'); res.json(errosRecentes); });
 api.get('/plans', (_req, res) => res.json(Object.values(PLANS)));
 
