@@ -1512,6 +1512,18 @@ async function cfgModelos(dados) {
       <div style="text-align:right"><div style="font-size:22px;font-weight:800">${aprov}/${d.modelos.length}</div><div class="muted" style="font-size:12px">aprovados</div></div></div>
     ${d.conectado ? (edit ? `<div class="row" style="margin-top:10px"><button class="btn primary" id="md_env">Enviar todos para aprovação</button><button class="btn" id="md_sync">Atualizar status</button><span class="muted">A Meta costuma responder em minutos; às vezes leva até 24h.</span></div>` : '')
       : '<p style="background:#fff7e6;padding:8px 10px;border-radius:8px;margin:10px 0 0">Conecte o WhatsApp pelo botão da Meta (Configurações → Conexões) para enviar os modelos. O texto deles já está pronto abaixo.</p>'}</div>
+    ${d.conectado && edit ? `<div class="card pad" style="margin-bottom:14px"><b style="font-size:15px">Criar novo modelo</b>
+      <div class="muted" style="margin-bottom:8px">Escreva sua própria mensagem e envie para aprovação da Meta. Use {{1}}, {{2}}... onde entram dados do cliente (nome, pedido, data).</div>
+      <div class="grid" style="grid-template-columns:2fr 1fr;gap:10px">
+        <label>Nome do modelo<input id="mn_nome" placeholder="confirmacao_atendimento"></label>
+        <label>Categoria<select id="mn_cat"><option value="UTILITY">Utilidade (avisos, pedidos, atendimento)</option><option value="MARKETING">Marketing (ofertas, novidades)</option></select></label></div>
+      <label>Texto<textarea id="mn_corpo" rows="3" placeholder="Olá {{1}}, recebemos sua mensagem e já vamos te atender."></textarea></label>
+      <div id="mn_ex"></div>
+      <div class="row" style="margin-top:8px"><button class="btn primary" id="mn_env">Enviar para aprovação</button><span class="muted">A Meta responde em minutos ou até 24h.</span></div></div>` : ''}
+    ${(d.proprios || []).length ? `<div class="card" style="margin-bottom:12px"><div class="pad" style="padding-bottom:0"><b>Meus modelos</b></div><table><thead><tr><th style="width:24%">Nome</th><th>Texto</th><th>Categoria</th><th>Situação</th></tr></thead><tbody>
+      ${d.proprios.map((m) => `<tr><td><code>${esc(m.nome)}</code></td><td style="font-size:13px">${esc(m.corpo).replace(/\{\{(\d+)\}\}/g, (_, n) => `<b>[${esc(m.exemplos[n - 1] || '')}]</b>`)}</td>
+        <td><span class="pill">${(m.categoria_meta || m.categoria) === 'MARKETING' ? 'Marketing' : 'Utilidade'}</span></td>
+        <td><span class="pill ${ST[m.status]?.[1] || ''}">${ST[m.status]?.[0] || esc(m.status)}</span>${m.motivo ? `<div style="font-size:12px;color:#d64545">${esc(m.motivo)}</div>` : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}
     ${fases.map((f) => `<div class="card" style="margin-bottom:12px"><div class="pad" style="padding-bottom:0"><b>${esc(f)}</b></div><table><thead><tr><th style="width:24%">Quando é usado</th><th>Texto</th><th>Categoria</th><th>Situação</th></tr></thead><tbody>
       ${d.modelos.filter((m) => m.fase === f).map((m) => `<tr><td><b>${esc(m.uso)}</b><div class="muted" style="font-size:12px"><code>${m.chave}</code></div></td>
         <td style="font-size:13px">${esc(m.corpo).replace(/\{\{(\d+)\}\}/g, (_, n) => `<b title="exemplo">[${esc(m.exemplo[n - 1])}]</b>`)}${m.botoes?.length ? `<div class="muted" style="font-size:12px;margin-top:4px">Botões: ${m.botoes.map(esc).join(' · ')}</div>` : ''}</td>
@@ -1521,7 +1533,17 @@ async function cfgModelos(dados) {
     try { const r = await api(`/tenants/${TENANT.id}/modelos/enviar`, { method:'POST' }); const erros = r.enviados.filter((x) => x.status === 'erro').length;
       toast(r.enviados.length ? `${r.enviados.length - erros} enviados para aprovação${erros ? `, ${erros} com erro` : ''}` : 'Todos já estavam enviados'); } catch (e) { toast(e.message); }
     cfgModelos(); };
-  if ($('#md_sync')) $('#md_sync').onclick = async () => { try { cfgModelos(await api(`/tenants/${TENANT.id}/modelos/sincronizar`, { method:'POST' }).then((r) => ({ ...d, modelos: r.modelos }))); toast('Status atualizado'); } catch (e) { toast(e.message); } };
+  if ($('#md_sync')) $('#md_sync').onclick = async () => { try { cfgModelos(await api(`/tenants/${TENANT.id}/modelos/sincronizar`, { method:'POST' }).then((r) => ({ ...d, modelos: r.modelos, proprios: r.proprios }))); toast('Status atualizado'); } catch (e) { toast(e.message); } };
+  if ($('#mn_corpo')) {
+    const exs = () => { const n = Math.max(0, ...($('#mn_corpo').value.match(/\{\{(\d+)\}\}/g) || []).map((v) => Number(v.replace(/\D/g, ''))));
+      const atuais = [...document.querySelectorAll('.mn_exv')].map((i) => i.value);
+      $('#mn_ex').innerHTML = n ? `<div class="muted" style="font-size:12px;margin-top:6px">Exemplo de cada variável (a Meta exige):</div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">${Array.from({ length: n }, (_, i) => `<label>{{${i + 1}}}<input class="mn_exv" value="${esc(atuais[i] || '')}" placeholder="${i === 0 ? 'Maria' : 'exemplo'}"></label>`).join('')}</div>` : ''; };
+    $('#mn_corpo').oninput = exs;
+    $('#mn_env').onclick = async (ev) => { ev.target.disabled = true;
+      try { await api(`/tenants/${TENANT.id}/modelos/novo`, { method: 'POST', body: { nome: $('#mn_nome').value, categoria: $('#mn_cat').value, corpo: $('#mn_corpo').value,
+          exemplos: [...document.querySelectorAll('.mn_exv')].map((i) => i.value) } });
+        toast('Modelo enviado para aprovação da Meta'); cfgModelos(); } catch (e) { toast(e.message); ev.target.disabled = false; } };
+  }
 }
 
 // ---------- Recebimentos (gateway de pagamento da empresa) ----------
