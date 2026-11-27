@@ -92,6 +92,22 @@ CREATE TABLE IF NOT EXISTS tenant_templates (
   atualizado_em TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (tenant_id, chave)
 );
+CREATE TABLE IF NOT EXISTS modelos_proprios (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  nome TEXT NOT NULL,
+  categoria TEXT NOT NULL,
+  idioma TEXT NOT NULL DEFAULT 'pt_BR',
+  corpo TEXT NOT NULL,
+  exemplos TEXT,
+  status TEXT NOT NULL DEFAULT 'PENDING',
+  categoria_meta TEXT,
+  meta_id TEXT,
+  motivo TEXT,
+  criado_em TEXT NOT NULL DEFAULT (datetime('now')),
+  atualizado_em TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (tenant_id, nome)
+);
 `);
 
 const limparParam = (v) => String(v ?? '').replace(/[\r\n\t]+/g, ' · ').replace(/ {4,}/g, '   ').trim().slice(0, 900) || '-';
@@ -146,8 +162,12 @@ export async function sincronizarModelos(tenantId) {
   if (!cr) return { erro: 'Conecte o WhatsApp pelo botão da Meta (ou informe o WABA ID) para gerenciar os modelos.' };
   const d = await graph(`/${cr.waba}/message_templates?fields=name,status,category,rejected_reason,id&limit=250`, cr.token);
   const chaves = new Set(MODELOS.map((m) => m.chave));
-  for (const x of d.data || []) if (chaves.has(x.name))
-    salvar(tenantId, x.name, { status: x.status, categoria: x.category, id: x.id, motivo: x.rejected_reason && x.rejected_reason !== 'NONE' ? x.rejected_reason : null });
+  const upd = db.prepare("UPDATE modelos_proprios SET status = ?, categoria_meta = ?, meta_id = COALESCE(?, meta_id), motivo = ?, atualizado_em = datetime('now') WHERE tenant_id = ? AND nome = ?");
+  for (const x of d.data || []) {
+    const motivo = x.rejected_reason && x.rejected_reason !== 'NONE' ? x.rejected_reason : null;
+    if (chaves.has(x.name)) salvar(tenantId, x.name, { status: x.status, categoria: x.category, id: x.id, motivo });
+    else upd.run(x.status, x.category || null, x.id || null, motivo, tenantId, x.name);
+  }
   return { ok: true };
 }
 
@@ -176,6 +196,39 @@ export async function enviarParaAprovacao(tenantId, chaves = null) {
   return { enviados: out };
 }
 
+// ---------- Modelos criados pela própria empresa ----------
+export function validarModeloProprio(b = {}) {
+  const nome = String(b.nome || '').trim().toLowerCase();
+  if (!/^[a-z0-9_]{3,60}$/.test(nome)) return { erro: 'Nome: só letras minúsculas, números e _ (3 a 60 caracteres). Ex.: confirmacao_atendimento' };
+  if (MODELOS.some((m) => m.chave === nome)) return { erro: 'Esse nome já é usado por um modelo padrão do sistema' };
+  const categoria = String(b.categoria || '').toUpperCase();
+  if (!['UTILITY', 'MARKETING'].includes(categoria)) return { erro: 'Escolha a categoria: Utilidade ou Marketing' };
+  const corpo = String(b.corpo || '').trim();
+  if (corpo.length < 10 || corpo.length > 1024) return { erro: 'O texto precisa ter entre 10 e 1024 caracteres' };
+  if (/^\{\{|\}\}$/.test(corpo)) return { erro: 'O texto não pode começar nem terminar com uma variável {{n}}' };
+  const nums = (corpo.match(/\{\{(\d+)\}\}/g) || []).map((v) => Number(v.replace(/\D/g, '')));
+  const n = nums.length ? Math.max(...nums) : 0;
+  for (let i = 1; i <= n; i++) if (!nums.includes(i)) return { erro: `As variáveis precisam ser sequenciais: falta {{${i}}}` };
+  const exemplos = (Array.isArray(b.exemplos) ? b.exemplos : []).map((x) => String(x || '').trim()).slice(0, n);
+  if (exemplos.length < n || exemplos.some((x) => !x)) return { erro: `Informe um exemplo para cada variável (${n})` };
+  return { nome, categoria, corpo, exemplos, idioma: b.idioma || 'pt_BR' };
+}
+export async function criarModeloProprio(tenantId, b) {
+  const cr = credenciais(tenantId);
+  if (!cr) return { erro: 'Conecte o WhatsApp (com o WABA ID) para criar modelos.' };
+  const v = validarModeloProprio(b);
+  if (v.erro) return v;
+  if (db.prepare('SELECT 1 FROM modelos_proprios WHERE tenant_id = ? AND nome = ?').get(tenantId, v.nome)) return { erro: 'Já existe um modelo seu com esse nome' };
+  const components = [{ type: 'BODY', text: v.corpo, ...(v.exemplos.length ? { example: { body_text: [v.exemplos] } } : {}) }];
+  const r = await graph(`/${cr.waba}/message_templates`, cr.token, { method: 'POST',
+    body: { name: v.nome, language: v.idioma, category: v.categoria, components } });
+  db.prepare('INSERT INTO modelos_proprios (tenant_id, nome, categoria, idioma, corpo, exemplos, status, categoria_meta, meta_id) VALUES (?,?,?,?,?,?,?,?,?)')
+    .run(tenantId, v.nome, v.categoria, v.idioma, v.corpo, JSON.stringify(v.exemplos), r.status || 'PENDING', r.category || null, r.id || null);
+  return { ok: true, status: r.status || 'PENDING' };
+}
+export const listaProprios = (tenantId) => db.prepare('SELECT * FROM modelos_proprios WHERE tenant_id = ? ORDER BY id DESC').all(tenantId)
+  .map((m) => ({ ...m, exemplos: JSON.parse(m.exemplos || '[]') }));
+
 export function listaModelos(tenantId) {
   const st = Object.fromEntries(db.prepare('SELECT * FROM tenant_templates WHERE tenant_id = ?').all(tenantId).map((x) => [x.chave, x]));
   return MODELOS.map((m) => ({ ...m, variaveis: nVars(m.corpo), status: st[m.chave]?.status || 'nao_enviado', categoria_meta: st[m.chave]?.categoria_meta || null,
@@ -188,7 +241,7 @@ let ultimaChecagem = 0;
 periodicas.push(async () => {
   if (Date.now() - ultimaChecagem < 30 * 60e3) return;
   ultimaChecagem = Date.now();
-  const ts = db.prepare("SELECT DISTINCT tenant_id FROM tenant_templates WHERE status = 'PENDING'").all();
+  const ts = db.prepare("SELECT DISTINCT tenant_id FROM tenant_templates WHERE status = 'PENDING' UNION SELECT DISTINCT tenant_id FROM modelos_proprios WHERE status = 'PENDING'").all();
   for (const { tenant_id } of ts) await sincronizarModelos(tenant_id).catch((e) => console.error('[modelos]', e.message));
 });
 
@@ -201,7 +254,12 @@ export function modelosRouter(canSee) {
   };
   r.get('/tenants/:id/modelos', (req, res) => {
     if (!ok(req, res)) return;
-    res.json({ modelos: listaModelos(Number(req.params.id)), conectado: !!credenciais(Number(req.params.id)) });
+    res.json({ modelos: listaModelos(Number(req.params.id)), proprios: listaProprios(Number(req.params.id)), conectado: !!credenciais(Number(req.params.id)) });
+  });
+  r.post('/tenants/:id/modelos/novo', async (req, res) => {
+    if (!ok(req, res, 'configurar')) return;
+    try { const r2 = await criarModeloProprio(Number(req.params.id), req.body || {}); if (r2.erro) return res.status(400).json(r2); res.status(201).json(r2); }
+    catch (e) { res.status(502).json({ erro: e.message }); }
   });
   r.post('/tenants/:id/modelos/enviar', async (req, res) => {
     if (!ok(req, res, 'configurar')) return;
@@ -211,7 +269,7 @@ export function modelosRouter(canSee) {
   r.post('/tenants/:id/modelos/sincronizar', async (req, res) => {
     if (!ok(req, res)) return;
     try { const r2 = await sincronizarModelos(Number(req.params.id)); if (r2.erro) return res.status(400).json(r2);
-      res.json({ modelos: listaModelos(Number(req.params.id)) }); } catch (e) { res.status(502).json({ erro: e.message }); }
+      res.json({ modelos: listaModelos(Number(req.params.id)), proprios: listaProprios(Number(req.params.id)) }); } catch (e) { res.status(502).json({ erro: e.message }); }
   });
   return r;
 }
