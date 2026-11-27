@@ -18,7 +18,7 @@ globalThis.fetch = async (url, opts = {}) => {
 };
 
 const { db } = await import('../src/db.js');
-const { MODELOS, enviarParaAprovacao, sincronizarModelos, listaModelos, avisarEquipe, componentes } = await import('../src/modelos.js');
+const { MODELOS, enviarParaAprovacao, sincronizarModelos, listaModelos, avisarEquipe, componentes, validarModeloProprio, criarModeloProprio, listaProprios } = await import('../src/modelos.js');
 const { enviarAoCliente } = await import('../src/vendas.js');
 const { filtroConversas, podeVerConversa } = await import('../src/operacao.js');
 let ok = 0;
@@ -85,6 +85,18 @@ check(podeVerConversa(U(bia), fin) && !podeVerConversa(U(bia), vendas) && !podeV
 check(podeVerConversa(U(dono), fin) && podeVerConversa({ admin: true }, fin), 'dono e plataforma veem tudo');
 const lista = (id) => { const f = filtroConversas(U(id)); return db.prepare(`SELECT c.id FROM conversations c JOIN contacts ct ON ct.id = c.contact_id WHERE c.tenant_id = ? ${f.sql}`).all(tid, ...f.args).map((x) => x.id); };
 check(lista(ana).sort().join() === [daAna.id, carteiraAna.id].sort().join() && lista(bia).join() === String(fin.id), 'lista de conversas filtrada no banco');
+
+// ---- Modelos criados pela empresa ----
+check(validarModeloProprio({ nome: 'Com Espaço', categoria: 'UTILITY', corpo: 'Olá, tudo certo por aqui?' }).erro, 'nome fora do padrão recusado');
+check(validarModeloProprio({ nome: 'ava_lembrete_reuniao', categoria: 'UTILITY', corpo: 'Olá, tudo certo por aqui?' }).erro, 'não sobrescreve modelo padrão');
+check(validarModeloProprio({ nome: 'teste_ok', categoria: 'UTILITY', corpo: 'Olá {{1}}, pedido {{3}} saiu.', exemplos: ['a', 'b', 'c'] }).erro?.includes('{{2}}'), 'variáveis fora de sequência recusadas');
+check(validarModeloProprio({ nome: 'teste_ok', categoria: 'UTILITY', corpo: 'Olá {{1}}, recebemos sua mensagem.', exemplos: [] }).erro?.includes('exemplo'), 'exige exemplo das variáveis');
+const cp = await criarModeloProprio(tid, { nome: 'confirmacao_atendimento', categoria: 'UTILITY', corpo: 'Olá {{1}}, recebemos sua mensagem e já vamos te atender.', exemplos: ['Maria'] });
+const envio = graph.filter((g) => g.method === 'POST' && g.body?.name === 'confirmacao_atendimento').at(-1);
+check(cp.ok && envio?.url.includes('/WABA9/message_templates') && envio.body.components[0].example.body_text[0][0] === 'Maria', 'modelo próprio enviado para a Meta com exemplo');
+statusMeta.confirmacao_atendimento = 'APPROVED'; await sincronizarModelos(tid);
+check(listaProprios(tid)[0].status === 'APPROVED', 'status do modelo próprio sincronizado');
+check((await criarModeloProprio(tid, { nome: 'confirmacao_atendimento', categoria: 'UTILITY', corpo: 'Olá {{1}}, recebemos sua mensagem.', exemplos: ['Maria'] })).erro, 'nome repetido recusado');
 
 // ---- CRM: todos os negócios ou só os dela ----
 const { filtroLeads, podeVerLead } = await import('../src/operacao.js');
